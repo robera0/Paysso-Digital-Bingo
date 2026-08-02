@@ -3,6 +3,7 @@ import GameSession from "../models/Game.model.js";
 export const createGame = async (req, res) => {
   try {
     const newGame = await GameSession.createFreshGame();
+    console.log(newGame);
     res.status(201).json({
       success: true,
       gameId: newGame._id,

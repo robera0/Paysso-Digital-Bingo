@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 
 const BoxSchema = new mongoose.Schema({
-  boxNumber: { type: Number, required: true }, // 1 to 100
+  boxNumber: { type: Number, required: true },
   prize: {
-    type: { type: String, required: true }, // 'GRAND_PRIZE', 'SMALL_PRIZE', 'NO_PRIZE'
+    type: { type: String, required: true },
     value: { type: Number, default: 0 },
   },
   isOpened: { type: Boolean, default: false },
@@ -24,7 +24,7 @@ const GameSessionSchema = new mongoose.Schema(
       default: "ACTIVE",
     },
     remainingBoxes: { type: Number, default: 100 },
-    boxes: [BoxSchema], // Array of 100 pre-shuffled boxes
+    boxes: [BoxSchema],
   },
   { timestamps: true },
 );
@@ -54,6 +54,6 @@ GameSessionSchema.statics.createFreshGame = async function () {
   });
 };
 
-const GameSession = mongoose.model("GameSession", GameSessionSchema);
+const GameSession = mongoose.model("gamesessions", GameSessionSchema);
 
 export default GameSession;

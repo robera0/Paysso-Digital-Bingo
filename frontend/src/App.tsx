@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Main from "../components/Main";
-
+import Game from "../pages/Game";
 const queryClient = new QueryClient();
 export const App = () => {
   return (
@@ -9,7 +9,9 @@ export const App = () => {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Main />} />
+            <Route path="/" element={<Main />}>
+              <Route index element={<Game />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

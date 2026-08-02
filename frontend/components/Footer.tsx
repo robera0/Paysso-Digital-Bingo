@@ -1,4 +1,3 @@
-import React from "react";
 import Icon from "./icon";
 
 interface NavItemsProps {
@@ -25,20 +24,8 @@ export default function Footer({
   setActive,
 }: FooterProps) {
   return (
-    <footer className="flex-shrink-0 border-t border-line bg-white px-4 pb-2.5 pt-3.5 font-poppins">
-      <div className="mb-2.5 flex items-center justify-between rounded-2xl bg-ink px-4 py-2.5">
-        <span className="text-[13px] font-semibold text-white">
-          {selectedCount} {selectedCount === 1 ? "Number" : "Numbers"}
-        </span>
-        <button
-          type="button"
-          className="rounded-[10px] bg-white px-4.5 py-2 text-[13px] font-bold text-ink"
-        >
-          Play
-        </button>
-      </div>
-
-      <nav className="grid grid-cols-4">
+    <footer className="flex-shrink-0 border-t border-slate-200 bg-white px-4 pb-3 pt-3 sm:px-6">
+      <nav className="grid grid-cols-4 gap-2">
         {NAV_ITEMS.map((item) => {
           const isActive = active === item.key;
           return (
@@ -46,20 +33,22 @@ export default function Footer({
               key={item.key}
               type="button"
               onClick={() => setActive(item.key)}
-              className={[
-                "flex flex-col items-center gap-1 px-1 py-2",
-                isActive ? "text-ink" : "text-muted",
-              ].join(" ")}
+              className={`flex flex-col items-center gap-1 rounded-2xl border px-1 py-2 transition ${
+                isActive
+                  ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+              }`}
             >
               <span
-                className={[
-                  "flex h-[34px] w-[34px] items-center justify-center rounded-[10px]",
-                  isActive ? "bg-ink text-white" : "",
-                ].join(" ")}
+                className={`flex h-[34px] w-[34px] items-center justify-center rounded-[10px] ${
+                  isActive
+                    ? "bg-white/10 text-white"
+                    : "bg-slate-100 text-slate-700"
+                }`}
               >
                 <Icon name={item.icon} size={20} />
               </span>
-              <span className="text-[10.5px] font-semibold tracking-wide">
+              <span className="text-xs font-medium">
                 {item.label}
               </span>
             </button>
@@ -67,7 +56,7 @@ export default function Footer({
         })}
       </nav>
 
-      <p className="mt-2.5 mb-0.5 text-center text-[10px] font-medium text-muted">
+      <p className="mt-3 mb-0.5 text-center text-xs font-medium text-slate-500">
         Paysso Digital Bingo &copy; 2026
       </p>
     </footer>
