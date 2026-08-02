@@ -35,10 +35,7 @@ GameSessionSchema.statics.createFreshGame = async function () {
     ...Array(99).fill({ type: "NO_PRIZE", value: 0 }),
   ];
 
-  //Fisher-Yates Shuffle using crypto.randomInt
-
   for (let i = prizePool.length - 1; i > 0; i--) {
-    // Generate random index from 0 to i (inclusive)
     const j = crypto.randomInt(0, i + 1);
 
     [prizePool[i], prizePool[j]] = [prizePool[j], prizePool[i]];

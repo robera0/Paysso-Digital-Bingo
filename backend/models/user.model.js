@@ -3,15 +3,38 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
   {
     email: {
-      type: string,
+      type: String,
       required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     password: {
-      type: string,
-      required: true,
+      type: String,
+    },
+
+    refreshTokens: [
+      {
+        token: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+    role: {
+      type: String,
+      default: "user",
+      enum: ["admin", "user"],
     },
   },
   { timestamps: true },
 );
 
-export const userModel = mongoose.model("User", userSchema);
+userSchema.set("toJSON", {
+  transform: function (doc, ret) {
+    delete ret.password;
+    delete ret.refreshTokens;
+    return ret;
+  },
+});
+
+const UserModel = mongoose.model("User", userSchema);
+export default UserModel;
