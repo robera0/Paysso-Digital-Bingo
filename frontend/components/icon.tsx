@@ -25,21 +25,7 @@ export default function Icon({ name, size = 20, className = "" }: IconProps) {
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
       );
-    case "search":
-      return (
-        <svg {...common}>
-          <circle cx="11" cy="11" r="7" />
-          <path d="M21 21l-4.3-4.3" />
-        </svg>
-      );
-    case "filter":
-      return (
-        <svg {...common}>
-          <path d="M4 5h16" />
-          <path d="M7 12h10" />
-          <path d="M10 19h4" />
-        </svg>
-      );
+
     case "grid":
       return (
         <svg {...common}>

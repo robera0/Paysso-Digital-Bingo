@@ -9,13 +9,13 @@ interface CheckoutModalProps {
   price?: number;
 }
 
-const CheckoutModal: React.FC<CheckoutModalProps> = ({
+const CheckoutModal = ({
   isOpen,
   onClose,
   onConfirm,
   selectedNumber,
   price = 50,
-}) => {
+}: CheckoutModalProps) => {
   if (!isOpen || selectedNumber === null) return null;
 
   return (
@@ -38,21 +38,32 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <span className="text-sm font-medium text-slate-500">
               Selected Number
             </span>
-            <span className="mt-1 flex h-16 w-16 items-center justify-center rounded-xl bg-indigo-600 text-3xl font-bold text-white shadow-sm">
+            <span className="mt-1 flex h-16 w-16 items-center justify-center rounded-xl bg-green-600 text-2xl font-bold text-white shadow-sm">
               {selectedNumber}
             </span>
           </div>
 
-          <div className="space-y-3 text-sm">
+          <div className="space-y-4 text-sm">
             <div className="flex justify-between">
               <span className="font-medium text-slate-500">Ticket Price</span>
               <span className="font-semibold text-slate-900">{price} ETB</span>
             </div>
             <div className="flex justify-between border-t border-slate-200 pt-3">
               <span className="font-medium text-slate-900">Total</span>
-              <span className="text-lg font-bold text-indigo-600">
+              <span className="text-lg font-bold text-green-600">
                 {price} ETB
               </span>
+            </div>
+
+            <div className="border-t border-slate-200 pt-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-500">
+                  TeleBirr Number
+                </span>
+                <span className="font-semibold text-slate-900">
+                  +251912345678
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -71,7 +82,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
               onConfirm();
               onClose();
             }}
-            className="flex-1 rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700"
+            className="flex-1 rounded-xl bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700"
           >
             Pay Now
           </button>

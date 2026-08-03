@@ -13,6 +13,7 @@ const BoxSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
+
   openedAt: { type: Date, default: null },
 });
 
