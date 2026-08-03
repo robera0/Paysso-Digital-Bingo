@@ -1,8 +1,7 @@
-import React from "react";
-import { Bell, Ticket as TicketIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Ticket as TicketIcon } from "lucide-react";
 
-// ---- demo data -------------------------------------------------------
-const TICKETS = [
+export const TICKETS = [
   {
     id: "014",
     game: "Sheger Bingo Night",
@@ -53,7 +52,10 @@ const COLORS = {
   wonText: "#B45309",
 };
 
-function StatusPill({ status: string }) {
+interface StatusPillProps {
+  status: string;
+}
+function StatusPill({ status }: StatusPillProps) {
   const bg = status === "Won" ? COLORS.wonBg : COLORS.activeBg;
   const color = status === "Won" ? COLORS.wonText : COLORS.activeText;
   return (
@@ -66,7 +68,16 @@ function StatusPill({ status: string }) {
   );
 }
 
-function TicketCard({ t }) {
+interface Ticket {
+  id: string;
+  game: string;
+  price: string;
+  status: string;
+  numbers: number[];
+  marked: number[];
+}
+
+function TicketCard({ t }: { t: Ticket }) {
   return (
     <div
       className="rounded-2xl p-5"
@@ -95,8 +106,8 @@ function TicketCard({ t }) {
       </p>
 
       <div className="grid grid-cols-5 gap-1.5 mb-4">
-        {t.numbers.map((n) => {
-          const isMarked = t.marked.includes(n);
+        {t?.numbers?.map((n) => {
+          const isMarked = t?.marked.includes(n);
           return (
             <div
               key={n}

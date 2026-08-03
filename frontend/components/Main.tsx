@@ -10,7 +10,7 @@ const Main = () => {
         <main className="flex-1">
           <Outlet />
         </main>
-        <Footer selectedCount={0} active={""} setActive={() => ""} />
+        <Footer />
       </div>
     </div>
   );

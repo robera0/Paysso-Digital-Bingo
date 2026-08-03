@@ -1,38 +1,42 @@
+import { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Icon from "./icon";
 
 interface NavItemsProps {
   key: string;
   label: string;
   icon: string;
+  path: string;
 }
 const NAV_ITEMS: NavItemsProps[] = [
-  { key: "bingo", label: "Bingo", icon: "grid" },
-  { key: "tickets", label: "Tickets", icon: "ticket" },
-  { key: "winners", label: "Winners", icon: "trophy" },
-  { key: "settings", label: "Settings", icon: "gear" },
+  { key: "bingo", label: "Bingo", icon: "grid", path: "/" },
+  { key: "tickets", label: "Tickets", icon: "ticket", path: "/ticket" },
+  { key: "winners", label: "Winners", icon: "trophy", path: "/winners" },
+  { key: "settings", label: "Settings", icon: "gear", path: "/settings" },
 ];
 
-interface FooterProps {
-  selectedCount: number;
-  active: string;
-  setActive: (key: string) => void;
-}
+export default function Footer() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-export default function Footer({
-  selectedCount,
-  active,
-  setActive,
-}: FooterProps) {
+  const activeKey = useMemo(() => {
+    if (location.pathname.startsWith("/ticket")) return "tickets";
+    if (location.pathname === "/") return "bingo";
+    if (location.pathname.startsWith("/winners")) return "winners";
+    if (location.pathname.startsWith("/settings")) return "settings";
+    return "bingo";
+  }, [location.pathname]);
+
   return (
     <footer className="flex-shrink-0 border-t border-slate-200 bg-white px-4 pb-3 pt-3 sm:px-6">
       <nav className="grid grid-cols-4 gap-2">
         {NAV_ITEMS.map((item) => {
-          const isActive = active === item.key;
+          const isActive = activeKey === item.key;
           return (
             <button
               key={item.key}
               type="button"
-              onClick={() => setActive(item.key)}
+              onClick={() => navigate(item.path)}
               className={`flex flex-col items-center gap-1 rounded-2xl border px-1 py-2 transition ${
                 isActive
                   ? "border-slate-900 bg-slate-900 text-white shadow-sm"
@@ -48,9 +52,7 @@ export default function Footer({
               >
                 <Icon name={item.icon} size={20} />
               </span>
-              <span className="text-xs font-medium">
-                {item.label}
-              </span>
+              <span className="text-xs font-medium">{item.label}</span>
             </button>
           );
         })}

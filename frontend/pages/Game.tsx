@@ -4,7 +4,7 @@ import { useGame } from "../src/services/api";
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
-  const { data: gameData, isLoading, isError, error } = useGame();
+  const { data: gameData } = useGame();
 
   const toggleNumber = (number: number) => {
     setCheckoutNumber(number);
@@ -78,9 +78,10 @@ const Game = () => {
               <button
                 key={box.boxNumber}
                 type="button"
+                disabled={box.isOpened}
                 onClick={() => toggleNumber(box?.boxNumber)}
                 className={`aspect-square rounded-xl border text-sm font-semibold transition-colors duration-200 ${
-                  isSelected
+                  isSelected || box?.isOpened
                     ? "border-green-200 bg-green-600 text-white"
                     : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700"
                 }`}

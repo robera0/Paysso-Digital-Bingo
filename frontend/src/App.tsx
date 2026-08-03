@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Main from "../components/Main";
 import Game from "../pages/Game";
 import BingoTickets from "../pages/ticket";
+import TicketEdit from "../pages/TicketEdit";
 const queryClient = new QueryClient();
 export const App = () => {
   return (
@@ -12,7 +13,8 @@ export const App = () => {
           <Routes>
             <Route path="/" element={<Main />}>
               <Route index element={<Game />} />
-              <Route path="/ticket" element={<BingoTickets />} />
+              <Route path="ticket" element={<BingoTickets />} />
+              <Route path="ticket/:id/edit" element={<TicketEdit />} />
             </Route>
           </Routes>
         </BrowserRouter>
