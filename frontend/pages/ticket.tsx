@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Ticket as TicketIcon } from "lucide-react";
 
 export const TICKETS = [
