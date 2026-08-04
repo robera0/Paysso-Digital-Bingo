@@ -9,7 +9,7 @@ export interface Credentials {
 }
 
 const loginUSer = async (credentials: Credentials) => {
-  const res = await axios.post(`${VITE_API_URL}/login/user`, credentials, {
+  const res = await axios.post(`${VITE_API_URL}/v1/login/user`, credentials, {
     withCredentials: true,
   });
   const data = res.data;

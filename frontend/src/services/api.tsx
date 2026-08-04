@@ -35,7 +35,7 @@ export interface TicketApiResponse {
 }
 // get Game
 export const fetchGame = async (): Promise<ApiResponse> => {
-  const res = await fetch(`${VITE_API_URL}/game/newGame`);
+  const res = await fetch(`${VITE_API_URL}/v1/game/newGame`);
   const data: ApiResponse = await res.json();
 
   return data;
@@ -50,7 +50,7 @@ export const useGame = () => {
 // get tickets
 export const fetchTickets = async (): Promise<TicketApiResponse> => {
   {
-    const res = await fetch(`${VITE_API_URL}/auth/ticket`, {
+    const res = await fetch(`${VITE_API_URL}/v1/auth/ticket`, {
       credentials: "include",
     });
     const data: TicketApiResponse = await res.json();
