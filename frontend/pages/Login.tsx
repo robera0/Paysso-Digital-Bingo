@@ -1,6 +1,5 @@
 import { Leaf, Mail, Lock, Eye, ArrowRight } from "lucide-react";
 import { useState } from "react";
-import type { ChangeEvent, MouseEvent } from "react";
 import { useLogin, type Credentials } from "../src/services/useLogin";
 const Login = () => {
   const [email, setEmail] = useState<string>("");
