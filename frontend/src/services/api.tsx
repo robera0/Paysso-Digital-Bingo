@@ -9,6 +9,7 @@ export interface Box {
   openedBy: string;
   openedAt: string;
 }
+// for game
 export interface ApiResponse {
   success?: boolean;
   gameId: string;
@@ -16,8 +17,25 @@ export interface ApiResponse {
   remainingBoxes: number;
   boxes: Box[];
 }
+
+// for tickets
+export interface TicketResponse {
+  _id: string;
+  gameId: string;
+  user: string;
+  isVerified: boolean;
+  verificationExpiresAt: string;
+  boxId: string;
+  createdAt: string;
+}
+
+export interface TicketApiResponse {
+  success: boolean;
+  ticket: TicketResponse[];
+}
+// get Game
 export const fetchGame = async (): Promise<ApiResponse> => {
-  const res = await fetch(`${VITE_API_URL}/newGame`);
+  const res = await fetch(`${VITE_API_URL}/game/newGame`);
   const data: ApiResponse = await res.json();
 
   return data;
@@ -29,15 +47,20 @@ export const useGame = () => {
     queryFn: fetchGame,
   });
 };
+// get tickets
+export const fetchTickets = async (): Promise<TicketApiResponse> => {
+  {
+    const res = await fetch(`${VITE_API_URL}/auth/ticket`, {
+      credentials: "include",
+    });
+    const data: TicketApiResponse = await res.json();
+    return data;
+  }
+};
 
-
-export interface Ticket {
-  gameId:string ,
-  user:string ,
-  isVerified : boolean ,
-  verificationExpiresAt:boolean,
-  boxId:string,
-
-}
-
-
+export const useTicket = () => {
+  return useQuery<TicketApiResponse>({
+    queryKey: ["ticket"],
+    queryFn: fetchTickets,
+  });
+};

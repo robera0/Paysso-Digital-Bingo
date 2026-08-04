@@ -1,188 +1,214 @@
-import { Ticket as TicketIcon } from "lucide-react";
-
-export const TICKETS = [
-  {
-    id: "014",
-    game: "Sheger Bingo Night",
-    price: "50 ETB",
-    status: "Active",
-    numbers: [
-      3, 12, 27, 34, 41, 8, 19, 25, 38, 46, 1, 16, 22, 30, 44, 7, 20, 29, 37,
-      49, 5, 14, 23, 33, 48,
-    ],
-    marked: [12, 25, 44, 20, 33],
-  },
-  {
-    id: "027",
-    game: "Sheger Bingo Night",
-    price: "50 ETB",
-    status: "Won",
-    numbers: [
-      2, 11, 26, 35, 42, 9, 18, 24, 39, 45, 4, 15, 21, 31, 43, 6, 17, 28, 36,
-      47, 10, 13, 32, 40, 50,
-    ],
-    marked: [2, 11, 26, 35, 42, 9, 18, 24, 39, 45],
-  },
-  {
-    id: "003",
-    game: "Weekend Jackpot",
-    price: "100 ETB",
-    status: "Active",
-    numbers: [
-      55, 61, 78, 84, 92, 58, 67, 73, 89, 97, 52, 64, 71, 81, 95, 56, 69, 76,
-      87, 99, 53, 62, 75, 83, 91,
-    ],
-    marked: [78, 67, 71],
-  },
-];
+import { Ticket as TicketIcon, ShieldAlert } from "lucide-react";
+import { useTicket } from "../src/services/api";
+import type { TicketApiResponse } from "../src/services/api";
 
 const COLORS = {
   page: "#EEF1F6",
   card: "#FFFFFF",
   border: "#E4E8EF",
-  cell: "#1E2A3D",
-  cellMarked: "#A9B3C1",
   textDark: "#111827",
   textMuted: "#6B7280",
-  avatar: "#6C5CE7",
-  activeBg: "#DCFCE7",
-  activeText: "#16A34A",
-  wonBg: "#FEF3C7",
-  wonText: "#B45309",
+  verifiedBg: "#DCFCE7",
+  verifiedText: "#16A34A",
+  pendingBg: "#FEF3C7",
+  pendingText: "#B45309",
+  warnBg: "#FEF2F2",
+  warnBorder: "#FECACA",
+  warnText: "#B91C1C",
 };
 
-interface StatusPillProps {
-  status: string;
+function formatDateTime(iso: string) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "Unknown";
+  return d.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 }
-function StatusPill({ status }: StatusPillProps) {
-  const bg = status === "Won" ? COLORS.wonBg : COLORS.activeBg;
-  const color = status === "Won" ? COLORS.wonText : COLORS.activeText;
+
+interface StatusPillProps {
+  isVerified: boolean;
+}
+function StatusPill({ isVerified }: StatusPillProps) {
+  const bg = isVerified ? COLORS.verifiedBg : COLORS.pendingBg;
+  const color = isVerified ? COLORS.verifiedText : COLORS.pendingText;
   return (
     <span
-      className="text-xs font-medium px-3 py-1 rounded-full"
+      className="text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap"
       style={{ backgroundColor: bg, color }}
     >
-      {status === "Won" ? "Won" : "Active Game"}
+      {isVerified ? "Verified" : "Unverified"}
     </span>
   );
 }
+type TicketArray = TicketApiResponse["ticket"][number];
 
-interface Ticket {
-  id: string;
-  game: string;
-  price: string;
-  status: string;
-  numbers: number[];
-  marked: number[];
-}
+function TicketCard({ t }: { t: TicketArray }) {
+  const shortId = t?._id.slice(-8).toUpperCase();
+  const expiry = new Date(t?.verificationExpiresAt);
+  const isExpired = !isNaN(expiry.getTime()) && expiry.getTime() < Date.now();
 
-function TicketCard({ t }: { t: Ticket }) {
   return (
     <div
-      className="rounded-2xl p-5"
+      className="rounded-2xl p-4 sm:p-5 w-full max-w-sm mx-auto sm:mx-0"
       style={{
         backgroundColor: COLORS.card,
         border: `1px solid ${COLORS.border}`,
       }}
     >
-      <div className="flex items-start justify-between mb-1">
+      <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
         <div>
           <p className="text-xs" style={{ color: COLORS.textMuted }}>
             Ticket
           </p>
           <h3
-            className="text-lg font-semibold"
+            className="text-base sm:text-lg font-semibold break-all"
             style={{ color: COLORS.textDark }}
           >
-            #{t.id}
+            #{shortId}
           </h3>
         </div>
-        <StatusPill status={t.status} />
+        <StatusPill isVerified={t.isVerified} />
       </div>
 
-      <p className="text-sm mb-4" style={{ color: COLORS.textMuted }}>
-        {t.game}
-      </p>
-
-      <div className="grid grid-cols-5 gap-1.5 mb-4">
-        {t?.numbers?.map((n) => {
-          const isMarked = t?.marked.includes(n);
-          return (
-            <div
-              key={n}
-              className="aspect-square flex items-center justify-center rounded-lg text-xs font-medium"
-              style={{
-                backgroundColor: isMarked ? COLORS.cellMarked : COLORS.cell,
-                color: "#FFFFFF",
-              }}
+      {!t.isVerified && (
+        <div
+          className="flex items-start gap-2 rounded-lg p-3 mt-3"
+          style={{
+            backgroundColor: COLORS.warnBg,
+            border: `1px solid ${COLORS.warnBorder}`,
+          }}
+        >
+          <ShieldAlert
+            size={16}
+            className="mt-0.5 shrink-0"
+            style={{ color: COLORS.warnText }}
+          />
+          <div className="min-w-0">
+            <p
+              className="text-sm font-medium"
+              style={{ color: COLORS.warnText }}
             >
-              {n}
-            </div>
-          );
-        })}
+              This ticket isn't verified yet
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: COLORS.warnText }}>
+              {isExpired
+                ? "The verification window has expired."
+                : `Verify before ${formatDateTime(t.verificationExpiresAt)}.`}
+            </p>
+            {/* No verify endpoint wired up yet — hook this to your mutation */}
+            <button
+              type="button"
+              className="mt-2 text-xs font-semibold px-3 py-1.5 rounded-md w-full sm:w-auto"
+              style={{ backgroundColor: COLORS.warnText, color: "#FFFFFF" }}
+            >
+              Verify ticket
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-2 mt-4">
+        <div className="flex flex-wrap items-center justify-between gap-1">
+          <span className="text-sm" style={{ color: COLORS.textMuted }}>
+            Purchased
+          </span>
+          <span
+            className="text-sm text-right"
+            style={{ color: COLORS.textDark }}
+          >
+            {formatDateTime(t.createdAt)}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-1">
+          <span className="text-sm" style={{ color: COLORS.textMuted }}>
+            Verification {isExpired ? "expired" : "expires"}
+          </span>
+          <span
+            className="text-sm text-right"
+            style={{ color: isExpired ? COLORS.pendingText : COLORS.textDark }}
+          >
+            {formatDateTime(t.verificationExpiresAt)}
+          </span>
+        </div>
       </div>
 
       <div
-        className="flex items-center justify-between pt-3"
+        className="pt-3 mt-3"
         style={{ borderTop: `1px solid ${COLORS.border}` }}
       >
-        <span className="text-sm" style={{ color: COLORS.textMuted }}>
-          Entry fee
-        </span>
-        <span
-          className="text-sm font-semibold"
+        <p className="text-xs" style={{ color: COLORS.textMuted }}>
+          Box ID
+        </p>
+        <p
+          className="text-sm font-mono break-all"
           style={{ color: COLORS.textDark }}
         >
-          {t.price}
-        </span>
+          {t.boxId}
+        </p>
       </div>
     </div>
   );
 }
 
 const BingoTickets = () => {
+  const {
+    data: ticketData,
+    isLoading: ticketIsLoading,
+    isError: ticketError,
+  } = useTicket();
+
+  if (ticketIsLoading) {
+    return (
+      <div
+        className="w-full min-h-screen flex items-center justify-center p-4"
+        style={{ backgroundColor: COLORS.page }}
+      >
+        <p style={{ color: COLORS.textMuted }}>Loading ticket...</p>
+      </div>
+    );
+  }
+
+  if (ticketError) {
+    return (
+      <div
+        className="w-full min-h-screen flex items-center justify-center p-4"
+        style={{ backgroundColor: COLORS.page }}
+      >
+        <p className="text-center" style={{ color: COLORS.textMuted }}>
+          Couldn't load your ticket. Please try again.
+        </p>
+      </div>
+    );
+  }
+
+  const ticket = ticketData?.ticket?.[0];
+
   return (
     <div
-      className="w-full min-h-screen p-6"
+      className="w-full min-h-screen p-3 sm:p-6"
       style={{ backgroundColor: COLORS.page }}
     >
-      {/* tickets section */}
       <div
-        className="rounded-2xl p-6"
+        className="rounded-2xl p-4 sm:p-6"
         style={{
           backgroundColor: COLORS.card,
           border: `1px solid ${COLORS.border}`,
         }}
       >
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <p className="text-sm" style={{ color: COLORS.textMuted }}>
-              Your tickets
-            </p>
-            <h2
-              className="text-xl font-semibold"
-              style={{ color: COLORS.textDark }}
-            >
-              {TICKETS.length} purchased
-            </h2>
-          </div>
-          <button
-            className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full"
-            style={{
-              border: `1px solid ${COLORS.border}`,
-              color: COLORS.textDark,
-            }}
-          >
-            <TicketIcon size={14} />
-            Buy ticket
-          </button>
+        <div className="flex items-center gap-2 mb-4 sm:mb-5">
+          <TicketIcon size={18} style={{ color: COLORS.textMuted }} />
+          <p className="text-sm" style={{ color: COLORS.textMuted }}>
+            Your ticket
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {TICKETS.map((t) => (
-            <TicketCard key={t.id} t={t} />
-          ))}
-        </div>
+        {ticket ? (
+          <TicketCard t={ticket} />
+        ) : (
+          <p style={{ color: COLORS.textMuted }}>No ticket yet.</p>
+        )}
       </div>
     </div>
   );

@@ -4,6 +4,6 @@ import { authenticateTokenMiddleware } from "../middleware/authenticateToken.mid
 
 const ticketRouter = express.Router();
 
-ticketRouter.get("/auth/ticket", authenticateTokenMiddleware, getTicket);
+ticketRouter.get("/ticket", authenticateTokenMiddleware, getTicket);
 
 export default ticketRouter;
