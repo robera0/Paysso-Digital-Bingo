@@ -1,10 +1,14 @@
 import { useState } from "react";
 import CheckoutModal from "../components/CheckoutModal";
 import { useGame } from "../src/services/api";
+import { useTicket } from "../src/services/api";
+import type { TicketApiResponse } from "../src/services/api";
+
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
   const { data: gameData } = useGame();
+  const { data: ticketData } = useTicket();
 
   const toggleNumber = (number: number) => {
     setCheckoutNumber(number);
