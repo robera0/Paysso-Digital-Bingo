@@ -47,44 +47,50 @@ export const register = async (req, res) => {
 };
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  try {
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
+    const user = await UserModel.findOne({ email: email });
 
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await comparePassword(password, user?.password);
+
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid credentials" });
+
+    const payload = {
+      id: user._id,
+      email: user.email,
+    };
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload);
+
+    await user.save();
+
+    res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/",
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/",
+      })
+      .status(200)
+      .json({ role: user.role, message: "Logged in successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-  const user = await UserModel.findOne({ email: email });
-
-  if (!user) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-
-  const isMatch = await comparePassword(password, user?.password);
-
-  if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
-
-  const payload = {
-    id: user._id,
-    email: user.email,
-  };
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload);
-
-  await user.save();
-
-  res
-    .cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      path: "/",
-    })
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      path: "/",
-    })
-    .status(200)
-    .json({ role: user.role, message: "Logged in successfully" });
 };
 
 export const refresh = async (req, res) => {

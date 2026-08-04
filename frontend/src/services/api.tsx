@@ -29,3 +29,15 @@ export const useGame = () => {
     queryFn: fetchGame,
   });
 };
+
+
+export interface Ticket {
+  gameId:string ,
+  user:string ,
+  isVerified : boolean ,
+  verificationExpiresAt:boolean,
+  boxId:string,
+
+}
+
+
