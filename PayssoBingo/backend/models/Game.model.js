@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 
 const BoxSchema = new mongoose.Schema({
-  boxNumber: { type: Number, required: true }, // 1 to 100
+  boxNumber: { type: Number, required: true },
   prize: {
-    type: { type: String, required: true }, // 'GRAND_PRIZE', 'SMALL_PRIZE', 'NO_PRIZE'
+    type: { type: String, required: true },
     value: { type: Number, default: 0 },
   },
   isOpened: { type: Boolean, default: false },
@@ -13,6 +13,7 @@ const BoxSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
+
   openedAt: { type: Date, default: null },
 });
 
@@ -24,7 +25,7 @@ const GameSessionSchema = new mongoose.Schema(
       default: "ACTIVE",
     },
     remainingBoxes: { type: Number, default: 100 },
-    boxes: [BoxSchema], // Array of 100 pre-shuffled boxes
+    boxes: [BoxSchema],
   },
   { timestamps: true },
 );
@@ -35,10 +36,7 @@ GameSessionSchema.statics.createFreshGame = async function () {
     ...Array(99).fill({ type: "NO_PRIZE", value: 0 }),
   ];
 
-  //Fisher-Yates Shuffle using crypto.randomInt
-
   for (let i = prizePool.length - 1; i > 0; i--) {
-    // Generate random index from 0 to i (inclusive)
     const j = crypto.randomInt(0, i + 1);
 
     [prizePool[i], prizePool[j]] = [prizePool[j], prizePool[i]];
@@ -57,6 +55,6 @@ GameSessionSchema.statics.createFreshGame = async function () {
   });
 };
 
-const GameSession = mongoose.model("GameSession", GameSessionSchema);
+const GameSession = mongoose.model("gamesessions", GameSessionSchema);
 
 export default GameSession;
