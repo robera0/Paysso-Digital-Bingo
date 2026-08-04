@@ -9,7 +9,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173", // Vite dev server
-  "https://paysso.com", // production frontend
+  "https://payssobingo.netlify.app", // production frontend
   "https://staging.paysso.com", // staging, if you have one
 ];
 app.use(
