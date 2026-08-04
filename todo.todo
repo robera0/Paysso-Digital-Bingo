@@ -4,14 +4,3 @@
 [] design a account section
 
 
-/ so first the when a user click the box it should show the telebirr number and when it click pay it should get him to ticket section so he can verify 
- 12 min to verify 
-
- so isOpened -> true - > openedBy -> userId -> ticketSchema-> isVerified ->fals{
-
-  when a user click pay  take the openedAt and add 12 min then make 
-  the verificationExpiresAt that
- }
- 
- (12min)-> if true -> update status 
-

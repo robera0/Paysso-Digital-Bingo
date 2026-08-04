@@ -10,9 +10,9 @@ interface NavItemsProps {
 }
 const NAV_ITEMS: NavItemsProps[] = [
   { key: "bingo", label: "Bingo", icon: "grid", path: "/" },
-  { key: "tickets", label: "Tickets", icon: "ticket", path: "/ticket" },
-  { key: "winners", label: "Winners", icon: "trophy", path: "/winners" },
-  { key: "settings", label: "Settings", icon: "gear", path: "/settings" },
+  { key: "tickets", label: "Tickets", icon: "ticket", path: "/game/ticket" },
+  { key: "winners", label: "Winners", icon: "trophy", path: "/game/winners" },
+  { key: "settings", label: "Settings", icon: "gear", path: "/game/settings" },
 ];
 
 export default function Footer() {
