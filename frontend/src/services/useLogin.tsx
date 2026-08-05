@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 const VITE_API_URL: string = import.meta.env.VITE_API_URL;
 
 export interface Credentials {
@@ -30,6 +31,7 @@ export const useLogin = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       navigate("/game");
+      toast.success("Logged in successfully");
     },
   });
 };

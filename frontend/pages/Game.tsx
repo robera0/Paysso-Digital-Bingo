@@ -1,7 +1,6 @@
 import { useState } from "react";
 import CheckoutModal from "../components/CheckoutModal";
 import { useGame } from "../src/services/api";
-
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);

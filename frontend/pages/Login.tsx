@@ -1,14 +1,26 @@
-import { Leaf, Mail, Lock, Eye, ArrowRight } from "lucide-react";
+import { Leaf, Mail, Lock, Eye, ArrowRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useLogin, type Credentials } from "../src/services/useLogin";
 const Login = () => {
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState<string>("");
-  const { mutate: loginMutation } = useLogin();
+  const { mutate: loginMutation, isPending } = useLogin();
   const credentials: Credentials = {
     email: email,
     password: password,
   };
+  const [emailError, setEmailError] = useState("");
+
+  const validateEmail = (val: string) => {
+    setEmail(val);
+
+    if (val && !val.includes("@")) {
+      setEmailError("Add a valid email address (missing '@')");
+    } else {
+      setEmailError("");
+    }
+  };
+
   return (
     <div
       className="w-full min-h-screen flex flex-col items-center px-6 pt-16"
@@ -32,14 +44,17 @@ const Login = () => {
         </label>
         <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3.5 mb-6">
           <Mail size={18} className="text-gray-400 shrink-0" />
+
           <input
             type="email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setEmail(e.target.value)
+              validateEmail(e.target.value)
             }
             placeholder="Enter your email"
-            className="w-full bg-transparent text-gray-700 placeholder-gray-400 outline-none"
+            className={`w-full bg-transparent text-gray-700 placeholder-gray-400 outline-none ${
+              emailError ? "border-b-2 border-red-500" : ""
+            }`}
           />
         </div>
 
@@ -67,14 +82,24 @@ const Login = () => {
         {/* Sign in button */}
         <button
           type="button"
+          disabled={isPending}
           onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
             e.preventDefault();
             loginMutation(credentials);
           }}
-          className="w-full flex items-center justify-center gap-2 bg-[#1B7A2E] text-white font-semibold py-3.5 rounded-xl"
+          className="w-full flex items-center justify-center gap-2 bg-[#1B7A2E] text-white font-semibold py-3.5 rounded-xl disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Sign In
-          <ArrowRight size={18} />
+          {isPending ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              Signing In...
+            </>
+          ) : (
+            <>
+              Sign In
+              <ArrowRight size={18} />
+            </>
+          )}
         </button>
       </div>
 
