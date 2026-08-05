@@ -11,10 +11,15 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://payssobingo.netlify.app",
 ];
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        /^https:\/\/[a-z0-9]+--payssobingo\.netlify\.app$/.test(origin)
+      ) {
         callback(null, true);
       } else {
         callback(null, false);
