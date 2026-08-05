@@ -9,7 +9,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://payssobingo.netlify.app/api",
+  "https://payssobingo.netlify.app",
 ];
 app.use(
   cors({
