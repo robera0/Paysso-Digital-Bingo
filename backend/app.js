@@ -8,9 +8,8 @@ import cors from "cors";
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:5173", // Vite dev server
-  "https://payssobingo.netlify.app", // production frontend
-  "https://staging.paysso.com", // staging, if you have one
+  "http://localhost:5173",
+  "https://payssobingo.netlify.app/",
 ];
 app.use(
   cors({
@@ -18,7 +17,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(null, false);
       }
     },
     credentials: true,
