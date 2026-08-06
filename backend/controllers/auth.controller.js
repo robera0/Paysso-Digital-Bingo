@@ -3,7 +3,7 @@ import UserModel from "../models/user.model.js";
 import {
   generateAccessToken,
   generateRefreshToken,
-} from "../service/token.service.js";
+} from "../services/token.service.js";
 
 const refreshToken_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const isProduction = process.env.NODE_ENV === "production";

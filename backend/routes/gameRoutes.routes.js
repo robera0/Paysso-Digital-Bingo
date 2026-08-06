@@ -10,6 +10,5 @@ const gameRouter = express.Router();
 
 gameRouter.post("/start", createGame);
 gameRouter.get("/newGame", getGame);
-gameRouter.post("/ticket", authenticateTokenMiddleware, PurchaseBox);
 
 export default gameRouter;

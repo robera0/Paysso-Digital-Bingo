@@ -1,8 +1,10 @@
+import "dotenv/config";
+
 import express from "express";
 import connectDB from "./config/db.js";
 import gameRouter from "./routes/gameRoutes.routes.js";
 import authRouter from "./routes/auth.routes.js";
-import ticketRouter from "./routes/ticket.routes.js";
+import { ticketRouter, verifyRouter } from "./routes/ticket.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 const app = express();
@@ -28,6 +30,7 @@ app.use(
     credentials: true,
   }),
 );
+
 app.use(express.json());
 app.use(cookieParser());
 connectDB(app);
@@ -35,3 +38,4 @@ connectDB(app);
 app.use("/api/v1", authRouter);
 app.use("/api/v1/game", gameRouter);
 app.use("/api/v1/auth", ticketRouter);
+app.use("/api", verifyRouter);

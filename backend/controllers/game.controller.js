@@ -31,11 +31,11 @@ export const getGame = async (req, res) => {
     }
 
     const sanitizedBoxes = game?.boxes?.map((box) => ({
+      _id: box?._id,
       boxNumber: box?.boxNumber,
       isOpened: box?.isOpened,
       openedBy: box?.openedBy,
       openedAt: box?.openedAt,
-
       prize: box?.isOpened ? box?.prize : null,
     }));
 
@@ -103,12 +103,18 @@ export const PurchaseBox = async (req, res) => {
       (b) => b.boxNumber === Number(boxNumber),
     );
 
+    if (!claimedBox) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({ success: false, error: "Box not found." });
+    }
+
     const newTicket = await TicketModel.create(
       [
         {
           gameId: gameId,
           user: userId,
-          boxId: updatedGame._id,
+          boxId: claimedBox._id,
           isVerified: false,
           verificationExpiresAt: expireAt,
         },
