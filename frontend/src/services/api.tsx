@@ -87,24 +87,24 @@ export const usePurchaseTicket = () => {
     mutationFn: (payload: PurchasedTicketApiResponse) =>
       purchaseTicket(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["purchase"] });
-      navigate("/game/ticket ");
-
-      toast.success("you Hold the ticket successfully ", {
+      queryClient.invalidateQueries({ queryKey: ["ticket"] });
+      queryClient.invalidateQueries({ queryKey: ["game"] });
+      navigate("/game/ticket");
+      toast.success("You held the ticket successfully", {
         duration: 3000,
       });
-      onError: (error: string) => {
-        if (axios.isAxiosError(error)) {
-          const message =
-            error.response?.data?.message ||
-            "You didn't hold the ticket, try again";
-          toast.error(message, { duration: 3000 });
-        } else {
-          toast.error("You didn't hold the ticket, try again", {
-            duration: 3000,
-          });
-        }
-      };
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          "You didn't hold the ticket, try again";
+        toast.error(message, { duration: 3000 });
+      } else {
+        toast.error("You didn't hold the ticket, try again", {
+          duration: 3000,
+        });
+      }
     },
   });
 };

@@ -12,18 +12,26 @@ const Game = () => {
   const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
 
   const toggleNumber = (number: number) => {
+    setSelectedNumbers((prev) =>
+      prev.includes(number)
+        ? prev.filter((value) => value !== number)
+        : [number],
+    );
     setCheckoutNumber(number);
   };
 
   const handleConfirmPurchase = () => {
-    if (checkoutNumber !== null && !selectedNumbers.includes(checkoutNumber)) {
-      if (!gameData?.gameId) {
-        toast.error("Game data not loaded yet");
-        return;
-      }
-
-      purchaseTicket({ boxNumber: checkoutNumber, gameId: gameData.gameId });
+    if (checkoutNumber === null) {
+      toast.error("Select a box number first");
+      return;
     }
+
+    if (!gameData?.gameId) {
+      toast.error("Game data not loaded yet");
+      return;
+    }
+
+    purchaseTicket({ boxNumber: checkoutNumber, gameId: gameData.gameId });
   };
 
   return (
@@ -82,19 +90,37 @@ const Game = () => {
         <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
           {gameData?.boxes?.map((box) => {
             const isSelected = selectedNumbers.includes(box?.boxNumber);
+            const ticketForBox = ticketData?.ticket?.find(
+              (ticket) => ticket.boxId === box?._id?.toString(),
+            );
+            const hasActiveTicket = Boolean(
+              ticketForBox &&
+              (ticketForBox.isVerified ||
+                new Date(ticketForBox.verificationExpiresAt).getTime() >
+                  Date.now()),
+            );
+            const hasExpiredTicket = Boolean(
+              ticketForBox &&
+              !ticketForBox.isVerified &&
+              new Date(ticketForBox.verificationExpiresAt).getTime() <=
+                Date.now(),
+            );
+
+            const buttonClass = isSelected
+              ? "border-green-200 bg-green-600 text-white"
+              : hasActiveTicket
+                ? "border-green-200 bg-green-600 text-white"
+                : hasExpiredTicket
+                  ? "border-rose-200 bg-rose-600 text-white"
+                  : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700";
+
             return (
               <button
                 key={box.boxNumber}
                 type="button"
-                disabled={box.isOpened || isSelected}
+                disabled={box?.isOpened || isSelected}
                 onClick={() => toggleNumber(box?.boxNumber)}
-                className={`aspect-square rounded-xl border text-sm font-semibold transition-colors duration-200 ${
-                  isSelected ||
-                  (box?.isOpened &&
-                    ticketData?.ticket[0]?.boxId.includes(box?._id))
-                    ? "border-green-200 bg-green-600 text-white"
-                    : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700"
-                }`}
+                className={`aspect-square rounded-xl border text-sm font-semibold transition-colors duration-200 ${buttonClass}`}
               >
                 {box?.boxNumber}
               </button>

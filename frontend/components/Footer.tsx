@@ -11,8 +11,8 @@ interface NavItemsProps {
 const NAV_ITEMS: NavItemsProps[] = [
   { key: "bingo", label: "Bingo", icon: "grid", path: "/game" },
   { key: "tickets", label: "Tickets", icon: "ticket", path: "/game/ticket" },
-  { key: "winners", label: "Winners", icon: "trophy", path: "/game/winners" },
-  { key: "settings", label: "Settings", icon: "gear", path: "/game/settings" },
+  // { key: "winners", label: "Winners", icon: "trophy", path: "/game/winners" },
+  // { key: "settings", label: "Settings", icon: "gear", path: "/game/settings" },
 ];
 
 export default function Footer() {
@@ -27,8 +27,8 @@ export default function Footer() {
   }, [location.pathname]);
 
   return (
-    <footer className="flex-shrink-0 border-t border-slate-200 bg-white px-4 pb-3 pt-3 sm:px-6">
-      <nav className="grid grid-cols-4 gap-2">
+    <footer className="flex flex-col items-center border-t border-slate-200 bg-white px-4 pb-3 pt-3 sm:px-6 sm:border-none sm:fixed sm:top-1/2 sm:right-4 sm:z-50 sm:max-w-none sm:min-w-[220px] sm:-translate-y-1/2 sm:rounded-3xl sm:border sm:border-slate-200 sm:bg-white sm:shadow-xl">
+      <nav className="grid w-full grid-cols-2 gap-4 sm:grid-cols-1 sm:gap-3">
         {NAV_ITEMS.map((item) => {
           const isActive = activeKey === item.key;
           return (
