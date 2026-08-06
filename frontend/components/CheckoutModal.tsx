@@ -13,6 +13,7 @@ const CheckoutModal = ({
   onClose,
   onConfirm,
   selectedNumber,
+
   price = 50,
 }: CheckoutModalProps) => {
   if (!isOpen || selectedNumber === null) return null;

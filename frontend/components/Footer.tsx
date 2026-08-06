@@ -9,7 +9,7 @@ interface NavItemsProps {
   path: string;
 }
 const NAV_ITEMS: NavItemsProps[] = [
-  { key: "bingo", label: "Bingo", icon: "grid", path: "/" },
+  { key: "bingo", label: "Bingo", icon: "grid", path: "/game" },
   { key: "tickets", label: "Tickets", icon: "ticket", path: "/game/ticket" },
   { key: "winners", label: "Winners", icon: "trophy", path: "/game/winners" },
   { key: "settings", label: "Settings", icon: "gear", path: "/game/settings" },
@@ -20,10 +20,9 @@ export default function Footer() {
   const location = useLocation();
 
   const activeKey = useMemo(() => {
-    if (location.pathname.startsWith("/ticket")) return "tickets";
-    if (location.pathname === "/") return "bingo";
-    if (location.pathname.startsWith("/winners")) return "winners";
-    if (location.pathname.startsWith("/settings")) return "settings";
+    if (location.pathname.startsWith("/game/ticket")) return "tickets";
+    if (location.pathname.startsWith("/game/winners")) return "winners";
+    if (location.pathname.startsWith("/game/settings")) return "settings";
     return "bingo";
   }, [location.pathname]);
 

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Ticket as TicketIcon, ShieldAlert } from "lucide-react";
 import { useTicket } from "../src/services/api";
 import type { TicketApiResponse } from "../src/services/api";
@@ -43,111 +44,162 @@ function StatusPill({ isVerified }: StatusPillProps) {
 }
 type TicketArray = TicketApiResponse["ticket"][number];
 
+function getRemainingTime(verificationExpiresAt: string | Date) {
+  const expiry = new Date(verificationExpiresAt);
+  const now = Date.now();
+
+  // Validate date
+  if (isNaN(expiry.getTime())) {
+    return { hours: 0, minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
+  }
+
+  const diff = expiry.getTime() - now;
+  const isExpired = diff <= 0;
+
+  if (isExpired) {
+    return { hours: 0, minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
+  }
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return { hours, minutes, seconds, totalMs: diff, isExpired: false };
+}
+
 function TicketCard({ t }: { t: TicketArray }) {
-  const shortId = t?._id.slice(-8).toUpperCase();
-  const expiry = new Date(t?.verificationExpiresAt);
-  const isExpired = !isNaN(expiry.getTime()) && expiry.getTime() < Date.now();
+  const ticketRef = t._id.slice(-8).toUpperCase();
+  const sessionRef = t.boxId.slice(-8).toUpperCase();
+  const [timeLeft, setTimeLeft] = useState(() =>
+    getRemainingTime(t.verificationExpiresAt),
+  );
+  const [showVerifyInput, setShowVerifyInput] = useState(false);
+  const [verifyLink, setVerifyLink] = useState("");
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setTimeLeft(getRemainingTime(t.verificationExpiresAt));
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [t.verificationExpiresAt]);
+
+  const isExpired = timeLeft.isExpired;
+  const { hours, minutes, seconds } = timeLeft;
 
   return (
     <div
-      className="rounded-2xl p-4 sm:p-5 w-full max-w-sm mx-auto sm:mx-0"
-      style={{
-        backgroundColor: COLORS.card,
-        border: `1px solid ${COLORS.border}`,
-      }}
+      className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_45px_-20px_rgba(15,23,42,0.35)]"
+      style={{ backgroundColor: COLORS.card }}
     >
-      <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs" style={{ color: COLORS.textMuted }}>
-            Ticket
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
+            Ticket reference
           </p>
-          <h3
-            className="text-base sm:text-lg font-semibold break-all"
-            style={{ color: COLORS.textDark }}
-          >
-            #{shortId}
+          <h3 className="mt-3 text-3xl font-semibold text-slate-900">
+            #{ticketRef}
           </h3>
+          <p className="mt-2 text-sm text-slate-500">
+            This is your active bingo ticket. Keep it safe and verify before the
+            window expires.
+          </p>
         </div>
         <StatusPill isVerified={t.isVerified} />
       </div>
 
-      {!t.isVerified && (
-        <div
-          className="flex items-start gap-2 rounded-lg p-3 mt-3"
-          style={{
-            backgroundColor: COLORS.warnBg,
-            border: `1px solid ${COLORS.warnBorder}`,
-          }}
-        >
-          <ShieldAlert
-            size={16}
-            className="mt-0.5 shrink-0"
-            style={{ color: COLORS.warnText }}
-          />
-          <div className="min-w-0">
-            <p
-              className="text-sm font-medium"
-              style={{ color: COLORS.warnText }}
-            >
-              This ticket isn't verified yet
-            </p>
-            <p className="text-xs mt-0.5" style={{ color: COLORS.warnText }}>
-              {isExpired
-                ? "The verification window has expired."
-                : `Verify before ${formatDateTime(t.verificationExpiresAt)}.`}
-            </p>
-            {/* No verify endpoint wired up yet — hook this to your mutation */}
-            <button
-              type="button"
-              className="mt-2 text-xs font-semibold px-3 py-1.5 rounded-md w-full sm:w-auto"
-              style={{ backgroundColor: COLORS.warnText, color: "#FFFFFF" }}
-            >
-              Verify ticket
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="space-y-2 mt-4">
-        <div className="flex flex-wrap items-center justify-between gap-1">
-          <span className="text-sm" style={{ color: COLORS.textMuted }}>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-3xl bg-slate-50 p-5">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
             Purchased
-          </span>
-          <span
-            className="text-sm text-right"
-            style={{ color: COLORS.textDark }}
-          >
+          </p>
+          <p className="mt-3 text-sm font-semibold text-slate-900">
             {formatDateTime(t.createdAt)}
-          </span>
+          </p>
         </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-1">
-          <span className="text-sm" style={{ color: COLORS.textMuted }}>
-            Verification {isExpired ? "expired" : "expires"}
-          </span>
-          <span
-            className="text-sm text-right"
-            style={{ color: isExpired ? COLORS.pendingText : COLORS.textDark }}
+        <div className="rounded-3xl bg-slate-50 p-5">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+            {isExpired ? "Verification expired" : "Verification expires"}
+          </p>
+          <p
+            className={`mt-3 text-sm font-semibold ${
+              isExpired ? "text-rose-600" : "text-slate-900"
+            }`}
           >
             {formatDateTime(t.verificationExpiresAt)}
-          </span>
+          </p>
         </div>
       </div>
 
-      <div
-        className="pt-3 mt-3"
-        style={{ borderTop: `1px solid ${COLORS.border}` }}
-      >
-        <p className="text-xs" style={{ color: COLORS.textMuted }}>
-          Box ID
+      <div className="mt-6 rounded-3xl bg-slate-50 p-5">
+        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+          Game session reference
         </p>
-        <p
-          className="text-sm font-mono break-all"
-          style={{ color: COLORS.textDark }}
-        >
-          {t.boxId}
+        <p className="mt-2 text-sm font-mono text-slate-900 break-all">
+          {sessionRef}
         </p>
       </div>
+
+      {!t.isVerified && (
+        <div className="mt-6 rounded-[28px]  p-5">
+          <div className="flex items-start gap-3">
+            <ShieldAlert size={20} className="mt-1 text-red-500" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-red-500">
+                {isExpired ? (
+                  "Verification window expired"
+                ) : (
+                  <>
+                    Verify your ticket now
+                    <span className="font-mono text-red-400">
+                      {`  - ${minutes}m ${seconds}s remaining`}
+                    </span>
+                  </>
+                )}
+              </p>
+              <p className="mt-1 text-sm text-orange-700">
+                {isExpired &&
+                  "Your verification window has ended. Go and buy the box again."}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            disabled={isExpired}
+            onClick={() => setShowVerifyInput(true)}
+            className={`mt-4 w-42 rounded-lg px-4 py-3 text-sm font-semibold text-white transition ${
+              isExpired
+                ? "bg-slate-400 cursor-not-allowed"
+                : "bg-slate-900 hover:bg-slate-700"
+            }`}
+          >
+            {isExpired ? "buy ticket" : "Verify ticket"}
+          </button>
+
+          {showVerifyInput && !isExpired && (
+            <div className="mt-4 space-y-8 rounded-3xl border border-slate-200 bg-white p-4">
+              <label className="block text-sm font-semibold text-slate-700">
+                Verification link
+              </label>
+              <input
+                type="url"
+                value={verifyLink}
+                onChange={(event) => setVerifyLink(event.target.value)}
+                placeholder="Enter verification URL"
+                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+              />
+              <div className="w-full text-center flex justify-center items-center">
+                <button
+                  type="button"
+                  className="w-89   rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-700"
+                >
+                  Submit verification link
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -183,31 +235,46 @@ const BingoTickets = () => {
     );
   }
 
-  const ticket = ticketData?.ticket?.[0];
+  const tickets = ticketData?.ticket;
 
   return (
     <div
-      className="w-full min-h-screen p-3 sm:p-6"
+      className="w-full min-h-[calc(100vh-12rem)] flex items-center justify-center p-3 sm:p-6"
       style={{ backgroundColor: COLORS.page }}
     >
       <div
-        className="rounded-2xl p-4 sm:p-6"
+        className="w-full max-w-5xl rounded-2xl p-4 sm:p-6"
         style={{
           backgroundColor: COLORS.card,
           border: `1px solid ${COLORS.border}`,
         }}
       >
-        <div className="flex items-center gap-2 mb-4 sm:mb-5">
-          <TicketIcon size={18} style={{ color: COLORS.textMuted }} />
-          <p className="text-sm" style={{ color: COLORS.textMuted }}>
-            Your ticket
-          </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <TicketIcon size={18} style={{ color: COLORS.textMuted }} />
+              <p className="text-sm font-semibold text-slate-900">
+                Your tickets
+              </p>
+            </div>
+            <p className="text-sm text-slate-500">
+              {tickets?.length
+                ? `${tickets.length} ticket${tickets.length > 1 ? "s" : ""} purchased`
+                : "No tickets purchased yet."}
+            </p>
+          </div>
         </div>
 
-        {ticket ? (
-          <TicketCard t={ticket} />
+        {tickets && tickets.length > 0 ? (
+          <div className="space-y-6">
+            {tickets.map((ticket) => (
+              <TicketCard key={ticket._id} t={ticket} />
+            ))}
+          </div>
         ) : (
-          <p style={{ color: COLORS.textMuted }}>No ticket yet.</p>
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
+            No ticket yet.
+          </div>
         )}
       </div>
     </div>

@@ -1,10 +1,15 @@
 import { useState } from "react";
 import CheckoutModal from "../components/CheckoutModal";
-import { useGame } from "../src/services/api";
+import { useGame, useTicket } from "../src/services/api";
+import { usePurchaseTicket } from "../src/services/api";
+import { toast } from "sonner";
+
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
   const { data: gameData } = useGame();
+  const { data: ticketData } = useTicket();
+  const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
 
   const toggleNumber = (number: number) => {
     setCheckoutNumber(number);
@@ -12,9 +17,12 @@ const Game = () => {
 
   const handleConfirmPurchase = () => {
     if (checkoutNumber !== null && !selectedNumbers.includes(checkoutNumber)) {
-      setSelectedNumbers((current) =>
-        [...current, checkoutNumber].sort((a, b) => a - b),
-      );
+      if (!gameData?.gameId) {
+        toast.error("Game data not loaded yet");
+        return;
+      }
+
+      purchaseTicket({ boxNumber: checkoutNumber, gameId: gameData.gameId });
     }
   };
 
@@ -78,10 +86,12 @@ const Game = () => {
               <button
                 key={box.boxNumber}
                 type="button"
-                disabled={box.isOpened}
+                disabled={box.isOpened || isSelected}
                 onClick={() => toggleNumber(box?.boxNumber)}
                 className={`aspect-square rounded-xl border text-sm font-semibold transition-colors duration-200 ${
-                  isSelected || box?.isOpened
+                  isSelected ||
+                  (box?.isOpened &&
+                    ticketData?.ticket[0]?.boxId.includes(box?._id))
                     ? "border-green-200 bg-green-600 text-white"
                     : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700"
                 }`}

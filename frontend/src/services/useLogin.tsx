@@ -31,7 +31,10 @@ export const useLogin = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       navigate("/game");
-      toast.success("Logged in successfully");
+
+      toast.success("Logged in successfully", {
+        duration: 3000,
+      });
     },
   });
 };

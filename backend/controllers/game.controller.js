@@ -55,7 +55,8 @@ export const getGame = async (req, res) => {
 };
 
 export const PurchaseBox = async (req, res) => {
-  const { gameId, userId, boxNumber } = req.body;
+  const userId = new mongoose.Types.ObjectId(req.user.id);
+  const { gameId, boxNumber } = req.body;
 
   if (!gameId || !boxNumber || !userId) {
     return res
@@ -89,7 +90,7 @@ export const PurchaseBox = async (req, res) => {
         },
         $inc: { remainingBoxes: -1 },
       },
-      { new: true, session },
+      { returnDocument: "after", session },
     );
 
     if (!updatedGame) {
@@ -123,7 +124,7 @@ export const PurchaseBox = async (req, res) => {
     res.json({
       success: true,
       message: `Box #${boxNumber} purchased successfully!`,
-      ticket: newTicket[0],
+      ticket: newTicket,
       prize: claimedBox.prize,
     });
   } catch (err) {
