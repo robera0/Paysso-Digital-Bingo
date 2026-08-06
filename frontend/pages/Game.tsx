@@ -110,9 +110,7 @@ const Game = () => {
               ? "border-green-200 bg-green-600 text-white"
               : hasActiveTicket
                 ? "border-green-200 bg-green-600 text-white"
-                : hasExpiredTicket
-                  ? "border-rose-200 bg-rose-600 text-white"
-                  : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700";
+                : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700";
 
             return (
               <button
