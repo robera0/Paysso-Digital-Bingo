@@ -29,8 +29,34 @@ export const getGame = async (req, res) => {
         .status(404)
         .json({ success: false, error: "Game session not found." });
     }
+    const expiredTickets = await TicketModel.find({
+      isVerified: false,
+      verificationExpiresAt: { $lt: new Date() },
+    });
 
-    const sanitizedBoxes = game?.boxes?.map((box) => ({
+    for (const ticket of expiredTickets) {
+      await GameSession.findOneAndUpdate(
+        {
+          _id: game._id,
+          "boxes.._id": ticket.boxId,
+        },
+        {
+          $set: {
+            "boxes.$[box].isOpened": false,
+            "boxes.$[box].openedBy": null,
+            "boxes.$[box].openedAt": null,
+          },
+        },
+        {
+          arrayFilters: [{ "box.._id": ticket.boxId }],
+        },
+      );
+      await TicketModel.findByIdAndDelete(ticket._id);
+    }
+
+    const updatedGame = expiredTickets.length ? await GameSession.find() : game;
+
+    const sanitizedBoxes = updatedGame?.boxes?.map((box) => ({
       _id: box?._id,
       boxNumber: box?.boxNumber,
       isOpened: box?.isOpened,
