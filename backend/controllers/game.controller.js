@@ -59,6 +59,7 @@ export const getGame = async (req, res) => {
 
     await TicketModel.deleteMany({
       expired: true,
+      isVerified: false,
       verificationExpiresAt: { $lt: fiveMinutesAgo },
     });
     const newGame = await GameSession.find();
@@ -152,6 +153,7 @@ export const PurchaseBox = async (req, res) => {
           boxId: claimedBox._id,
           isVerified: false,
           verificationExpiresAt: expireAt,
+          expired: false,
         },
       ],
       { session },

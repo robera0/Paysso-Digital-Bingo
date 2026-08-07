@@ -46,11 +46,16 @@ export const getTicket = async (req, res) => {
           boxNumber: "$box.boxNumber",
           prize: "$box.prize",
           isOpened: "$box.isOpened",
+          boxId: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          verificationExpiresAt: 1,
         },
       },
     ]);
 
-    return res.status(200).json({ success: true, tickets });
+    // Return property name `ticket` to match frontend expectation
+    return res.status(200).json({ success: true, ticket: tickets });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }

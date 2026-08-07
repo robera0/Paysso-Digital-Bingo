@@ -29,6 +29,7 @@ export interface TicketResponse {
   isVerified: boolean;
   verificationExpiresAt: string;
   boxId: string;
+  boxNumber?: number;
   createdAt: string;
   updatedAt: string;
 }

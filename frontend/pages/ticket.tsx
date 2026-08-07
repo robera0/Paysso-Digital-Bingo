@@ -97,8 +97,11 @@ function TicketCard({ t }: { t: TicketArray }) {
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
             Ticket reference
           </p>
-          <h3 className="mt-3 text-3xl font-semibold text-slate-900">
-            #{ticketRef}
+          <h3 className="mt-3 flex items-baseline gap-3 text-3xl font-semibold text-slate-900">
+            <span>#{ticketRef}</span>
+            <span className="text-sm font-medium text-slate-500">
+              Box {t.boxNumber ?? "-"}
+            </span>
           </h3>
           <p className="mt-2 text-sm text-slate-500">
             This is your active bingo ticket. Keep it safe and verify before the
