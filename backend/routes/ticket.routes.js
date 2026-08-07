@@ -10,6 +10,6 @@ const verifyRouter = express.Router();
 ticketRouter.get("/ticket", authenticateTokenMiddleware, getTicket);
 ticketRouter.post("/ticket", authenticateTokenMiddleware, PurchaseBox);
 
-verifyRouter.post("/verify", verifyTicket);
+verifyRouter.post("/verify", authenticateTokenMiddleware, verifyTicket);
 
 export { ticketRouter, verifyRouter };

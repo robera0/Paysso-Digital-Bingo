@@ -1,0 +1,9 @@
+[f] add user auth 
+[f] distribute the boxes 
+[] map the tickets and make the buy ticket have an array
+[] make the but ticket trigger purchase api
+[] add when a user purchase to verify with birr.js
+[] design a account section
+
+
+ so check the expirer date and trigger deletion of the ticket 

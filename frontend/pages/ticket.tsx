@@ -50,21 +50,20 @@ function getRemainingTime(verificationExpiresAt: string | Date) {
 
   // Validate date
   if (isNaN(expiry.getTime())) {
-    return { hours: 0, minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
+    return { minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
   }
 
   const diff = expiry.getTime() - now;
   const isExpired = diff <= 0;
 
   if (isExpired) {
-    return { hours: 0, minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
+    return { minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
   }
 
-  const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  return { hours, minutes, seconds, totalMs: diff, isExpired: false };
+  return { minutes, seconds, totalMs: diff, isExpired: false };
 }
 
 function TicketCard({ t }: { t: TicketArray }) {
@@ -85,7 +84,7 @@ function TicketCard({ t }: { t: TicketArray }) {
   }, [t.verificationExpiresAt]);
 
   const isExpired = timeLeft.isExpired;
-  const { hours, minutes, seconds } = timeLeft;
+  const { minutes, seconds } = timeLeft;
 
   return (
     <div

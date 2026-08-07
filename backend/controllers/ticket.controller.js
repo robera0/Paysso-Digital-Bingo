@@ -41,11 +41,15 @@ export const getTicket = async (req, res) => {
 */
 
 export const verifyTicket = async (req, res) => {
+  const id = req.user.id;
   const { receiptUrl, boxId } = req.body;
-
+  if (!id) {
+    return res.status(400).json({ message: "token is required" });
+  }
   if (!receiptUrl) {
     return res.status(400).json({ message: "receiptUrl is required" });
   }
+
   try {
     const result = await verifyReceipt(receiptUrl);
 
