@@ -99,13 +99,13 @@ const Game = () => {
                 new Date(ticketForBox.verificationExpiresAt).getTime() >
                   Date.now()),
             );
-            const hasExpiredTicket = Boolean(
+            /*const hasExpiredTicket = Boolean(
               ticketForBox &&
               !ticketForBox.isVerified &&
               new Date(ticketForBox.verificationExpiresAt).getTime() <=
                 Date.now(),
             );
-
+*/
             const buttonClass = isSelected
               ? "border-green-200 bg-green-600 text-white"
               : hasActiveTicket
@@ -129,6 +129,7 @@ const Game = () => {
 
       <CheckoutModal
         isOpen={checkoutNumber !== null}
+        isPending={isPending}
         onClose={() => setCheckoutNumber(null)}
         onConfirm={handleConfirmPurchase}
         selectedNumber={checkoutNumber}

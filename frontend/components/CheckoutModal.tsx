@@ -6,12 +6,14 @@ interface CheckoutModalProps {
   onConfirm: () => void;
   selectedNumber: number | null;
   price?: number;
+  isPending: boolean;
 }
 
 const CheckoutModal = ({
   isOpen,
   onClose,
   onConfirm,
+  isPending,
   selectedNumber,
 
   price = 50,
@@ -77,6 +79,7 @@ const CheckoutModal = ({
             Cancel
           </button>
           <button
+            disabled={isPending}
             onClick={() => {
               // Proceed to payment integration here
               onConfirm();
