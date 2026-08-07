@@ -10,7 +10,7 @@ const Game = () => {
   const { data: gameData } = useGame();
   const { data: ticketData } = useTicket();
   const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
-
+  const Telenumber = "  +251912345678";
   const toggleNumber = (number: number) => {
     setSelectedNumbers((prev) =>
       prev.includes(number)
@@ -20,7 +20,7 @@ const Game = () => {
     setCheckoutNumber(number);
   };
 
-  const handleConfirmPurchase = () => {
+  const handleConfirmPurchase = async () => {
     if (checkoutNumber === null) {
       toast.error("Select a box number first");
       return;
@@ -29,6 +29,14 @@ const Game = () => {
     if (!gameData?.gameId) {
       toast.error("Game data not loaded yet");
       return;
+    }
+    try {
+      await navigator.clipboard.writeText(Telenumber);
+      toast.success("Number Copied ", {
+        duration: 2000,
+      });
+    } catch (err) {
+      console.error("Failed to copy: ", err);
     }
 
     purchaseTicket({ boxNumber: checkoutNumber, gameId: gameData.gameId });

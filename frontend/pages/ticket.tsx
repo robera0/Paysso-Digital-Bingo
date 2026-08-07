@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
-import { Ticket as TicketIcon, ShieldAlert } from "lucide-react";
+import {
+  Ticket as TicketIcon,
+  ShieldAlert,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
 import { useTicket } from "../src/services/api";
 import type { TicketApiResponse } from "../src/services/api";
+import { useVerify } from "../src/services/useVerify";
 
 const COLORS = {
   page: "#EEF1F6",
@@ -48,7 +54,6 @@ function getRemainingTime(verificationExpiresAt: string | Date) {
   const expiry = new Date(verificationExpiresAt);
   const now = Date.now();
 
-  // Validate date
   if (isNaN(expiry.getTime())) {
     return { minutes: 0, seconds: 0, totalMs: 0, isExpired: true };
   }
@@ -87,6 +92,23 @@ function TicketCard({ t }: { t: TicketArray }) {
   const { minutes, seconds } = timeLeft;
   const verificationDate = t.isVerified ? t.updatedAt : t.verificationExpiresAt;
 
+  const {
+    mutate: verifyDate,
+    isPending,
+    isSuccess,
+    isError,
+    reset: resetVerify,
+  } = useVerify();
+
+  const handleOpenVerify = () => {
+    setShowVerifyInput(true);
+  };
+
+  const handleSubmitVerify = () => {
+    if (!verifyLink.trim() || isPending) return;
+    verifyDate({ receiptUrl: verifyLink, boxId: t.boxId });
+  };
+
   return (
     <div
       className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_45px_-20px_rgba(15,23,42,0.35)]"
@@ -98,9 +120,9 @@ function TicketCard({ t }: { t: TicketArray }) {
             Ticket reference
           </p>
           <h3 className="mt-3 flex items-baseline gap-3 text-3xl font-semibold text-slate-900">
-            <span>#{ticketRef}</span>
+            Box {t.boxNumber ?? "-"}
             <span className="text-sm font-medium text-slate-500">
-              Box {t.boxNumber ?? "-"}
+              <span>#{ticketRef}</span>
             </span>
           </h3>
           <p className="mt-2 text-sm text-slate-500">
@@ -148,7 +170,7 @@ function TicketCard({ t }: { t: TicketArray }) {
       </div>
 
       {!t.isVerified && (
-        <div className="mt-6 rounded-[28px]  p-5">
+        <div className="mt-6 rounded-[28px] p-5">
           <div className="flex items-start gap-3">
             <ShieldAlert size={20} className="mt-1 text-red-500" />
             <div className="min-w-0">
@@ -170,39 +192,67 @@ function TicketCard({ t }: { t: TicketArray }) {
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            disabled={isExpired}
-            onClick={() => setShowVerifyInput(true)}
-            className={`mt-4 w-42 rounded-lg px-4 py-3 text-sm font-semibold text-white transition ${
-              isExpired
-                ? "bg-slate-400 cursor-not-allowed"
-                : "bg-slate-900 hover:bg-slate-700"
-            }`}
-          >
-            {isExpired ? "buy ticket" : "Verify ticket"}
-          </button>
+
+          {!showVerifyInput && (
+            <button
+              type="button"
+              disabled={isExpired}
+              onClick={handleOpenVerify}
+              className={`mt-4 w-42 rounded-lg px-4 py-3 text-sm font-semibold text-white transition ${
+                isExpired
+                  ? "bg-slate-400 cursor-not-allowed"
+                  : "bg-slate-900 hover:bg-slate-700"
+              }`}
+            >
+              {isExpired ? "buy ticket" : "Verify ticket"}
+            </button>
+          )}
 
           {showVerifyInput && !isExpired && (
-            <div className="mt-4 space-y-8 rounded-3xl border border-slate-200 bg-white p-4">
+            <div className="mt-4 space-y-4 rounded-3xl border border-slate-200 bg-white p-4 transition-all duration-300 ease-out animate-in fade-in slide-in-from-top-2">
               <label className="block text-sm font-semibold text-slate-700">
                 Verification link
               </label>
               <input
                 type="url"
                 value={verifyLink}
-                onChange={(event) => setVerifyLink(event.target.value)}
+                onChange={(event) => {
+                  setVerifyLink(event.target.value);
+                  if (isError) resetVerify();
+                }}
                 placeholder="Enter verification URL"
-                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                disabled={isPending || isSuccess}
+                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 disabled:opacity-60"
               />
+
               <div className="w-full text-center flex justify-center items-center">
                 <button
                   type="button"
-                  className="w-89   rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-700"
+                  disabled={!verifyLink.trim() || isPending || isSuccess}
+                  onClick={handleSubmitVerify}
+                  className="w-full sm:w-72 flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Submit verification link
+                  {isPending && (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Verifying...
+                    </>
+                  )}
+                  {!isPending && isSuccess && (
+                    <>
+                      <CheckCircle2 size={16} className="text-emerald-400" />
+                      Verified
+                    </>
+                  )}
+                  {!isPending && !isSuccess && "Submit verification link"}
                 </button>
               </div>
+
+              {isError && (
+                <p className="text-center text-sm text-rose-600 animate-in fade-in">
+                  Couldn't verify that link. Please check it and try again.
+                </p>
+              )}
             </div>
           )}
         </div>

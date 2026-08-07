@@ -54,7 +54,6 @@ export const getTicket = async (req, res) => {
       },
     ]);
 
-    // Return property name `ticket` to match frontend expectation
     return res.status(200).json({ success: true, ticket: tickets });
   } catch (err) {
     return res.status(500).json({ message: err.message });
