@@ -32,13 +32,14 @@ export const getGame = async (req, res) => {
     const expiredTickets = await TicketModel.find({
       isVerified: false,
       verificationExpiresAt: { $lt: new Date() },
+      expired: { $ne: true },
     });
 
     for (const ticket of expiredTickets) {
       await GameSession.findOneAndUpdate(
         {
           _id: game._id,
-          "boxes.._id": ticket.boxId,
+          "boxes._id": ticket.boxId,
         },
         {
           $set: {
@@ -48,11 +49,18 @@ export const getGame = async (req, res) => {
           },
         },
         {
-          arrayFilters: [{ "box.._id": ticket.boxId }],
+          arrayFilters: [{ "box._id": ticket.boxId }],
         },
       );
-      await TicketModel.findByIdAndDelete(ticket._id);
+      await TicketModel.findByIdAndUpdate(ticket._id, { expired: true });
     }
+
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+
+    await TicketModel.deleteMany({
+      expired: true,
+      verificationExpiresAt: { $lt: fiveMinutesAgo },
+    });
 
     const updatedGame = expiredTickets.length ? await GameSession.find() : game;
 

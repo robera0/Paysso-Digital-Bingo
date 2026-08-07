@@ -15,6 +15,10 @@ const ticketSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    expired: {
+      type: Boolean,
+      default: false,
+    },
     verificationExpiresAt: {
       type: Date,
       default: null,

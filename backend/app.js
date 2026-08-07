@@ -38,4 +38,4 @@ connectDB(app);
 app.use("/api/v1", authRouter);
 app.use("/api/v1/game", gameRouter);
 app.use("/api/v1/auth", ticketRouter);
-app.use("/api", verifyRouter);
+app.use("/api/v1/auth", verifyRouter);

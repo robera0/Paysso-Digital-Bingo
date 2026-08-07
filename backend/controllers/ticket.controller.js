@@ -41,39 +41,51 @@ export const getTicket = async (req, res) => {
 */
 
 export const verifyTicket = async (req, res) => {
-  const id = req.user.id;
+  const userId = req.user?.id;
   const { receiptUrl, boxId } = req.body;
-  if (!id) {
-    return res.status(400).json({ message: "token is required" });
+
+  if (!userId) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User token is required" });
   }
-  if (!receiptUrl) {
-    return res.status(400).json({ message: "receiptUrl is required" });
+  if (!receiptUrl || !boxId) {
+    return res
+      .status(400)
+      .json({ message: "Both receiptUrl and boxId are required" });
   }
 
   try {
-    const result = await verifyReceipt(receiptUrl);
+    const isValid = await verifyReceipt(receiptUrl);
 
-    if (result) {
-      const updatedTicket = await TicketModel.findOneAndUpdate(
-        { boxId: boxId },
-        {
-          isVerified: true,
-          verificationExpiresAt: null,
-        },
-      );
-
-      {
-        returnDocument: "after";
-      }
+    if (!isValid) {
+      return res
+        .status(400)
+        .json({ message: "Receipt verification failed or invalid" });
     }
+
+    const updatedTicket = await TicketModel.findOneAndUpdate(
+      { boxId },
+      {
+        isVerified: true,
+        verificationExpiresAt: null,
+        expired: false,
+      },
+      { returnDocument: "after" },
+    );
+
     if (!updatedTicket) {
       return res.status(404).json({ message: "Ticket not found for this box" });
     }
-    return res
-      .status(200)
-      .json({ message: "Payment verified", ticket: updatedTicket });
+
+    return res.status(200).json({
+      message: "Payment verified successfully",
+      ticket: updatedTicket,
+    });
   } catch (err) {
-    process.env.ODIT_API_KEY;
-    res.status(500).json({ message: err.message });
+    console.error("verifyTicket Error:", err);
+    return res
+      .status(500)
+      .json({ message: err.message || "Internal server error" });
   }
 };
