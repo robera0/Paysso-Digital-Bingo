@@ -81,13 +81,12 @@ const CheckoutModal = ({
           <button
             disabled={isPending}
             onClick={() => {
-              // Proceed to payment integration here
               onConfirm();
               onClose();
             }}
             className="flex-1 rounded-xl bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700"
           >
-            Pay Now
+            Copy & Pay Now
           </button>
         </div>
       </div>

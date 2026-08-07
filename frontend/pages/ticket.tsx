@@ -85,6 +85,7 @@ function TicketCard({ t }: { t: TicketArray }) {
 
   const isExpired = timeLeft.isExpired;
   const { minutes, seconds } = timeLeft;
+  const verificationDate = t.isVerified ? t.updatedAt : t.verificationExpiresAt;
 
   return (
     <div
@@ -118,14 +119,18 @@ function TicketCard({ t }: { t: TicketArray }) {
         </div>
         <div className="rounded-3xl bg-slate-50 p-5">
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
-            {isExpired ? "Verification expired" : "Verification expires"}
+            {t.isVerified
+              ? "Verified on"
+              : isExpired
+                ? "Verification expired"
+                : "Verification expires"}
           </p>
           <p
             className={`mt-3 text-sm font-semibold ${
-              isExpired ? "text-rose-600" : "text-slate-900"
+              !t.isVerified && isExpired ? "text-rose-600" : "text-slate-900"
             }`}
           >
-            {formatDateTime(t.verificationExpiresAt)}
+            {formatDateTime(verificationDate)}
           </p>
         </div>
       </div>

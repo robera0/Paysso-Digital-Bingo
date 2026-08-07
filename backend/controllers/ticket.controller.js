@@ -1,20 +1,58 @@
 import mongoose from "mongoose";
 import TicketModel from "../models/ticket.model.js";
 import verifyReceipt from "../services/verifyReceipt.js";
+import GameSession from "../models/Game.model.js";
+
 export const getTicket = async (req, res) => {
   try {
-    const id = new mongoose.Types.ObjectId(req.user.id);
+    const userId = req.user.id;
 
-    if (!id) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-    const ticket = await TicketModel.find({ user: id });
-    return res.status(200).json({
-      success: true,
-      ticket,
-    });
+    const tickets = await TicketModel.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+
+      {
+        $lookup: {
+          from: "gamesessions",
+          localField: "boxId",
+          foreignField: "boxes._id",
+          as: "gameSession",
+        },
+      },
+      { $unwind: "$gameSession" },
+
+      {
+        $addFields: {
+          box: {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: "$gameSession.boxes",
+                  as: "b",
+                  cond: { $eq: ["$$b._id", "$boxId"] },
+                },
+              },
+              0,
+            ],
+          },
+        },
+      },
+
+      {
+        $project: {
+          _id: 1,
+          isVerified: 1,
+          expired: 1,
+          gameSessionId: "$gameSession._id",
+          boxNumber: "$box.boxNumber",
+          prize: "$box.prize",
+          isOpened: "$box.isOpened",
+        },
+      },
+    ]);
+
+    return res.status(200).json({ success: true, tickets });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 

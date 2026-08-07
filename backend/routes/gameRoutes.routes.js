@@ -9,6 +9,6 @@ import { authenticateTokenMiddleware } from "../middleware/authenticateToken.mid
 const gameRouter = express.Router();
 
 gameRouter.post("/start", createGame);
-gameRouter.get("/newGame", getGame);
+gameRouter.get("/new-game", getGame);
 
 export default gameRouter;

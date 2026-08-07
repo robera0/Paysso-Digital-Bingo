@@ -30,6 +30,7 @@ export interface TicketResponse {
   verificationExpiresAt: string;
   boxId: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface TicketApiResponse {
@@ -39,7 +40,7 @@ export interface TicketApiResponse {
 
 // get Game
 export const fetchGame = async (): Promise<ApiResponse> => {
-  const res = await fetch(`${VITE_API_URL}/api/v1/game/newGame`);
+  const res = await fetch(`${VITE_API_URL}/api/v1/game/new-game`);
   const data: ApiResponse = await res.json();
 
   return data;

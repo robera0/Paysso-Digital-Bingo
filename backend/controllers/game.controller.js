@@ -39,7 +39,7 @@ export const getGame = async (req, res) => {
       await GameSession.findOneAndUpdate(
         {
           _id: game._id,
-          "boxes._id": ticket.boxId,
+          "boxes._id": ticket?.boxId,
         },
         {
           $set: {
@@ -49,7 +49,7 @@ export const getGame = async (req, res) => {
           },
         },
         {
-          arrayFilters: [{ "box._id": ticket.boxId }],
+          arrayFilters: [{ "box._id": ticket?.boxId }],
         },
       );
       await TicketModel.findByIdAndUpdate(ticket._id, { expired: true });
@@ -61,8 +61,9 @@ export const getGame = async (req, res) => {
       expired: true,
       verificationExpiresAt: { $lt: fiveMinutesAgo },
     });
+    const newGame = await GameSession.find();
 
-    const updatedGame = expiredTickets.length ? await GameSession.find() : game;
+    const updatedGame = expiredTickets.length ? newGame : game;
 
     const sanitizedBoxes = updatedGame?.boxes?.map((box) => ({
       _id: box?._id,
