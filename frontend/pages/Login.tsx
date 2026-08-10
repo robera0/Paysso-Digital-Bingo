@@ -1,5 +1,6 @@
 import { Leaf, Mail, Lock, Eye, ArrowRight, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useLogin, type Credentials } from "../src/services/useLogin";
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -106,7 +107,9 @@ const Login = () => {
       {/* Footer */}
       <p className="text-gray-500 text-sm mt-8">
         Don't have an account?{" "}
-        <span className="text-[#1B7A2E] font-bold">Create one</span>
+        <Link to="/signup" className="text-[#1B7A2E] font-bold hover:underline">
+          Create one
+        </Link>
       </p>
     </div>
   );

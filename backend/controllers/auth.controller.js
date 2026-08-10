@@ -10,10 +10,29 @@ const isProduction = process.env.NODE_ENV === "production";
 
 export const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    console.log(email);
+    const { email, password, phone, fullname, username } = req.body;
+
+    if (!email || !password || !phone || !fullname) {
+      return res.status(400).json({
+        message: "Email, password, and phone number are required",
+      });
+    }
+
+    const phonePattern = /^\+2519[0-9]{8}$/;
+    if (!phonePattern.test(phone.trim())) {
+      return res.status(400).json({
+        message: "Please enter a valid phone number (+2519XXXXXXXX)",
+      });
+    }
+
+    // Password strength
+    if (password.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters",
+      });
+    }
+
     const existingUser = await UserModel.findOne({ email });
-    console.log(existingUser);
     if (existingUser)
       return res.status(400).json({ message: "Email already exists" });
 
@@ -22,23 +41,14 @@ export const register = async (req, res) => {
     const payload = {
       email,
       password: hashedPassword,
+      phone,
+      fullName: fullname,
+      username: username,
     };
     const newUser = await UserModel.create(payload);
 
-    const newPayload = {
-      id: newUser._id,
-      email: newUser.email,
-    };
-    const accessToken = generateAccessToken(newPayload);
-
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
+    return res.status(201).json({
+      message: "Account created successfully",
       user: newUser,
     });
   } catch (err) {

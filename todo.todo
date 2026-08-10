@@ -1,8 +1,9 @@
 [f] add user auth 
 [f] distribute the boxes 
-[] map the tickets and make the buy ticket have an array
-[] make the but ticket trigger purchase api
-[] add when a user purchase to verify with birr.js
+[f] map the tickets and make the buy ticket have an array
+[f] make the but ticket trigger purchase api
+[f] add when a user purchase to verify with birr.js
+[] make the use buy three tickets only
 [] design a account section
 
 

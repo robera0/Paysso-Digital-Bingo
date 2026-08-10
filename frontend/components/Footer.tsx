@@ -27,39 +27,41 @@ export default function Footer() {
   }, [location.pathname]);
 
   return (
-    <footer className="flex flex-col items-center border-t border-slate-200 bg-white px-4 pb-3 pt-3 sm:px-6 sm:border-none sm:fixed sm:top-1/2 sm:right-4 sm:z-50 sm:max-w-none sm:min-w-[220px] sm:-translate-y-1/2 sm:rounded-3xl sm:border sm:border-slate-200 sm:bg-white sm:shadow-xl">
-      <nav className="grid w-full grid-cols-2 gap-4 sm:grid-cols-1 sm:gap-3">
-        {NAV_ITEMS.map((item) => {
-          const isActive = activeKey === item.key;
-          return (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1 rounded-2xl border px-1 py-2 transition ${
-                isActive
-                  ? "border-slate-900 bg-slate-900 text-white shadow-sm"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-              }`}
-            >
-              <span
-                className={`flex h-[34px] w-[34px] items-center justify-center rounded-[10px] ${
+    <footer className="fixed inset-x-0 bottom-0 z-50 flex flex-col sm:top-1/2 sm:right-6 sm:bottom-auto sm:left-auto sm:-translate-y-1/2 sm:w-auto sm:items-end">
+      <div className="w-full border-t border-slate-200 bg-white/95 px-4 py-4 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-md sm:rounded-[28px] sm:border sm:w-auto sm:min-w-[120px] sm:px-3 sm:shadow-[0_8px_30px_rgba(15,23,42,0.08)]">
+        <nav className="grid grid-cols-2 gap-2 sm:flex sm:flex-col sm:gap-3">
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeKey === item.key;
+            return (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => navigate(item.path)}
+                className={`flex flex-col items-center gap-1 rounded-2xl border px-2 py-2 transition ${
                   isActive
-                    ? "bg-white/10 text-white"
-                    : "bg-slate-100 text-slate-700"
+                    ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}
               >
-                <Icon name={item.icon} size={20} />
-              </span>
-              <span className="text-xs font-medium">{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-[10px] ${
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "bg-slate-100 text-slate-700"
+                  }`}
+                >
+                  <Icon name={item.icon} size={18} />
+                </span>
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
-      <p className="mt-3 mb-0.5 text-center text-xs font-medium text-slate-500">
-        Paysso Digital Bingo &copy; 2026
-      </p>
+        <div className="col-span-2 mt-2 flex items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 px-2 py-2 text-center text-[10px] font-medium text-slate-500 sm:col-span-1">
+          PDB
+        </div>
+      </div>
     </footer>
   );
 }

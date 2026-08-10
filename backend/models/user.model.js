@@ -13,6 +13,17 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    phone: {
+      type: String,
+      unique: true,
+    },
+
+    fullName: String,
+    username: {
+      type: String,
+      unique: true,
+    },
+
     refreshTokens: [
       {
         token: { type: String, required: true },

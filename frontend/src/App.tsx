@@ -6,20 +6,21 @@ import Main from "../components/Main";
 import Game from "../pages/Game";
 import BingoTickets from "../pages/ticket";
 import Login from "../pages/Login";
+import SignUp from "../pages/SignUp.tsx";
 const queryClient = new QueryClient();
 
 const pageTransition = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-  transition: { duration: 0.25 },
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.18, ease: [0.25, 0.1, 0.25, 1] as const },
 };
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => (
   <motion.div
     {...pageTransition}
-    className="min-h-screen"
-    style={{ width: "100%" }}
+    className="min-h-screen w-full"
+    style={{ width: "100%", willChange: "opacity" }}
   >
     {children}
   </motion.div>
@@ -36,6 +37,14 @@ const AnimatedRoutes = () => {
           element={
             <PageWrapper>
               <Login />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PageWrapper>
+              <SignUp />
             </PageWrapper>
           }
         />

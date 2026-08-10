@@ -4,6 +4,6 @@ import { authenticateTokenMiddleware } from "../middleware/authenticateToken.mid
 const authRouter = express.Router();
 
 authRouter.post("/signup/user", register);
-authRouter.post("/login/user", login);
+authRouter.post("/auth/login/user", authenticateTokenMiddleware, login);
 
 export default authRouter;
