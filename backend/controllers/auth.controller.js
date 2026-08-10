@@ -47,10 +47,33 @@ export const register = async (req, res) => {
     };
     const newUser = await UserModel.create(payload);
 
-    return res.status(201).json({
-      message: "Account created successfully",
-      user: newUser,
-    });
+    // Auto-login the new user
+    const tokenPayload = {
+      id: newUser._id,
+      email: newUser.email,
+    };
+    const accessToken = generateAccessToken(tokenPayload);
+    const refreshToken = generateRefreshToken(tokenPayload);
+
+    return res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/",
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/",
+      })
+      .status(201)
+      .json({
+        role: newUser.role,
+        message: "Account created and logged in successfully",
+        user: newUser,
+      });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,23 +1,25 @@
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Icon from "./icon";
+import { useLanguage } from "../src/LanguageContext";
+import { translations } from "../src/translations";
 
 interface NavItemsProps {
   key: string;
-  label: string;
   icon: string;
   path: string;
 }
+
 const NAV_ITEMS: NavItemsProps[] = [
-  { key: "bingo", label: "Bingo", icon: "grid", path: "/game" },
-  { key: "tickets", label: "Tickets", icon: "ticket", path: "/game/ticket" },
-  // { key: "winners", label: "Winners", icon: "trophy", path: "/game/winners" },
-  // { key: "settings", label: "Settings", icon: "gear", path: "/game/settings" },
+  { key: "bingo", icon: "grid", path: "/game" },
+  { key: "tickets", icon: "ticket", path: "/game/ticket" },
 ];
 
 export default function Footer() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language } = useLanguage();
+  const t = translations[language].footer;
 
   const activeKey = useMemo(() => {
     if (location.pathname.startsWith("/game/ticket")) return "tickets";
@@ -32,6 +34,8 @@ export default function Footer() {
         <nav className="grid grid-cols-2 gap-2 sm:flex sm:flex-col sm:gap-3">
           {NAV_ITEMS.map((item) => {
             const isActive = activeKey === item.key;
+            const label = item.key === "bingo" ? t.bingo : t.tickets;
+            
             return (
               <button
                 key={item.key}
@@ -52,7 +56,7 @@ export default function Footer() {
                 >
                   <Icon name={item.icon} size={18} />
                 </span>
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <span className="text-[10px] font-medium">{label}</span>
               </button>
             );
           })}
