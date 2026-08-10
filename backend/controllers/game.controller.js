@@ -91,18 +91,32 @@ export const getGame = async (req, res) => {
 };
 
 export const PurchaseBox = async (req, res) => {
-  const userId = new mongoose.Types.ObjectId(req.user.id);
-  const { gameId, boxNumber } = req.body;
-
-  if (!gameId || !boxNumber || !userId) {
+  if (!req.user?.id || !req.body.gameId || !req.body.boxNumber) {
     return res
       .status(400)
       .json({ success: false, error: "Missing required parameters." });
   }
+  const userId = new mongoose.Types.ObjectId(req.user.id);
+  const { gameId, boxNumber } = req.body;
+  const MAX_TICKETS_PER_USER = 3;
+
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
+
+    const ticketCount = await TicketModel.countDocuments({
+      user: userId,
+      $or: [
+        { isVerified: true },
+        { verificationExpiresAt: { $gt: new Date() } },
+      ],
+    }).session(session);
+    if (ticketCount >= MAX_TICKETS_PER_USER) {
+      return res.status(400).json({
+        message: `You can only purchase up to ${MAX_TICKETS_PER_USER} tickets`,
+      });
+    }
 
     const expireAt = new Date(Date.now() + 12 * 60 * 1000);
 
@@ -159,7 +173,11 @@ export const PurchaseBox = async (req, res) => {
       { session },
     );
     if (updatedGame.remainingBoxes === 0) {
-      await GameSession.findByIdAndUpdate(gameId, { status: "COMPLETED" });
+      await GameSession.findByIdAndUpdate(
+        gameId,
+        { status: "COMPLETED" },
+        { session },
+      );
     }
     await session.commitTransaction();
     session.endSession();
@@ -171,6 +189,8 @@ export const PurchaseBox = async (req, res) => {
       prize: claimedBox.prize,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({
       successful: false,
       message: err.message,
