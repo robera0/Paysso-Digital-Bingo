@@ -7,6 +7,8 @@ import Game from "../pages/Game";
 import BingoTickets from "../pages/ticket";
 import Login from "../pages/Login";
 import SignUp from "../pages/SignUp.tsx";
+import Account from "../pages/Account";
+
 const queryClient = new QueryClient();
 
 const pageTransition = {
@@ -72,6 +74,7 @@ const AnimatedRoutes = () => {
               </PageWrapper>
             }
           />
+          <Route path="account" element={<Account />} />
         </Route>
       </Routes>
     </AnimatePresence>

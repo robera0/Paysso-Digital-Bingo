@@ -1,8 +1,8 @@
-import Icon from "./icon";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useLogout } from "../src/services/useLogin";
-
+import { useNavigate } from "react-router-dom";
 const Header = () => {
+  const navigate = useNavigate();
   const Active: Boolean = true;
   const { mutate: logout, isPending } = useLogout();
   return (
@@ -34,11 +34,17 @@ const Header = () => {
             </span>
           </div>
           <button
-            type="button"
-            aria-label="Notifications"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
+            onClick={() => navigate("/game/account")}
+            className="flex items-center gap-3 rounded-full border border-slate-200 bg-white p-1 sm:pr-4 shadow-sm transition-colors hover:bg-slate-50 cursor-default"
           >
-            <Icon name="bell" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+              <User size={18} strokeWidth={2.5} />
+            </div>
+            <div className="hidden flex-col items-start justify-center sm:flex">
+              <span className="text-[13px] font-bold text-slate-900 leading-tight">
+                user
+              </span>
+            </div>
           </button>
 
           <button

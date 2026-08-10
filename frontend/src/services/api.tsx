@@ -42,6 +42,12 @@ export interface TicketApiResponse {
 // get Game
 export const fetchGame = async (): Promise<ApiResponse> => {
   const res = await fetch(`${VITE_API_URL}/api/v1/game/new-game`);
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Request failed with status ${res.status}`,
+    );
+  }
   const data: ApiResponse = await res.json();
 
   return data;
@@ -58,6 +64,12 @@ export const fetchTickets = async (): Promise<TicketApiResponse> => {
   const res = await fetch(`${VITE_API_URL}/api/v1/auth/ticket`, {
     credentials: "include",
   });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Request failed with status ${res.status}`,
+    );
+  }
   const data: TicketApiResponse = await res.json();
   return data;
 };
@@ -76,7 +88,7 @@ export const purchaseTicket = async (payload: PurchasedTicketApiResponse) => {
   const res = await axios.post(`${VITE_API_URL}/api/v1/auth/ticket`, payload, {
     withCredentials: true,
   });
-  console.log(payload);
+
   const data = res.data;
 
   return data;
@@ -108,5 +120,38 @@ export const usePurchaseTicket = () => {
         });
       }
     },
+  });
+};
+
+export type UserRole = "user" | "admin";
+
+export interface User {
+  email: string;
+  phone: string;
+  fullName: string;
+  username: string;
+  role: UserRole;
+}
+
+const fetchProfile = async (): Promise<User> => {
+  const res = await fetch(`${VITE_API_URL}/api/v1/auth/profile`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Request failed with status ${res.status}`,
+    );
+  }
+  const data: User = await res.json();
+
+  return data;
+};
+
+export const useProfile = () => {
+  return useQuery<User>({
+    queryKey: ["profile"],
+    queryFn: fetchProfile,
   });
 };
