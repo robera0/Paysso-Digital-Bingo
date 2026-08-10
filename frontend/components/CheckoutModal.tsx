@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Icon from "./icon";
 import { toast } from "sonner";
 
@@ -47,8 +48,8 @@ const CheckoutModal = ({
     setStep("instructions");
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm sm:p-6">
+  const modalContent = (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm sm:p-6">
       <div className="flex w-full max-w-md max-h-[90vh] flex-col rounded-2xl bg-white shadow-xl sm:max-w-lg">
         {/* Header */}
         <div className="flex flex-shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 sm:px-6 sm:py-4">
@@ -153,6 +154,8 @@ const CheckoutModal = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default CheckoutModal;
