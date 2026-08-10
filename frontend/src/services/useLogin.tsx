@@ -12,7 +12,7 @@ export interface Credentials {
 
 const loginUSer = async (credentials: Credentials) => {
   const res = await axios.post(
-    `${VITE_API_URL}/api/v1/auth/login/user`,
+    `${VITE_API_URL}/api/v1/login/user`,
     credentials,
     {
       withCredentials: true,
@@ -39,6 +39,16 @@ export const useLogin = () => {
 
       toast.success("Logged in successfully", {
         duration: 3000,
+      });
+    },
+    onError: (error: unknown) => {
+      const message =
+        axios.isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : "Unable to login right now";
+
+      toast.error(message, {
+        duration: 4000,
       });
     },
   });
@@ -83,6 +93,33 @@ export const useSignUp = () => {
       toast.error(message, {
         duration: 4000,
       });
+    },
+  });
+};
+const logoutUser = async () => {
+  const res = await axios.post(
+    `${VITE_API_URL}/api/v1/logout/user`,
+    {},
+    {
+      withCredentials: true,
+    },
+  );
+  return res.data;
+};
+
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      queryClient.clear();
+      navigate("/");
+      toast.success("Logged out successfully");
+    },
+    onError: () => {
+      toast.error("Failed to logout");
     },
   });
 };

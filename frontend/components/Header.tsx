@@ -1,7 +1,10 @@
 import Icon from "./icon";
+import { LogOut } from "lucide-react";
+import { useLogout } from "../src/services/useLogin";
 
 const Header = () => {
   const Active: Boolean = true;
+  const { mutate: logout, isPending } = useLogout();
   return (
     <header className="sticky top-0 z-20 flex-shrink-0 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
       <div className="flex items-center justify-between gap-3">
@@ -36,6 +39,17 @@ const Header = () => {
             className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
           >
             <Icon name="bell" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => logout()}
+            disabled={isPending}
+            aria-label="Logout"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-200 bg-white text-red-600 transition hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+            title="Logout"
+          >
+            <LogOut size={18} />
           </button>
         </div>
       </div>
