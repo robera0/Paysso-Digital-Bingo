@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payssobingo</title>
+
+    <link rel="stylesheet" href="syrup.css">
+</head>
+
+<body>
+
+    <main class="signup-page">
+
+        <div class="signup-card">
+
+            <div class="logo">
+                <h1>Payssobingo</h1>
+                <p>Play. Win. Enjoy.</p>
+            </div>
+
+            <div class="signup-header">
+                <h2>Create Account</h2>
+                <p class="subtitle">Create your account to get started</p>
+            </div>
+
+            <form id="signupform">
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username">
+                    <small id="usernameError" class="error">
+                        Please enter a username
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+2519XXXXXXXX">
+                    <small id="phoneError" class="error">
+                        Please enter a valid phone number
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email address">
+                    <small id="emailError" class="error">
+                        Please enter a valid email
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Create a password">
+
+                        <button type="button" class="show-password" onclick="togglePassword('password', this)">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+
+                    <div class="password-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            placeholder="Confirm your password">
+
+                        <button type="button" class="show-password" onclick="togglePassword('confirmPassword', this)">
+                            Show
+                        </button>
+                    </div>
+
+                    <small id="confirmPasswordError" class="error">
+                        Passwords do not match
+                    </small>
+                </div>
+
+                <button type="button" class="signup-button">
+                    Create Account
+                </button>
+
+            </form>
+
+            <div class="login-link">
+                <span>Already have an account?</span>
+                <a href="#">Login</a>
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <script>
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                button.textContent = "Hide";
+            } else {
+                input.type = "password";
+                button.textContent = "Show";
+            }
+        }
+
+        const signupButton = document.querySelector(".signup-button");
+
+        signupButton.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            const fullName = document.getElementById("fullName");
+            const username = document.getElementById("username");
+            const phone = document.getElementById("phone");
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+            const confirmPassword = document.getElementById("confirmPassword");
+
+            const usernameError = document.getElementById("usernameError");
+            const phoneError = document.getElementById("phoneError");
+            const emailError = document.getElementById("emailError");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+
+            let valid = true;
+
+            usernameError.style.display = "none";
+            phoneError.style.display = "none";
+            emailError.style.display = "none";
+            confirmPasswordError.style.display = "none";
+
+            if (fullName.value.trim() === "") {
+                fullName.focus();
+                valid = false;
+            }
+
+            if (username.value.trim() === "") {
+                usernameError.textContent = "Please enter a username";
+                usernameError.style.display = "block";
+
+                if (valid) {
+                    username.focus();
+                }
+
+                valid = false;
+            }
+
+            const phonePattern = /^\+2519[0-9]{8}$/;
+
+            if (!phonePattern.test(phone.value.trim())) {
+                phoneError.textContent = "Enter a valid phone number (+2519XXXXXXXX)";
+                phoneError.style.display = "block";
+
+                if (valid) {
+                    phone.focus();
+                }
+
+                valid = false;
+            }
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailPattern.test(email.value.trim())) {
+                emailError.textContent = "Please enter a valid email";
+                emailError.style.display = "block";
+
+                if (valid) {
+                    email.focus();
+                }
+
+                valid = false;
+            }
+
+            if (password.value.length < 8) {
+                password.focus();
+                valid = false;
+            }
+
+            if (confirmPassword.value.trim() === "") {
+                confirmPasswordError.textContent = "Please confirm your password";
+                confirmPasswordError.style.display = "block";
+
+                if (valid) {
+                    confirmPassword.focus();
+                }
+
+                valid = false;
+            } else if (password.value !== confirmPassword.value) {
+                confirmPasswordError.textContent = "Passwords do not match";
+                confirmPasswordError.style.display = "block";
+
+                if (valid) {
+                    confirmPassword.focus();
+                }
+
+                valid = false;
+            }
+
+            if (!valid) {
+                return;
+            }
+
+            alert("Account created successfully!");
+        });
+    </script>
+
+
+</body>
+
+</html>
