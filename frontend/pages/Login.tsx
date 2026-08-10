@@ -1,25 +1,15 @@
-import { Leaf, Mail, Lock, Eye, ArrowRight, Loader2 } from "lucide-react";
+import { Leaf, Lock, Eye, ArrowRight, Loader2, Phone } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogin, type Credentials } from "../src/services/useLogin";
+
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState<string>("");
   const { mutate: loginMutation, isPending } = useLogin();
   const credentials: Credentials = {
-    email: email,
-    password: password,
-  };
-  const [emailError, setEmailError] = useState("");
-
-  const validateEmail = (val: string) => {
-    setEmail(val);
-
-    if (val && !val.includes("@")) {
-      setEmailError("Add a valid email address (missing '@')");
-    } else {
-      setEmailError("");
-    }
+    identifier,
+    password,
   };
 
   return (
@@ -39,23 +29,19 @@ const Login = () => {
       </p>
 
       <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-sm">
-        {/* Email field */}
+        {/* Identifier field */}
         <label className="block text-xs font-bold tracking-wide text-gray-700 mb-2">
-          EMAIL ADDRESS
+          EMAIL OR PHONE NUMBER
         </label>
         <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3.5 mb-6">
-          <Mail size={18} className="text-gray-400 shrink-0" />
+          <Phone size={18} className="text-gray-400 shrink-0" />
 
           <input
-            type="email"
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              validateEmail(e.target.value)
-            }
-            placeholder="Enter your email"
-            className={`w-full bg-transparent text-gray-700 placeholder-gray-400 outline-none ${
-              emailError ? "border-b-2 border-red-500" : ""
-            }`}
+            type="text"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your email or phone number"
+            className="w-full bg-transparent text-gray-700 placeholder-gray-400 outline-none"
           />
         </div>
 

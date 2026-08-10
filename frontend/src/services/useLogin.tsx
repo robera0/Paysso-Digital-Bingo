@@ -6,23 +6,36 @@ import { toast } from "sonner";
 const VITE_API_URL: string = import.meta.env.VITE_API_URL;
 
 export interface Credentials {
-  email: string;
+  email?: string;
+  identifier?: string;
+  phone?: string;
   password: string;
 }
 
 const loginUSer = async (credentials: Credentials) => {
-  const res = await axios.post(
-    `${VITE_API_URL}/api/v1/login/user`,
-    credentials,
-    {
-      withCredentials: true,
-    },
-  );
+  const rawIdentifier = (
+    credentials.identifier ??
+    credentials.email ??
+    credentials.phone ??
+    ""
+  ).trim();
+  const payload = {
+    password: credentials.password,
+    ...(rawIdentifier.includes("@")
+      ? { email: rawIdentifier }
+      : { phone: rawIdentifier }),
+  };
+
+  const res = await axios.post(`${VITE_API_URL}/api/v1/login/user`, payload, {
+    withCredentials: true,
+  });
   const data = res.data;
 
   return data;
 };
-export interface SignupUser extends Credentials {
+export interface SignupUser {
+  email: string;
+  password: string;
   phone: string;
   fullname: string;
   username: string;

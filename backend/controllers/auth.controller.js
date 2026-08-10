@@ -19,12 +19,20 @@ export const register = async (req, res) => {
       });
     }
 
-    const phonePattern = /^\+2519[0-9]{8}$/;
-    if (!phonePattern.test(phone.trim())) {
+    const normalizedPhone = phone.trim();
+    const phonePattern = /^(\+2519[0-9]{8}|09[0-9]{8})$/;
+    if (!phonePattern.test(normalizedPhone)) {
       return res.status(400).json({
-        message: "Please enter a valid phone number (+2519XXXXXXXX)",
+        message:
+          "Please enter a valid phone number (+2519XXXXXXXX or 09XXXXXXXX)",
       });
     }
+
+    const normalizedPhoneForStorage = normalizedPhone.startsWith("+251")
+      ? normalizedPhone
+      : normalizedPhone.startsWith("09")
+        ? `+251${normalizedPhone.slice(1)}`
+        : normalizedPhone;
 
     if (password.length < 8) {
       return res.status(400).json({
@@ -41,7 +49,7 @@ export const register = async (req, res) => {
     const newUser = new UserModel({
       email,
       password: hashedPassword,
-      phone,
+      phone: normalizedPhoneForStorage,
       fullName: fullname,
       username,
       refreshTokens: [],
@@ -87,14 +95,31 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, phone, identifier } = req.body;
   try {
-    if (!email || !password) {
+    const lookupValue = (identifier ?? email ?? phone ?? "").trim();
+
+    if (!password || !lookupValue) {
       return res
         .status(400)
-        .json({ message: "Email and password are required" });
+        .json({ message: "Email/phone and password are required" });
     }
-    const user = await UserModel.findOne({ email });
+
+    const normalizedLookupValue = lookupValue.includes("@")
+      ? lookupValue
+      : lookupValue.startsWith("+251")
+        ? lookupValue
+        : lookupValue.startsWith("09")
+          ? `+251${lookupValue.slice(1)}`
+          : lookupValue;
+
+    const user = await UserModel.findOne(
+      lookupValue.includes("@")
+        ? { email: lookupValue }
+        : {
+            $or: [{ phone: normalizedLookupValue }, { phone: lookupValue }],
+          },
+    );
 
     if (!user) {
       return res
