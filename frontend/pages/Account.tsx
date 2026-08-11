@@ -1,7 +1,9 @@
-import React from "react";
 import { User, Mail, Shield, Key, Bell, ChevronRight } from "lucide-react";
-
+import { useProfile } from "../src/services/api";
 const Account = () => {
+  const { data: profile, isPending } = useProfile();
+
+  console.log(profile);
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
@@ -16,14 +18,31 @@ const Account = () => {
         {/* Left Column: Profile Card */}
         <div className="lg:col-span-1">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8 text-center">
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-indigo-100 text-3xl font-bold text-indigo-700 shadow-md">
-                P
-              </div>
-              <h2 className="mt-4 text-xl font-bold text-white">Cashier</h2>
-              <p className="text-sm text-indigo-100">cashier@paysso.com</p>
-              <div className="mt-4 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
-                Active Employee
+            <div
+              style={{
+                backgroundImage: `url(/Block_bingo.jpeg)`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+              className="relative px-6 py-8 text-center overflow-hidden"
+            >
+              {/* dark overlay so text stays readable */}
+              <div className="absolute inset-0 bg-black/50" />
+
+              {/* content sits above the overlay */}
+              <div className="relative z-10">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-indigo-100 text-3xl font-bold text-indigo-700 shadow-md">
+                  P
+                </div>
+                <h2 className="mt-4 text-xl font-bold text-white">
+                  {profile?.fullName}
+                </h2>
+                <p className="text-sm text-indigo-100">
+                  {profile?.profile?.email}
+                </p>
+                <div className="mt-4 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
+                  Active Employee
+                </div>
               </div>
             </div>
 

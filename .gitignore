@@ -41,6 +41,12 @@ build/Release
 node_modules/
 jspm_packages/
 
+# Ignore backend env file only
+backend/.env
+#ignore frontend env file
+frontend/.env
+
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
