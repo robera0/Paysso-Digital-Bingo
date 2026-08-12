@@ -126,11 +126,13 @@ export const usePurchaseTicket = () => {
 export type UserRole = "user" | "admin";
 
 export interface User {
-  email: string;
-  phone: string;
-  fullName: string;
-  username: string;
-  role: UserRole;
+  profile: {
+    email: string;
+    phone: string;
+    fullName: string;
+    username: string;
+    role: UserRole;
+  };
 }
 
 const fetchProfile = async (): Promise<User> => {

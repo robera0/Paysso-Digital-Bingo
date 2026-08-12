@@ -1,9 +1,11 @@
+import React, { useState } from "react";
 import { User, Mail, Shield, Key, Bell, ChevronRight } from "lucide-react";
 import { useProfile } from "../src/services/api";
 const Account = () => {
   const { data: profile, isPending } = useProfile();
-
-  console.log(profile);
+  const [isEditing, setIsEditing] = useState(false);
+  const info = profile?.profile;
+  console.log(isEditing);
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
@@ -35,11 +37,9 @@ const Account = () => {
                   P
                 </div>
                 <h2 className="mt-4 text-xl font-bold text-white">
-                  {profile?.fullName}
+                  {info?.fullName}
                 </h2>
-                <p className="text-sm text-indigo-100">
-                  {profile?.profile?.email}
-                </p>
+                <p className="text-sm text-indigo-100">{info?.email}</p>
                 <div className="mt-4 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
                   Active Employee
                 </div>
@@ -89,8 +89,8 @@ const Account = () => {
                 <input
                   type="text"
                   defaultValue="Paysso"
-                  disabled
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  disabled={!isEditing}
+                  className={`w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${isEditing ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500"}`}
                 />
               </div>
               <div>
@@ -100,8 +100,8 @@ const Account = () => {
                 <input
                   type="text"
                   defaultValue="Cashier"
-                  disabled
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  disabled={!isEditing}
+                  className={`w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${isEditing ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500"}`}
                 />
               </div>
               <div className="sm:col-span-2">
@@ -113,19 +113,29 @@ const Account = () => {
                     <Mail size={16} />
                   </div>
                   <input
+                    disabled={!isEditing}
                     type="email"
                     defaultValue="cashier@paysso.com"
-                    disabled
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${isEditing ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500"}`}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 space-x-4 flex justify-end">
               <button
-                disabled
-                className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm opacity-50 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                type="button"
+                onClick={() => setIsEditing(!isEditing)}
+                className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-slate-700 hover:bg-slate-600 active:bg-slate-800" : "bg-slate-900 hover:bg-slate-800 active:bg-slate-700"}`}
+              >
+                {isEditing ? "Cancel" : "Edit"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                disabled={!isEditing}
+                className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800" : "bg-indigo-500/70 text-slate-100 cursor-not-allowed"}`}
               >
                 Save Changes
               </button>
