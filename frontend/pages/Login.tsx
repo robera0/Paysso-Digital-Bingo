@@ -74,12 +74,12 @@ const Login = () => {
             e.preventDefault();
             loginMutation(credentials);
           }}
-          className="w-full flex items-center justify-center gap-2 bg-[#1B7A2E] text-white font-semibold py-3.5 rounded-xl disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 bg-[#1B7A2E] text-white font-semibold py-3.5 rounded-xl disabled:opacity-70 disabled:cursor-wait"
         >
           {isPending ? (
             <>
               <Loader2 size={18} className="animate-spin" />
-              Signing In...
+              Logging in... please wait
             </>
           ) : (
             <>

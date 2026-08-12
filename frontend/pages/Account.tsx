@@ -1,11 +1,37 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail, Shield, Key, Bell, ChevronRight } from "lucide-react";
 import { useProfile } from "../src/services/api";
+
 const Account = () => {
-  const { data: profile, isPending } = useProfile();
-  const [isEditing, setIsEditing] = useState(false);
+  const { data: profile } = useProfile();
   const info = profile?.profile;
-  console.log(isEditing);
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "" });
+
+  useEffect(() => {
+    if (info) {
+      const [firstName = "", lastName = ""] = (info.fullName ?? "").split(" ");
+      setForm({
+        firstName,
+        lastName,
+        email: info.email ?? "",
+      });
+    }
+  }, [info]);
+
+  const handleCancel = () => {
+    if (info) {
+      const [firstName = "", lastName = ""] = (info.fullName ?? "").split(" ");
+      setForm({ firstName, lastName, email: info.email ?? "" });
+    }
+    setIsEditing(false);
+  };
+
+  const handleSave = () => {
+    // TODO: call your update-profile mutation here with `form`
+    setIsEditing(false);
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
@@ -28,10 +54,7 @@ const Account = () => {
               }}
               className="relative px-6 py-8 text-center overflow-hidden"
             >
-              {/* dark overlay so text stays readable */}
               <div className="absolute inset-0 bg-black/50" />
-
-              {/* content sits above the overlay */}
               <div className="relative z-10">
                 <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-indigo-100 text-3xl font-bold text-indigo-700 shadow-md">
                   P
@@ -88,7 +111,10 @@ const Account = () => {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Paysso"
+                  value={form.firstName}
+                  onChange={(e) =>
+                    setForm({ ...form, firstName: e.target.value })
+                  }
                   disabled={!isEditing}
                   className={`w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${isEditing ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500"}`}
                 />
@@ -99,7 +125,10 @@ const Account = () => {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Cashier"
+                  value={form.lastName}
+                  onChange={(e) =>
+                    setForm({ ...form, lastName: e.target.value })
+                  }
                   disabled={!isEditing}
                   className={`w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${isEditing ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500"}`}
                 />
@@ -115,7 +144,10 @@ const Account = () => {
                   <input
                     disabled={!isEditing}
                     type="email"
-                    defaultValue="cashier@paysso.com"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
                     className={`w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${isEditing ? "bg-white text-slate-900" : "bg-slate-50 text-slate-500"}`}
                   />
                 </div>
@@ -125,7 +157,9 @@ const Account = () => {
             <div className="mt-6 space-x-4 flex justify-end">
               <button
                 type="button"
-                onClick={() => setIsEditing(!isEditing)}
+                onClick={() =>
+                  isEditing ? handleCancel() : setIsEditing(true)
+                }
                 className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-slate-700 hover:bg-slate-600 active:bg-slate-800" : "bg-slate-900 hover:bg-slate-800 active:bg-slate-700"}`}
               >
                 {isEditing ? "Cancel" : "Edit"}
@@ -133,7 +167,7 @@ const Account = () => {
 
               <button
                 type="button"
-                onClick={() => setIsEditing(false)}
+                onClick={handleSave}
                 disabled={!isEditing}
                 className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800" : "bg-indigo-500/70 text-slate-100 cursor-not-allowed"}`}
               >
