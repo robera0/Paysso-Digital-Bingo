@@ -46,15 +46,19 @@ const Account = () => {
         {/* Left Column: Profile Card */}
         <div className="lg:col-span-1">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div
-              style={{
-                backgroundImage: `url(/Block_bingo.jpeg)`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              className="relative px-6 py-8 text-center overflow-hidden"
-            >
+            <div className="relative px-6 py-8 text-center overflow-hidden">
+              {/* background image */}
+              <img
+                src="/Block_bingo.jpeg"
+                alt=""
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+
+              {/* dark overlay so text stays readable */}
               <div className="absolute inset-0 bg-black/50" />
+
+              {/* content sits above the overlay */}
               <div className="relative z-10">
                 <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-indigo-100 text-3xl font-bold text-indigo-700 shadow-md">
                   P
@@ -68,7 +72,6 @@ const Account = () => {
                 </div>
               </div>
             </div>
-
             <div className="p-4">
               <nav className="flex flex-col space-y-1">
                 <button className="flex items-center justify-between rounded-xl bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 transition-colors">
