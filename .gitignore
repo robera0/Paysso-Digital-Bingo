@@ -45,7 +45,8 @@ jspm_packages/
 backend/.env
 #ignore frontend env file
 frontend/.env
-
+# ignore todo 
+todo.todo
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
