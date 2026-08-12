@@ -14,21 +14,29 @@ const Login = () => {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col items-center px-6 pt-16"
+      className="w-full min-h-screen flex flex-col items-center justify-start px-6 py-10 md:justify-center md:py-0"
       style={{
-        background: "linear-gradient(180deg, #DCEFDD 0%, #F3F5F2 45%)",
+        backgroundImage:
+          "linear-gradient(180deg, rgba(248,250,250,0.90) 0%, rgba(220,232,240,0.95) 45%), url(/Block_bingo.jpeg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
-      <div className="w-20 h-20 rounded-3xl bg-[#4CAF50] flex items-center justify-center mb-6 shadow-sm">
-        <Leaf size={34} className="text-[#1B4B1F]" strokeWidth={2} />
+      <div className="w-20 h-20 rounded-3xl bg-slate-700 flex items-center justify-center mb-6 shadow-sm">
+        <Leaf size={34} className="text-slate-100" strokeWidth={2} />
       </div>
 
-      <h1 className="text-3xl font-bold text-[#1B7A2E] mb-2">Welcome Back</h1>
-      <p className="text-gray-500 text-base mb-10">
+      <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
+      <p className="text-slate-500 text-base mb-10">
         Sign in to continue your bingo journey
       </p>
 
       <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-sm">
+        <img
+          src="/Block_bingo.jpeg"
+          alt="Bingo login artwork"
+          className="w-full h-40 object-cover rounded-3xl mb-6"
+        />
         {/* Identifier field */}
         <label className="block text-xs font-bold tracking-wide text-gray-700 mb-2">
           EMAIL OR PHONE NUMBER
@@ -50,7 +58,7 @@ const Login = () => {
           <label className="text-xs font-bold tracking-wide text-gray-700">
             PASSWORD
           </label>
-          <span className="text-sm font-semibold text-[#1B7A2E]">Forgot?</span>
+          <span className="text-sm font-semibold text-slate-700">Forgot?</span>
         </div>
         <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3.5 mb-6">
           <Lock size={18} className="text-gray-400 shrink-0" />
@@ -74,7 +82,7 @@ const Login = () => {
             e.preventDefault();
             loginMutation(credentials);
           }}
-          className="w-full flex items-center justify-center gap-2 bg-[#1B7A2E] text-white font-semibold py-3.5 rounded-xl disabled:opacity-70 disabled:cursor-wait"
+          className="w-full flex items-center justify-center gap-2 bg-slate-700 text-white font-semibold py-3.5 rounded-xl disabled:opacity-70 disabled:cursor-wait"
         >
           {isPending ? (
             <>
@@ -93,7 +101,7 @@ const Login = () => {
       {/* Footer */}
       <p className="text-gray-500 text-sm mt-8">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-[#1B7A2E] font-bold hover:underline">
+        <Link to="/signup" className="text-slate-700 font-bold hover:underline">
           Create one
         </Link>
       </p>
