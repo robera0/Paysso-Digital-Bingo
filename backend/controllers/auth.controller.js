@@ -61,19 +61,22 @@ export const register = async (req, res) => {
 
     newUser.refreshTokens.push({ token: refreshToken });
     await newUser.save();
-
+    const REFRESH_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+    const ACCESS_MAX_AGE = 15 * 60 * 1000; // 15 minutes (Standard for access tokens)
     return res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         path: "/",
+        maxAge: ACCESS_MAX_AGE,
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         path: "/",
+        maxAge: REFRESH_MAX_AGE,
       })
       .status(201)
       .json({
@@ -138,19 +141,22 @@ export const login = async (req, res) => {
 
     user.refreshTokens.push({ token: refreshToken });
     await user.save();
-
+    const REFRESH_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+    const ACCESS_MAX_AGE = 15 * 60 * 1000; // 15 minutes (Standard for access tokens)
     res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         path: "/",
+        maxAge: ACCESS_MAX_AGE,
       })
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         path: "/",
+        maxAge: REFRESH_MAX_AGE,
       })
       .status(200)
       .json({ role: user.role, message: "Logged in successfully" });
@@ -195,7 +201,7 @@ export const refresh = async (req, res) => {
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         path: "/",
-        maxAge: 15 * 60 * 1000,
+        maxAge: 4 * 24 * 60 * 60 * 1000,
       })
       .status(200)
       .json({ message: "Token refreshed" });

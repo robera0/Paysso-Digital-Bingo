@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
-
-const VITE_API_URL: string = import.meta.env.VITE_API_URL;
-
+import { VITE_API_URL } from "./api";
 export interface VerifyTicket {
   receiptUrl: string;
   boxId: string;

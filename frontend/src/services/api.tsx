@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-const VITE_API_URL: string = import.meta.env.VITE_API_URL;
+
+export const VITE_API_URL: string = import.meta.env.VITE_API_URL;
 
 export interface Box {
   boxNumber: number;
@@ -120,40 +121,5 @@ export const usePurchaseTicket = () => {
         });
       }
     },
-  });
-};
-
-export type UserRole = "user" | "admin";
-
-export interface User {
-  profile: {
-    email: string;
-    phone: string;
-    fullName: string;
-    username: string;
-    role: UserRole;
-  };
-}
-
-const fetchProfile = async (): Promise<User> => {
-  const res = await fetch(`${VITE_API_URL}/api/v1/auth/profile`, {
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(
-      errorData.message || `Request failed with status ${res.status}`,
-    );
-  }
-  const data: User = await res.json();
-
-  return data;
-};
-
-export const useProfile = () => {
-  return useQuery<User>({
-    queryKey: ["profile"],
-    queryFn: fetchProfile,
   });
 };

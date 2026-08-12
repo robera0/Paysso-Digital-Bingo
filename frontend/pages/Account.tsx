@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Shield, Key, Bell, ChevronRight } from "lucide-react";
-import { useProfile } from "../src/services/api";
+import { useProfile, useUpdateProfile } from "../src/services/useUser";
 
 const Account = () => {
   const { data: profile } = useProfile();
+  const { mutate: updateProfile, isPending } = useUpdateProfile();
   const info = profile?.profile;
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "" });
@@ -68,7 +69,7 @@ const Account = () => {
                 </h2>
                 <p className="text-sm text-indigo-100">{info?.email}</p>
                 <div className="mt-4 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
-                  Active Employee
+                  Active user
                 </div>
               </div>
             </div>
@@ -171,10 +172,10 @@ const Account = () => {
               <button
                 type="button"
                 onClick={handleSave}
-                disabled={!isEditing}
+                disabled={!isEditing || isPending}
                 className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800" : "bg-indigo-500/70 text-slate-100 cursor-not-allowed"}`}
               >
-                Save Changes
+                {isPending ? "updating profile" : "  Save Changes"}
               </button>
             </div>
           </div>
