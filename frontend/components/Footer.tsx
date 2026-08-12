@@ -22,10 +22,13 @@ export default function Footer() {
   const t = translations[language].footer;
 
   const activeKey = useMemo(() => {
+    if (location.pathname.startsWith("/game/account")) return null;
     if (location.pathname.startsWith("/game/ticket")) return "tickets";
     if (location.pathname.startsWith("/game/winners")) return "winners";
     if (location.pathname.startsWith("/game/settings")) return "settings";
-    return "bingo";
+    if (location.pathname === "/game" || location.pathname.startsWith("/game/"))
+      return "bingo";
+    return null;
   }, [location.pathname]);
 
   return (
@@ -35,7 +38,7 @@ export default function Footer() {
           {NAV_ITEMS.map((item) => {
             const isActive = activeKey === item.key;
             const label = item.key === "bingo" ? t.bingo : t.tickets;
-            
+
             return (
               <button
                 key={item.key}
@@ -56,7 +59,9 @@ export default function Footer() {
                 >
                   <Icon name={item.icon} size={18} />
                 </span>
-                <span className="text-[9px] font-medium leading-none">{label}</span>
+                <span className="text-[9px] font-medium leading-none">
+                  {label}
+                </span>
               </button>
             );
           })}

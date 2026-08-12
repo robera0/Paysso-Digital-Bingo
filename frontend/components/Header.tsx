@@ -1,9 +1,11 @@
 import { LogOut, User } from "lucide-react";
 import { useLogout } from "../src/services/useLogin";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const Active: Boolean = true;
+  const isAccountRoute = location.pathname.startsWith("/game/account");
   const { mutate: logout, isPending } = useLogout();
   return (
     <header className="sticky top-0 z-20 flex-shrink-0 border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
@@ -35,13 +37,27 @@ const Header = () => {
           </div>
           <button
             onClick={() => navigate("/game/account")}
-            className="flex items-center gap-3 rounded-full border border-slate-200 bg-white p-1 sm:pr-4 shadow-sm transition-colors hover:bg-slate-50 cursor-default"
+            className={`flex cursor-pointer items-center gap-3 rounded-full border p-1 shadow-sm transition-colors sm:pr-4 ${
+              isAccountRoute
+                ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+            }`}
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+            <div
+              className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                isAccountRoute
+                  ? "bg-white/10 text-white"
+                  : "bg-slate-100 text-slate-700"
+              }`}
+            >
               <User size={18} strokeWidth={2.5} />
             </div>
             <div className="hidden flex-col items-start justify-center sm:flex">
-              <span className="text-[13px] font-bold text-slate-900 leading-tight">
+              <span
+                className={`text-[13px] font-bold leading-tight ${
+                  isAccountRoute ? "text-white" : "text-slate-900"
+                }`}
+              >
                 user
               </span>
             </div>
