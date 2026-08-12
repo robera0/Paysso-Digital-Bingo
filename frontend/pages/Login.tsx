@@ -14,54 +14,62 @@ const Login = () => {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col items-center justify-start px-6 py-10 md:justify-center md:py-0"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-8"
       style={{
         backgroundImage:
-          "linear-gradient(180deg, rgba(248,250,250,0.90) 0%, rgba(220,232,240,0.95) 45%), url(/Block_bingo.jpeg)",
+          "linear-gradient(180deg, rgba(232,237,243,0.94) 0%, rgba(248,250,252,0.97) 55%), url(/Block_bingo.jpeg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
     >
-      <div className="w-20 h-20 rounded-3xl bg-slate-700 flex items-center justify-center mb-6 shadow-sm">
-        <Leaf size={34} className="text-slate-100" strokeWidth={2} />
+      {/* Brand mark */}
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-700 shadow-sm shadow-slate-900/10">
+        <Leaf size={26} className="text-slate-100" strokeWidth={2} />
       </div>
 
-      <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h1>
-      <p className="text-slate-500 text-base mb-10">
+      <h1 className="mb-1.5 text-center text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        Welcome Back
+      </h1>
+      <p className="mb-6 text-center text-sm text-slate-500 sm:text-base">
         Sign in to continue your bingo journey
       </p>
 
-      <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-sm">
+      {/* Card */}
+      <div className="w-full max-w-sm rounded-3xl bg-white/95 p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-100 backdrop-blur-sm sm:p-7">
+        {/* Artwork Image */}
         <img
           src="/Block_bingo.jpeg"
           alt="Bingo login artwork"
-          className="w-full h-40 object-cover rounded-3xl mb-6"
+          className="mb-5 h-32 w-full rounded-2xl object-cover shadow-sm"
         />
+
         {/* Identifier field */}
-        <label className="block text-xs font-bold tracking-wide text-gray-700 mb-2">
+        <label className="mb-1.5 block text-[11px] font-bold tracking-wide text-slate-500">
           EMAIL OR PHONE NUMBER
         </label>
-        <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3.5 mb-6">
-          <Phone size={18} className="text-gray-400 shrink-0" />
-
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition-colors focus-within:border-slate-500 focus-within:ring-1 focus-within:ring-slate-500">
+          <Phone size={18} className="shrink-0 text-slate-400" />
           <input
             type="text"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             placeholder="Enter your email or phone number"
-            className="w-full bg-transparent text-gray-700 placeholder-gray-400 outline-none"
+            className="w-full bg-transparent text-slate-700 placeholder-slate-400 outline-none"
           />
         </div>
 
         {/* Password field */}
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-xs font-bold tracking-wide text-gray-700">
+        <div className="mb-1.5 flex items-center justify-between">
+          <label className="text-[11px] font-bold tracking-wide text-slate-500">
             PASSWORD
           </label>
-          <span className="text-sm font-semibold text-slate-700">Forgot?</span>
+          <span className="cursor-pointer text-xs font-semibold text-slate-700 hover:underline">
+            Forgot?
+          </span>
         </div>
-        <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3.5 mb-6">
-          <Lock size={18} className="text-gray-400 shrink-0" />
+        <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition-colors focus-within:border-slate-500 focus-within:ring-1 focus-within:ring-slate-500">
+          <Lock size={18} className="shrink-0 text-slate-400" />
           <input
             type="password"
             value={password}
@@ -69,9 +77,12 @@ const Login = () => {
               setPassword(e.target.value)
             }
             placeholder="Enter your password"
-            className="w-full bg-transparent text-gray-700 placeholder-gray-400 outline-none"
+            className="w-full bg-transparent text-slate-700 placeholder-slate-400 outline-none"
           />
-          <Eye size={18} className="text-gray-500 shrink-0" />
+          <Eye
+            size={18}
+            className="shrink-0 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
+          />
         </div>
 
         {/* Sign in button */}
@@ -82,12 +93,12 @@ const Login = () => {
             e.preventDefault();
             loginMutation(credentials);
           }}
-          className="w-full flex items-center justify-center gap-2 bg-slate-700 text-white font-semibold py-3.5 rounded-xl disabled:opacity-70 disabled:cursor-wait"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-700 py-3.5 font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
         >
           {isPending ? (
             <>
               <Loader2 size={18} className="animate-spin" />
-              Logging in... please wait
+              Logging in...
             </>
           ) : (
             <>
@@ -99,9 +110,9 @@ const Login = () => {
       </div>
 
       {/* Footer */}
-      <p className="text-gray-500 text-sm mt-8">
+      <p className="mt-6 text-sm text-slate-500">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-slate-700 font-bold hover:underline">
+        <Link to="/signup" className="font-bold text-slate-700 hover:underline">
           Create one
         </Link>
       </p>
