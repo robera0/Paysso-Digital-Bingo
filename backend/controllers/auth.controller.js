@@ -139,8 +139,15 @@ export const login = async (req, res) => {
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
+    user.refreshTokens = user.refreshTokens.filter((t) => {
+      const decoded = jwt.decode(t.token);
+      if (!decoded || !decoded.exp) return false;
+
+      return decoded.exp * 1000 > Date.now();
+    });
     user.refreshTokens.push({ token: refreshToken });
     await user.save();
+
     const REFRESH_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
     const ACCESS_MAX_AGE = 15 * 60 * 1000; // 15 minutes (Standard for access tokens)
     res
