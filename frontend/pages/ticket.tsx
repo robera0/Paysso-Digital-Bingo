@@ -10,6 +10,7 @@ import type { TicketApiResponse } from "../src/services/api";
 import { useVerify } from "../src/services/useVerify";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
+import { TwinOrbit } from "@/components/loading-ui/twin-orbit";
 
 const COLORS = {
   page: "#EEF1F6",
@@ -281,7 +282,7 @@ const BingoTickets = () => {
         className="w-full min-h-screen flex items-center justify-center p-4"
         style={{ backgroundColor: COLORS.page }}
       >
-        <p style={{ color: COLORS.textMuted }}>{t.loading}</p>
+        <TwinOrbit />
       </div>
     );
   }
