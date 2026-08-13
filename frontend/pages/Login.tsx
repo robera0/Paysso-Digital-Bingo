@@ -1,4 +1,4 @@
-import { Leaf, Lock, Eye, ArrowRight, Loader2, Phone } from "lucide-react";
+import { Leaf, Lock, Eye, EyeOff, ArrowRight, Loader2, Phone } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogin, type Credentials } from "../src/services/useLogin";
@@ -6,6 +6,7 @@ import { useLogin, type Credentials } from "../src/services/useLogin";
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
   const { mutate: loginMutation, isPending } = useLogin();
   const credentials: Credentials = {
     identifier,
@@ -71,7 +72,7 @@ const Login = () => {
         <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition-colors focus-within:border-slate-500 focus-within:ring-1 focus-within:ring-slate-500">
           <Lock size={18} className="shrink-0 text-slate-400" />
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)
@@ -79,10 +80,13 @@ const Login = () => {
             placeholder="Enter your password"
             className="w-full bg-transparent text-slate-700 placeholder-slate-400 outline-none"
           />
-          <Eye
-            size={18}
-            className="shrink-0 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
-          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((p) => !p)}
+            className="shrink-0 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
         </div>
 
         {/* Sign in button */}

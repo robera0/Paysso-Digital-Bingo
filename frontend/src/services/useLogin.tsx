@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { VITE_API_URL } from "./api";
+import { setAccessToken } from "../tokenStore";
 export interface Credentials {
   email?: string;
   identifier?: string;
@@ -44,7 +45,12 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: (credentials: Credentials) => loginUSer(credentials),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      if (data?.accessToken) {
+        setAccessToken(data.accessToken);
+      } else if (data?.token) {
+        setAccessToken(data.token);
+      }
       queryClient.invalidateQueries({ queryKey: ["user"] });
       navigate("/game");
 
@@ -87,7 +93,12 @@ export const useSignUp = () => {
 
   return useMutation({
     mutationFn: (credentials: SignupUser) => registerUser(credentials),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
+      if (data?.accessToken) {
+        setAccessToken(data.accessToken);
+      } else if (data?.token) {
+        setAccessToken(data.token);
+      }
       queryClient.invalidateQueries({ queryKey: ["user"] });
       navigate("/game");
 
@@ -125,6 +136,7 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
+      setAccessToken(null);
       queryClient.clear();
       navigate("/");
       toast.success("Logged out successfully");

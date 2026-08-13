@@ -29,7 +29,15 @@ const Account = () => {
   };
 
   const handleSave = () => {
-    // TODO: call your update-profile mutation here with `form`
+    if (info) {
+      updateProfile({
+        profile: {
+          ...info,
+          fullName: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+        },
+      });
+    }
     setIsEditing(false);
   };
 

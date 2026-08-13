@@ -39,14 +39,14 @@ export const useProfile = () => {
   });
 };
 
-const UpdateProfile = async (profile: User): Promise<User> => {
-  const res = await axios.put(`${VITE_API_URL}/api/v1/auth/profile`, profile, {
+const UpdateProfile = async (data: User): Promise<User> => {
+  const res = await axios.put(`${VITE_API_URL}/api/v1/auth/profile`, data.profile, {
     withCredentials: true,
   });
 
-  const data: User = await res.data;
+  const responseData: User = await res.data;
 
-  return data;
+  return responseData;
 };
 
 export const useUpdateProfile = () => {
@@ -54,9 +54,10 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (profile: User) => UpdateProfile(profile),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       queryClient.invalidateQueries({ queryKey: ["user"] });
 
-      toast.success("profile Updated  successfully", {
+      toast.success("Profile updated successfully", {
         duration: 3000,
       });
     },

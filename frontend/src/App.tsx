@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import SignUp from "../pages/SignUp.tsx";
 import Account from "../pages/Account";
 import ProtectedRoute from "../components/ProtectedRoute";
+import { AuthProvider } from "./AuthProvider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,52 +35,54 @@ const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route
-          path="/"
-          element={
-            <PageWrapper>
-              <Login />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <PageWrapper>
-              <SignUp />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/game"
-          element={
-            <ProtectedRoute>
-              <PageWrapper>
-                <Main />
-              </PageWrapper>
-            </ProtectedRoute>
-          }
-        >
+      <AuthProvider>
+        <Routes location={location} key={location.pathname}>
           <Route
-            index
+            path="/"
             element={
               <PageWrapper>
-                <Game />
+                <Login />
               </PageWrapper>
             }
           />
           <Route
-            path="ticket"
+            path="/signup"
             element={
               <PageWrapper>
-                <BingoTickets />
+                <SignUp />
               </PageWrapper>
             }
           />
-          <Route path="account" element={<Account />} />
-        </Route>
-      </Routes>
+          <Route
+            path="/game"
+            element={
+              <ProtectedRoute>
+                <PageWrapper>
+                  <Main />
+                </PageWrapper>
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              index
+              element={
+                <PageWrapper>
+                  <Game />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="ticket"
+              element={
+                <PageWrapper>
+                  <BingoTickets />
+                </PageWrapper>
+              }
+            />
+            <Route path="account" element={<Account />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </AnimatePresence>
   );
 };
