@@ -13,6 +13,8 @@ import {
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useSignUp, type SignupUser } from "../src/services/useLogin";
+import { useLanguage } from "../src/LanguageContext";
+import { translations } from "../src/translations";
 
 const FIELD_WRAP = "rounded-xl border px-4 pt-5 pb-2.5 transition-colors";
 const FIELD_IDLE =
@@ -37,6 +39,8 @@ const SignupPage = () => {
   const [formError, setFormError] = useState("");
 
   const { mutate: registerMutation, isPending } = useSignUp();
+  const { language, toggleLanguage } = useLanguage();
+  const t = translations[language].signup;
 
   const validateEmail = (val: string) => {
     setEmail(val);
@@ -98,16 +102,26 @@ const SignupPage = () => {
         backgroundAttachment: "fixed",
       }}
     >
+      {/* Language Toggle */}
+      <div className="absolute right-6 top-8">
+        <button
+          onClick={toggleLanguage}
+          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+        >
+          {language === 'en' ? 'አማርኛ' : 'English'}
+        </button>
+      </div>
+
       {/* Brand mark */}
       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-700 shadow-sm shadow-slate-900/10">
         <Leaf size={26} className="text-slate-100" strokeWidth={2} />
       </div>
 
       <h1 className="mb-1.5 text-center text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-        Create Account
+        {t.createAccount}
       </h1>
       <p className="mb-6 text-center text-sm text-slate-500 sm:text-base">
-        Join the bingo community and get started
+        {t.joinCommunity}
       </p>
 
       {/* Card */}
@@ -125,7 +139,7 @@ const SignupPage = () => {
                 step >= 1 ? "text-slate-700" : "text-slate-400"
               }`}
             >
-              Profile Details
+              {t.profileDetails}
             </span>
           </div>
           <div className="flex-1">
@@ -139,7 +153,7 @@ const SignupPage = () => {
                 step >= 2 ? "text-slate-700" : "text-slate-400"
               }`}
             >
-              Security
+              {t.security}
             </span>
           </div>
         </div>
@@ -151,7 +165,7 @@ const SignupPage = () => {
               <div className="space-y-4">
                 <div className={`${FIELD_WRAP} ${FIELD_IDLE} relative`}>
                   <label className="absolute left-11 top-1.5 text-[11px] font-medium text-slate-400">
-                    Full name
+                    {t.fullName}
                   </label>
                   <div className="flex items-center gap-3">
                     <UserRound size={18} className="shrink-0 text-slate-400" />
@@ -161,7 +175,7 @@ const SignupPage = () => {
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         setFullName(e.target.value)
                       }
-                      placeholder="e.g. Abebe Kebede"
+                      placeholder={t.egAbebe}
                       className="w-full bg-transparent text-slate-800 outline-none placeholder-slate-300"
                     />
                   </div>
@@ -169,7 +183,7 @@ const SignupPage = () => {
 
                 <div className={`${FIELD_WRAP} ${FIELD_IDLE} relative`}>
                   <label className="absolute left-11 top-1.5 text-[11px] font-medium text-slate-400">
-                    Username
+                    {t.username}
                   </label>
                   <div className="flex items-center gap-3">
                     <UserRound size={18} className="shrink-0 text-slate-400" />
@@ -179,7 +193,7 @@ const SignupPage = () => {
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         setUsername(e.target.value)
                       }
-                      placeholder="Choose a username"
+                      placeholder={t.chooseUsername}
                       className="w-full bg-transparent text-slate-800 outline-none placeholder-slate-300"
                     />
                   </div>
@@ -187,7 +201,7 @@ const SignupPage = () => {
 
                 <div className={`${FIELD_WRAP} ${FIELD_IDLE} relative`}>
                   <label className="absolute left-11 top-1.5 text-[11px] font-medium text-slate-400">
-                    Phone number
+                    {t.phoneNumber}
                   </label>
                   <div className="flex items-center gap-3">
                     <Phone size={18} className="shrink-0 text-slate-400" />
@@ -208,7 +222,7 @@ const SignupPage = () => {
                     className={`${FIELD_WRAP} ${emailError ? FIELD_ERROR : FIELD_IDLE} relative`}
                   >
                     <label className="absolute left-11 top-1.5 text-[11px] font-medium text-slate-400">
-                      Email
+                      {t.email}
                     </label>
                     <div className="flex items-center gap-3">
                       <Mail size={18} className="shrink-0 text-slate-400" />
@@ -240,7 +254,7 @@ const SignupPage = () => {
                 onClick={handleNextStep}
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-700 py-3.5 font-semibold text-white shadow-sm transition-colors hover:bg-slate-800"
               >
-                Next Step
+                {t.nextStep}
                 <ArrowRight size={18} />
               </button>
             </div>
@@ -252,7 +266,7 @@ const SignupPage = () => {
               <div className="space-y-4">
                 <div className={`${FIELD_WRAP} ${FIELD_IDLE} relative`}>
                   <label className="absolute left-11 top-1.5 text-[11px] font-medium text-slate-400">
-                    Password
+                    {t.password}
                   </label>
                   <div className="flex items-center gap-3">
                     <Lock size={18} className="shrink-0 text-slate-400" />
@@ -263,13 +277,13 @@ const SignupPage = () => {
                         setPassword(e.target.value)
                       }
                       disabled={isPending}
-                      placeholder="At least 8 characters"
+                      placeholder={t.atLeast8}
                       className="w-full bg-transparent text-slate-800 outline-none placeholder-slate-300 disabled:opacity-60"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((p) => !p)}
-                      className="shrink-0 text-slate-400 hover:text-slate-600"
+                      className="shrink-0 text-slate-400 hover:text-slate-600 focus:outline-none"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -279,7 +293,7 @@ const SignupPage = () => {
 
                 <div className={`${FIELD_WRAP} ${FIELD_IDLE} relative`}>
                   <label className="absolute left-11 top-1.5 text-[11px] font-medium text-slate-400">
-                    Confirm password
+                    {t.confirmPassword}
                   </label>
                   <div className="flex items-center gap-3">
                     <Lock size={18} className="shrink-0 text-slate-400" />
@@ -290,13 +304,13 @@ const SignupPage = () => {
                         setConfirmPassword(e.target.value)
                       }
                       disabled={isPending}
-                      placeholder="Re-enter password"
+                      placeholder={t.reEnterPassword}
                       className="w-full bg-transparent text-slate-800 outline-none placeholder-slate-300 disabled:opacity-60"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword((p) => !p)}
-                      className="shrink-0 text-slate-400 hover:text-slate-600"
+                      className="shrink-0 text-slate-400 hover:text-slate-600 focus:outline-none"
                       tabIndex={-1}
                     >
                       {showConfirmPassword ? (
@@ -334,11 +348,11 @@ const SignupPage = () => {
                   {isPending ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
-                      Creating...
+                      {t.creating}
                     </>
                   ) : (
                     <>
-                      Create Account
+                      {t.createAccount}
                       <ArrowRight size={18} />
                     </>
                   )}
@@ -350,9 +364,9 @@ const SignupPage = () => {
       </div>
 
       <p className="mt-6 text-sm text-slate-500">
-        Already have an account?{" "}
+        {t.alreadyHaveAccount}{" "}
         <Link to="/" className="font-bold text-slate-700 hover:underline">
-          Sign in
+          {t.signIn}
         </Link>
       </p>
     </div>

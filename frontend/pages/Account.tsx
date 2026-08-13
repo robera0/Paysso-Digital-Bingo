@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Shield, Key, Bell, ChevronRight } from "lucide-react";
 import { useProfile, useUpdateProfile } from "../src/services/useUser";
+import { useLanguage } from "../src/LanguageContext";
+import { translations } from "../src/translations";
 
 const Account = () => {
   const { data: profile } = useProfile();
+  const { language } = useLanguage();
+  const t = translations[language].account;
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const info = profile?.profile;
   const [isEditing, setIsEditing] = useState(false);
@@ -45,9 +49,9 @@ const Account = () => {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Account Settings</h1>
+        <h1 className="text-2xl font-bold text-slate-900">{t.accountSettings}</h1>
         <p className="text-sm text-slate-500">
-          Manage your profile and preferences.
+          {t.manageProfile}
         </p>
       </div>
 
@@ -77,7 +81,7 @@ const Account = () => {
                 </h2>
                 <p className="text-sm text-indigo-100">{info?.email}</p>
                 <div className="mt-4 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-md">
-                  Active user
+                  {t.activeUser}
                 </div>
               </div>
             </div>
@@ -86,21 +90,21 @@ const Account = () => {
                 <button className="flex items-center justify-between rounded-xl bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 transition-colors">
                   <div className="flex items-center gap-3">
                     <User size={18} />
-                    Personal Info
+                    {t.personalInfo}
                   </div>
                   <ChevronRight size={16} />
                 </button>
                 <button className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
                   <div className="flex items-center gap-3">
                     <Shield size={18} />
-                    Security
+                    {t.security}
                   </div>
                   <ChevronRight size={16} />
                 </button>
                 <button className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
                   <div className="flex items-center gap-3">
                     <Bell size={18} />
-                    Notifications
+                    {t.notifications}
                   </div>
                   <ChevronRight size={16} />
                 </button>
@@ -114,12 +118,12 @@ const Account = () => {
           {/* Personal Information */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="mb-4 text-lg font-bold text-slate-900">
-              Personal Information
+              {t.personalInformation}
             </h3>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                  First Name
+                  {t.firstName}
                 </label>
                 <input
                   type="text"
@@ -133,7 +137,7 @@ const Account = () => {
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Last Name
+                  {t.lastName}
                 </label>
                 <input
                   type="text"
@@ -147,7 +151,7 @@ const Account = () => {
               </div>
               <div className="sm:col-span-2">
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Email Address
+                  {t.emailAddress}
                 </label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -174,7 +178,7 @@ const Account = () => {
                 }
                 className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-slate-700 hover:bg-slate-600 active:bg-slate-800" : "bg-slate-900 hover:bg-slate-800 active:bg-slate-700"}`}
               >
-                {isEditing ? "Cancel" : "Edit"}
+                {isEditing ? t.cancel : t.edit}
               </button>
 
               <button
@@ -183,7 +187,7 @@ const Account = () => {
                 disabled={!isEditing || isPending}
                 className={`rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-sm focus:outline-none transition-colors ${isEditing ? "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800" : "bg-indigo-500/70 text-slate-100 cursor-not-allowed"}`}
               >
-                {isPending ? "updating profile" : "  Save Changes"}
+                {isPending ? t.updatingProfile : t.saveChanges}
               </button>
             </div>
           </div>
@@ -191,7 +195,7 @@ const Account = () => {
           {/* Security */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Security</h3>
+              <h3 className="text-lg font-bold text-slate-900">{t.security}</h3>
             </div>
 
             <div className="space-y-4">
@@ -202,15 +206,15 @@ const Account = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-slate-900">
-                      Password
+                      {t.password}
                     </p>
                     <p className="text-xs text-slate-500">
-                      Last changed 3 months ago
+                      {t.lastChanged}
                     </p>
                   </div>
                 </div>
                 <button className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
-                  Update
+                  {t.update}
                 </button>
               </div>
             </div>

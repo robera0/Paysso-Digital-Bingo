@@ -3,11 +3,17 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogin, type Credentials } from "../src/services/useLogin";
 
+import { useLanguage } from "../src/LanguageContext";
+import { translations } from "../src/translations";
+
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const { mutate: loginMutation, isPending } = useLogin();
+  const { language, toggleLanguage } = useLanguage();
+  const t = translations[language].login;
+  
   const credentials: Credentials = {
     identifier,
     password,
@@ -24,16 +30,26 @@ const Login = () => {
         backgroundAttachment: "fixed",
       }}
     >
+      {/* Language Toggle */}
+      <div className="absolute right-6 top-8">
+        <button
+          onClick={toggleLanguage}
+          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+        >
+          {language === 'en' ? 'አማርኛ' : 'English'}
+        </button>
+      </div>
+
       {/* Brand mark */}
       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-700 shadow-sm shadow-slate-900/10">
         <Leaf size={26} className="text-slate-100" strokeWidth={2} />
       </div>
 
       <h1 className="mb-1.5 text-center text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-        Welcome Back
+        {t.welcomeBack}
       </h1>
       <p className="mb-6 text-center text-sm text-slate-500 sm:text-base">
-        Sign in to continue your bingo journey
+        {t.signInToContinue}
       </p>
 
       {/* Card */}
@@ -47,7 +63,7 @@ const Login = () => {
 
         {/* Identifier field */}
         <label className="mb-1.5 block text-[11px] font-bold tracking-wide text-slate-500">
-          EMAIL OR PHONE NUMBER
+          {t.emailOrPhone}
         </label>
         <div className="mb-4 flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition-colors focus-within:border-slate-500 focus-within:ring-1 focus-within:ring-slate-500">
           <Phone size={18} className="shrink-0 text-slate-400" />
@@ -55,7 +71,7 @@ const Login = () => {
             type="text"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Enter your email or phone number"
+            placeholder={t.enterEmailOrPhone}
             className="w-full bg-transparent text-slate-700 placeholder-slate-400 outline-none"
           />
         </div>
@@ -63,10 +79,10 @@ const Login = () => {
         {/* Password field */}
         <div className="mb-1.5 flex items-center justify-between">
           <label className="text-[11px] font-bold tracking-wide text-slate-500">
-            PASSWORD
+            {t.password}
           </label>
           <span className="cursor-pointer text-xs font-semibold text-slate-700 hover:underline">
-            Forgot?
+            {t.forgot}
           </span>
         </div>
         <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 transition-colors focus-within:border-slate-500 focus-within:ring-1 focus-within:ring-slate-500">
@@ -77,7 +93,7 @@ const Login = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)
             }
-            placeholder="Enter your password"
+            placeholder={t.enterPassword}
             className="w-full bg-transparent text-slate-700 placeholder-slate-400 outline-none"
           />
           <button
@@ -102,11 +118,11 @@ const Login = () => {
           {isPending ? (
             <>
               <Loader2 size={18} className="animate-spin" />
-              Logging in...
+              {t.loggingIn}
             </>
           ) : (
             <>
-              Sign In
+              {t.signIn}
               <ArrowRight size={18} />
             </>
           )}
@@ -115,9 +131,9 @@ const Login = () => {
 
       {/* Footer */}
       <p className="mt-6 text-sm text-slate-500">
-        Don't have an account?{" "}
+        {t.dontHaveAccount}{" "}
         <Link to="/signup" className="font-bold text-slate-700 hover:underline">
-          Create one
+          {t.createOne}
         </Link>
       </p>
     </div>

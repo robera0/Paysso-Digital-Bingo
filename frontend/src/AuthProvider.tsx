@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { setAccessToken } from "./tokenStore";
 import { VITE_API_URL } from "./services/api";
+import { TwinOrbit } from "@/components/loading-ui/twin-orbit";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -42,7 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   if (!authChecked) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-slate-50/50">
+        <TwinOrbit />
+      </div>
+    );
   }
 
   return (
