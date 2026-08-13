@@ -9,9 +9,10 @@ import { translations } from "../src/translations";
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
-  const { data: gameData } = useGame();
-  const { data: ticketData } = useTicket();
+  const { data: gameData, isLoading: isGameLoading } = useGame();
+  const { data: ticketData, isLoading: ticketIsLoading } = useTicket();
   const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
+  const isLoading = isGameLoading || ticketIsLoading;
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language].game;
 
@@ -100,36 +101,43 @@ const Game = () => {
         </div>
 
         <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
-          {gameData?.boxes?.map((box) => {
-            const isSelected = selectedNumbers.includes(box?.boxNumber);
-            const ticketForBox = ticketData?.ticket?.find(
-              (ticket) => ticket.boxId === box?._id?.toString(),
-            );
-            const hasActiveTicket = Boolean(
-              ticketForBox &&
-              (ticketForBox.isVerified ||
-                new Date(ticketForBox.verificationExpiresAt).getTime() >
-                  Date.now()),
-            );
+          {isLoading
+            ? Array.from({ length: 50 }).map((_, index) => (
+                <div
+                  key={`skeleton-${index}`}
+                  className="aspect-square rounded-xl border border-slate-700 bg-slate-800/50 animate-pulse"
+                />
+              ))
+            : gameData?.boxes?.map((box) => {
+                const isSelected = selectedNumbers.includes(box?.boxNumber);
+                const ticketForBox = ticketData?.ticket?.find(
+                  (ticket) => ticket.boxId === box?._id?.toString(),
+                );
+                const hasActiveTicket = Boolean(
+                  ticketForBox &&
+                  (ticketForBox.isVerified ||
+                    new Date(ticketForBox.verificationExpiresAt).getTime() >
+                      Date.now()),
+                );
 
-            const buttonClass = isSelected
-              ? "border-green-200 bg-green-600 text-white"
-              : box?.isOpened || hasActiveTicket
-                ? "border-green-200 bg-green-600 text-white cursor-not-allowed opacity-80"
-                : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700";
+                const buttonClass = isSelected
+                  ? "border-green-200 bg-green-600 text-white"
+                  : box?.isOpened || hasActiveTicket
+                    ? "border-green-200 bg-green-600 text-white cursor-not-allowed opacity-80"
+                    : "border-slate-700 bg-slate-800 text-slate-200 hover:border-slate-600 hover:bg-slate-700";
 
-            return (
-              <button
-                key={box.boxNumber}
-                type="button"
-                disabled={box?.isOpened || isSelected}
-                onClick={() => toggleNumber(box?.boxNumber)}
-                className={`aspect-square rounded-xl border text-sm font-semibold transition-colors duration-200 ${buttonClass}`}
-              >
-                {box?.boxNumber}
-              </button>
-            );
-          })}
+                return (
+                  <button
+                    key={box.boxNumber}
+                    type="button"
+                    disabled={box?.isOpened || isSelected}
+                    onClick={() => toggleNumber(box?.boxNumber)}
+                    className={`aspect-square rounded-xl border text-sm font-semibold transition-colors duration-200 ${buttonClass}`}
+                  >
+                    {box?.boxNumber}
+                  </button>
+                );
+              })}
         </div>
       </section>
 

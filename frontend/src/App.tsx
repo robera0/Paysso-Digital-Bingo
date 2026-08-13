@@ -8,6 +8,7 @@ import BingoTickets from "../pages/ticket";
 import Login from "../pages/Login";
 import SignUp from "../pages/SignUp.tsx";
 import Account from "../pages/Account";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -53,9 +54,11 @@ const AnimatedRoutes = () => {
         <Route
           path="/game"
           element={
-            <PageWrapper>
-              <Main />
-            </PageWrapper>
+            <ProtectedRoute>
+              <PageWrapper>
+                <Main />
+              </PageWrapper>
+            </ProtectedRoute>
           }
         >
           <Route
