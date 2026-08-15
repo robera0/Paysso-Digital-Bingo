@@ -1,5 +1,4 @@
 import "dotenv/config";
-
 import express from "express";
 import connectDB from "./config/db.js";
 import gameRouter from "./routes/gameRoutes.routes.js";
@@ -31,6 +30,8 @@ app.use(
     credentials: true,
   }),
 );
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("isProduction:", process.env.NODE_ENV === "production");
 
 app.use(express.json());
 app.use(cookieParser());

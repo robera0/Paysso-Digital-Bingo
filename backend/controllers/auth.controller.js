@@ -5,10 +5,12 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../services/token.service.js";
+import "dotenv/config";
 
 const refreshToken_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const isProduction = process.env.NODE_ENV === "production";
-
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("isProduction:", isProduction);
 export const register = async (req, res) => {
   try {
     const { email, password, phone, fullname, username } = req.body;
