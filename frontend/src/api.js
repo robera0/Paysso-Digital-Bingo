@@ -1,9 +1,8 @@
 import axios from "axios";
 import { getAccessToken, setAccessToken } from "./tokenStore";
-import { VITE_API_URL } from "./services/api";
+
 
 const api = axios.create({
-  baseURL: VITE_API_URL,
   withCredentials: true,
 });
 
@@ -51,7 +50,7 @@ api.interceptors.response.use(
 
       try {
         const { data } = await axios.post(
-          `${VITE_API_URL}/api/auth/refresh`,
+          `/api/v1/refresh`,
           {},
           { withCredentials: true },
         );

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
-import { VITE_API_URL } from "./api";
+
 
 export type UserRole = "user" | "admin";
 
@@ -17,7 +17,7 @@ export interface User {
 }
 
 const fetchProfile = async (): Promise<User> => {
-  const res = await fetch(`${VITE_API_URL}/api/v1/auth/profile`, {
+  const res = await fetch(`/api/v1/auth/profile`, {
     credentials: "include",
   });
 
@@ -40,7 +40,7 @@ export const useProfile = () => {
 };
 
 const UpdateProfile = async (data: User): Promise<User> => {
-  const res = await axios.put(`${VITE_API_URL}/api/v1/auth/profile`, data.profile, {
+  const res = await axios.put(`/api/v1/auth/profile`, data.profile, {
     withCredentials: true,
   });
 

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { VITE_API_URL } from "../src/services/api";
+
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 
 const checkAuth = async (): Promise<boolean> => {
  
-  await axios.get(`${VITE_API_URL}/api/v1/auth/profile`, {
+  await axios.get(`/api/v1/auth/profile`, {
     withCredentials: true,
   });
   return true;

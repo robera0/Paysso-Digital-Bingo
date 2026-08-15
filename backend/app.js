@@ -30,8 +30,6 @@ app.use(
     credentials: true,
   }),
 );
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("isProduction:", process.env.NODE_ENV === "production");
 
 app.use(express.json());
 app.use(cookieParser());

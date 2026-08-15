@@ -10,7 +10,7 @@ import {
 } from "react";
 import axios from "axios";
 import { setAccessToken } from "./tokenStore";
-import { VITE_API_URL } from "./services/api";
+
 import { TwinOrbit } from "@/components/loading-ui/twin-orbit";
 
 interface AuthContextType {
@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const silentLogin = async () => {
       try {
         const { data } = await axios.post(
-          `${VITE_API_URL}/api/auth/refresh`,
+          `/api/v1/refresh`,
           {},
           { withCredentials: true },
         );

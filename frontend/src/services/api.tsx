@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-export const VITE_API_URL: string = import.meta.env.VITE_API_URL;
+
 
 export interface Box {
   boxNumber: number;
@@ -42,7 +42,7 @@ export interface TicketApiResponse {
 
 // get Game
 export const fetchGame = async (): Promise<ApiResponse> => {
-  const res = await fetch(`${VITE_API_URL}/api/v1/game/new-game`);
+  const res = await fetch(`/api/v1/game/new-game`);
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
@@ -62,7 +62,7 @@ export const useGame = () => {
 };
 // get tickets
 export const fetchTickets = async (): Promise<TicketApiResponse> => {
-  const res = await fetch(`${VITE_API_URL}/api/v1/auth/ticket`, {
+  const res = await fetch(`/api/v1/auth/ticket`, {
     credentials: "include",
   });
   if (!res.ok) {
@@ -86,7 +86,7 @@ export interface PurchasedTicketApiResponse {
   gameId: string;
 }
 export const purchaseTicket = async (payload: PurchasedTicketApiResponse) => {
-  const res = await axios.post(`${VITE_API_URL}/api/v1/auth/ticket`, payload, {
+  const res = await axios.post(`/api/v1/auth/ticket`, payload, {
     withCredentials: true,
   });
 

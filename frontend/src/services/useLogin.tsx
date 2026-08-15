@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { VITE_API_URL } from "./api";
+
 import { setAccessToken } from "../tokenStore";
 export interface Credentials {
   email?: string;
@@ -25,7 +25,7 @@ const loginUSer = async (credentials: Credentials) => {
       : { phone: rawIdentifier }),
   };
 
-  const res = await axios.post(`${VITE_API_URL}/api/v1/login/user`, payload, {
+  const res = await axios.post(`/api/v1/login/user`, payload, {
     withCredentials: true,
   });
   const data = res.data;
@@ -80,7 +80,7 @@ const registerUser = async (credentials: SignupUser) => {
     username: credentials.username.trim(),
   };
 
-  const res = await axios.post(`${VITE_API_URL}/api/v1/signup/user`, payload, {
+  const res = await axios.post(`/api/v1/signup/user`, payload, {
     withCredentials: true,
   });
 
@@ -120,7 +120,7 @@ export const useSignUp = () => {
 };
 const logoutUser = async () => {
   const res = await axios.post(
-    `${VITE_API_URL}/api/v1/logout/user`,
+    `/api/v1/logout/user`,
     {},
     {
       withCredentials: true,
