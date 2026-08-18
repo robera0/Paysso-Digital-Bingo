@@ -14,7 +14,8 @@ export const getUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const id = new mongoose.Types.ObjectId(req.user.id);
-  const { email, currentpass, password, phone, fullName, username } = req.body;
+  const { email, currentPassword, password, phone, fullName, username } =
+    req.body;
 
   if (!id)
     return res.status(400).json({ success: false, error: "Missing id." });
@@ -51,7 +52,7 @@ export const updateUser = async (req, res) => {
       if (existingUser.email === email) {
         return res.status(409).json({
           success: false,
-          error: "Email already exists.",
+          error: "Email already exist.",
         });
       }
 

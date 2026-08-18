@@ -34,7 +34,17 @@ const Account = () => {
     }
     setIsEditing(false);
   };
-  const handlePassword = () => {};
+  const handlePassword = () => {
+    if (info) {
+      updateProfile({
+        profile: {
+          ...info,
+          currentPassword: password.currentPass,
+          password: password.newPass,
+        },
+      });
+    }
+  };
   const handleSave = () => {
     if (info) {
       updateProfile({
@@ -239,7 +249,12 @@ const Account = () => {
                         <input
                           type="password"
                           value={password.currentPass}
-                          onChange={(e) => setpassword({ ...password, currentPass: e.target.value })}
+                          onChange={(e) =>
+                            setpassword({
+                              ...password,
+                              currentPass: e.target.value,
+                            })
+                          }
                           className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white text-slate-900"
                         />
                       </div>
@@ -250,7 +265,12 @@ const Account = () => {
                         <input
                           type="password"
                           value={password.newPass}
-                          onChange={(e) => setpassword({ ...password, newPass: e.target.value })}
+                          onChange={(e) =>
+                            setpassword({
+                              ...password,
+                              newPass: e.target.value,
+                            })
+                          }
                           className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white text-slate-900"
                         />
                       </div>

@@ -1,40 +1,52 @@
-import axios from "axios";
+import axios, {
+  type InternalAxiosRequestConfig,
+  AxiosError,
+  type AxiosResponse,
+} from "axios";
 import { getAccessToken, setAccessToken } from "./tokenStore";
-
 
 const api = axios.create({
   withCredentials: true,
 });
 
 api.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error: any) => Promise.reject(error),
 );
 
 let isRefreshing = false;
-let refreshSubscribers = [];
+let refreshSubscribers: ((token: string) => void)[] = [];
 
-const subscribeTokenRefresh = (cb) => {
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
   refreshSubscribers.push(cb);
 };
 
-const onRefreshed = (newToken) => {
+const onRefreshed = (newToken: string) => {
   refreshSubscribers.forEach((cb) => cb(newToken));
   refreshSubscribers = [];
 };
 
-api.interceptors.response.use(
-  (response) => response,
-  async (err) => {
-    const originalRequest = err.config;
+// Extend AxiosRequestConfig to include _retry
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
 
-    if (err.response?.status === 401 && !originalRequest?._retry) {
+api.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  async (err: AxiosError) => {
+    const originalRequest = err.config as CustomAxiosRequestConfig;
+
+    if (
+      err.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       if (isRefreshing) {
@@ -49,7 +61,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post(
+        const { data } = await axios.post<{ accessToken: string }>(
           `/api/v1/refresh`,
           {},
           { withCredentials: true },

@@ -2,7 +2,6 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import api from "../api";
 import { toast } from "sonner";
 
-
 export type UserRole = "user" | "admin";
 
 export interface User {
@@ -10,6 +9,8 @@ export interface User {
     email: string;
     phone: string;
     fullName: string;
+    password: string;
+    currentPassword: string;
     username: string;
     updatedAt?: string;
     role: UserRole;
