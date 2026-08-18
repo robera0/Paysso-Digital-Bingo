@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../api";
 import { toast } from "sonner";
 
 
@@ -17,19 +17,8 @@ export interface User {
 }
 
 const fetchProfile = async (): Promise<User> => {
-  const res = await fetch(`/api/v1/auth/profile`, {
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(
-      errorData.message || `Request failed with status ${res.status}`,
-    );
-  }
-  const data: User = await res.json();
-
-  return data;
+  const res = await api.get(`/api/v1/auth/profile`);
+  return res.data;
 };
 
 export const useProfile = () => {
@@ -40,11 +29,9 @@ export const useProfile = () => {
 };
 
 const UpdateProfile = async (data: User): Promise<User> => {
-  const res = await axios.put(`/api/v1/auth/profile`, data.profile, {
-    withCredentials: true,
-  });
+  const res = await api.put(`/api/v1/auth/profile`, data.profile);
 
-  const responseData: User = await res.data;
+  const responseData: User = res.data;
 
   return responseData;
 };
@@ -63,8 +50,8 @@ export const useUpdateProfile = () => {
     },
     onError: (error: unknown) => {
       const message =
-        axios.isAxiosError(error) && error.response?.data?.message
-          ? error.response.data.message
+        error instanceof Error && (error as any).response?.data?.message
+          ? (error as any).response.data.message
           : "Unable to update profile right now";
 
       toast.error(message, {

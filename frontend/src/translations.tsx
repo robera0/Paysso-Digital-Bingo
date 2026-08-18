@@ -3,7 +3,8 @@ export const translations = {
     game: {
       featuredDraw: "Featured draw",
       title: "Pick your lucky numbers with style",
-      description: "Tap any square to highlight it, build your favorite set, and enjoy a more polished bingo experience.",
+      description:
+        "Tap any square to highlight it, build your favorite set, and enjoy a more polished bingo experience.",
       currentPicks: "Current picks",
       bingoBoard: "Bingo board",
       numbersCount: "100 numbers",
@@ -21,11 +22,14 @@ export const translations = {
       copyOurNumber: "Copy Our Number:",
       copyInstruction: "Copy our official Telebirr payment number:",
       sendPayment: "Send Your Payment:",
-      sendInstruction: "Open your Telebirr app and send exactly {price} Birr to the number above.",
+      sendInstruction:
+        "Open your Telebirr app and send exactly {price} Birr to the number above.",
       getReceipt: "Get Your Receipt Link:",
-      getReceiptInstruction: "After your payment is successful, open the digital receipt in Telebirr and copy the web link (it will look like https://transactioninfo.ethiotelecom.et/receipt/XXXXX).",
+      getReceiptInstruction:
+        "After your payment is successful, open the digital receipt in Telebirr and copy the web link (it will look like https://transactioninfo.ethiotelecom.et/receipt/XXXXX).",
       verifyClaim: "Verify & Claim:",
-      verifyInstruction: "Come right back here, paste that link into the box below, and click Verify Ticket to secure your box!",
+      verifyInstruction:
+        "Come right back here, paste that link into the box below, and click Verify Ticket to secure your box!",
       cancel: "Cancel",
       copyAndPay: "Copy & Pay Now",
       understandAndContinue: "Understand & Continue",
@@ -39,7 +43,8 @@ export const translations = {
       unverified: "Unverified",
       ticketReference: "Ticket reference",
       box: "Box",
-      activeTicketDesc: "This is your active bingo ticket. Keep it safe and verify before the window expires.",
+      activeTicketDesc:
+        "This is your active bingo ticket. Keep it safe and verify before the window expires.",
       purchased: "Purchased",
       verifiedOn: "Verified on",
       verificationExpired: "Verification expired",
@@ -48,7 +53,8 @@ export const translations = {
       verifyWindowExpired: "Verification window expired",
       verifyNow: "Verify your ticket now",
       remaining: "remaining",
-      windowEnded: "Your verification window has ended. Go and buy the box again.",
+      windowEnded:
+        "Your verification window has ended. Go and buy the box again.",
       buyTicket: "buy ticket",
       verifyTicket: "Verify ticket",
       verificationLink: "Verification link",
@@ -79,6 +85,8 @@ export const translations = {
       updatingProfile: "updating profile...",
       saveChanges: "Save Changes",
       password: "Password",
+      currentPass: "current password",
+      newPass: "new password",
       lastChanged: "Last changed 3 months ago",
       update: "Update",
     },
@@ -120,7 +128,8 @@ export const translations = {
     game: {
       featuredDraw: "ልዩ እጣ",
       title: "የእድል ቁጥሮትዎን በዘመናዊ መንገድ ይምረጡ",
-      description: "ማንኛውንም ሳጥን በመጫን ይምረጡ፣ ተወዳጅ ቁጥሮችዎን ይሰብስቡ እና በአዝናኝ የቢንጎ ጨዋታ ይደሰቱ።",
+      description:
+        "ማንኛውንም ሳጥን በመጫን ይምረጡ፣ ተወዳጅ ቁጥሮችዎን ይሰብስቡ እና በአዝናኝ የቢንጎ ጨዋታ ይደሰቱ።",
       currentPicks: "የተመረጡ ቁጥሮች",
       bingoBoard: "የቢንጎ ሰሌዳ",
       numbersCount: "100 ቁጥሮች",
@@ -138,11 +147,14 @@ export const translations = {
       copyOurNumber: "ቁጥራችንን ኮፒ ያድርጉ፡",
       copyInstruction: "ትክክለኛውን የቴሌብር መክፈያ ቁጥራችንን ኮፒ ያድርጉ፡",
       sendPayment: "ክፍያዎን ይላኩ፡",
-      sendInstruction: "የቴሌብር መተግበሪያዎን ይክፈቱ እና በትክክል {price} ብር ከላይ ወዳለው ቁጥር ይላኩ።",
+      sendInstruction:
+        "የቴሌብር መተግበሪያዎን ይክፈቱ እና በትክክል {price} ብር ከላይ ወዳለው ቁጥር ይላኩ።",
       getReceipt: "የደረሰኝ ሊንክዎን ያግኙ፡",
-      getReceiptInstruction: "ክፍያዎ በተሳካ ሁኔታ ከተጠናቀቀ በኋላ፣ በቴሌብር ውስጥ ዲጂታል ደረሰኙን ይክፈቱ እና የድረ-ገጽ ሊንኩን ኮፒ ያድርጉ (ይህንን ይመስላል https://transactioninfo.ethiotelecom.et/receipt/XXXXX)።",
+      getReceiptInstruction:
+        "ክፍያዎ በተሳካ ሁኔታ ከተጠናቀቀ በኋላ፣ በቴሌብር ውስጥ ዲጂታል ደረሰኙን ይክፈቱ እና የድረ-ገጽ ሊንኩን ኮፒ ያድርጉ (ይህንን ይመስላል https://transactioninfo.ethiotelecom.et/receipt/XXXXX)።",
       verifyClaim: "ያረጋግጡ እና ይውሰዱ፡",
-      verifyInstruction: "ወደዚህ ይመለሱ፣ ሊንኩን ከታች ባለው ሳጥን ውስጥ ፔስት ያድርጉ እና ሳጥንዎን እርግጠኛ ለማድረግ 'ትኬት አረጋግጥ' የሚለውን ይጫኑ!",
+      verifyInstruction:
+        "ወደዚህ ይመለሱ፣ ሊንኩን ከታች ባለው ሳጥን ውስጥ ፔስት ያድርጉ እና ሳጥንዎን እርግጠኛ ለማድረግ 'ትኬት አረጋግጥ' የሚለውን ይጫኑ!",
       cancel: "ሰርዝ",
       copyAndPay: "ኮፒ አድርግ እና አሁን ክፈል",
       understandAndContinue: "ተረድቻለሁ እና ቀጥል",
@@ -156,7 +168,8 @@ export const translations = {
       unverified: "አልተረጋገጠም",
       ticketReference: "የትኬት መለያ",
       box: "ሳጥን",
-      activeTicketDesc: "ይህ የእርስዎ ገቢር የቢንጎ ትኬት ነው። ደህንነቱን ይጠብቁ እና ጊዜው ከማለፉ በፊት ያረጋግጡ።",
+      activeTicketDesc:
+        "ይህ የእርስዎ ገቢር የቢንጎ ትኬት ነው። ደህንነቱን ይጠብቁ እና ጊዜው ከማለፉ በፊት ያረጋግጡ።",
       purchased: "የተገዛበት",
       verifiedOn: "የተረጋገጠበት",
       verificationExpired: "የማረጋገጫ ጊዜ አልቋል",
@@ -196,6 +209,8 @@ export const translations = {
       updatingProfile: "መገለጫን በማስተካከል ላይ...",
       saveChanges: "ለውጦችን አስቀምጥ",
       password: "የይለፍ ቃል",
+      currentPass: "የአሁኑ የይለፍ ቃል",
+      newPass: "አዲስ የይለፍ ቃል",
       lastChanged: "ለመጨረሻ ጊዜ የተቀየረው ከ3 ወራት በፊት",
       update: "አዘምን",
     },
@@ -232,5 +247,5 @@ export const translations = {
       alreadyHaveAccount: "አስቀድመው አካውንት አልዎት?",
       signIn: "ይግቡ",
     },
-  }
+  },
 };

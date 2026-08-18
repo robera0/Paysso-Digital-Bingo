@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../src/api";
 
 
 interface ProtectedRouteProps {
@@ -10,9 +10,7 @@ interface ProtectedRouteProps {
 
 const checkAuth = async (): Promise<boolean> => {
  
-  await axios.get(`/api/v1/auth/profile`, {
-    withCredentials: true,
-  });
+  await api.get(`/api/v1/auth/profile`);
   return true;
 };
 

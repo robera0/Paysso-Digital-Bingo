@@ -1,5 +1,6 @@
 import UserModel from "../models/user.model.js";
 import mongoose from "mongoose";
+import { hashPassword } from "./password.controller.js";
 
 export const getUser = async (req, res) => {
   const id = new mongoose.Types.ObjectId(req.user.id);
@@ -13,14 +14,22 @@ export const getUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const id = new mongoose.Types.ObjectId(req.user.id);
-  const { email, password, phone, fullName, username } = req.body;
+  const { email, currentpass, password, phone, fullName, username } = req.body;
 
   if (!id)
     return res.status(400).json({ success: false, error: "Missing id." });
   try {
+    const Password = hashPassword(currentPassword);
+    const user = await UserModel.findOne({ _id: id });
+    if (user.password != Password) {
+      return res.status(409).json({
+        success: false,
+        error: "password  is not correct  .",
+      });
+    }
     const updateData = {
       email,
-      password,
+      password: Password,
       phone,
       fullName,
       username,

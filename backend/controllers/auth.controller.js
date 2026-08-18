@@ -150,7 +150,7 @@ export const login = async (req, res) => {
     await user.save();
 
     const REFRESH_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
-    const ACCESS_MAX_AGE = 15 * 60 * 1000; // 15 minutes (Standard for access tokens)
+    const ACCESS_MAX_AGE = 15 * 60 * 1000; // 15 minutes
     res
       .cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -202,6 +202,7 @@ export const refresh = async (req, res) => {
       role: user.role,
     };
     const newAccessToken = generateAccessToken(payload);
+ const ACCESS_MAX_AGE = 15 * 60 * 1000;
 
     res
       .cookie("accessToken", newAccessToken, {
@@ -209,7 +210,7 @@ export const refresh = async (req, res) => {
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         path: "/",
-        maxAge: 4 * 24 * 60 * 60 * 1000,
+        maxAge: ACCESS_MAX_AGE
       })
       .status(200)
       .json({ message: "Token refreshed" });

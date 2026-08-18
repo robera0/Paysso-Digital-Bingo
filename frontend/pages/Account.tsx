@@ -3,6 +3,7 @@ import { User, Mail, Shield, Key, Bell, ChevronRight } from "lucide-react";
 import { useProfile, useUpdateProfile } from "../src/services/useUser";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Account = () => {
   const { data: profile } = useProfile();
@@ -11,7 +12,9 @@ const Account = () => {
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const info = profile?.profile;
   const [isEditing, setIsEditing] = useState(false);
+  const [isPassword, setIsPassword] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "" });
+  const [password, setpassword] = useState({ currentPass: "", newPass: "" });
 
   useEffect(() => {
     if (info) {
@@ -31,7 +34,7 @@ const Account = () => {
     }
     setIsEditing(false);
   };
-
+  const handlePassword = () => {};
   const handleSave = () => {
     if (info) {
       updateProfile({
@@ -49,10 +52,10 @@ const Account = () => {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">{t.accountSettings}</h1>
-        <p className="text-sm text-slate-500">
-          {t.manageProfile}
-        </p>
+        <h1 className="text-2xl font-bold text-slate-900">
+          {t.accountSettings}
+        </h1>
+        <p className="text-sm text-slate-500">{t.manageProfile}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -208,15 +211,61 @@ const Account = () => {
                     <p className="text-sm font-medium text-slate-900">
                       {t.password}
                     </p>
-                    <p className="text-xs text-slate-500">
-                      {t.lastChanged}
-                    </p>
+                    <p className="text-xs text-slate-500">{t.lastChanged}</p>
                   </div>
                 </div>
-                <button className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
-                  {t.update}
+                <button
+                  onClick={() => setIsPassword(!isPassword)}
+                  className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50"
+                >
+                  {isPassword ? t.cancel : t.update}
                 </button>
               </div>
+
+              <AnimatePresence>
+                {isPassword && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-4">
+                      <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700 capitalize">
+                          {t.currentPass}
+                        </label>
+                        <input
+                          type="password"
+                          value={password.currentPass}
+                          onChange={(e) => setpassword({ ...password, currentPass: e.target.value })}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white text-slate-900"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-700 capitalize">
+                          {t.newPass}
+                        </label>
+                        <input
+                          type="password"
+                          value={password.newPass}
+                          onChange={(e) => setpassword({ ...password, newPass: e.target.value })}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white text-slate-900"
+                        />
+                      </div>
+                      <div className="flex justify-end pt-2">
+                        <button
+                          onClick={handlePassword}
+                          className="rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-slate-800 focus:outline-none transition-colors"
+                        >
+                          {t.update}
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
