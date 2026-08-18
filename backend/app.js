@@ -7,6 +7,7 @@ import { ticketRouter, verifyRouter } from "./routes/ticket.routes.js";
 import profileRouter from "./routes/profile.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import redis from "./config/redis.js";
 const app = express();
 
 const allowedOrigins = [

@@ -52,6 +52,7 @@ export const useLogin = () => {
         setAccessToken(data.token);
       }
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.removeQueries({ queryKey: ["auth-check"] });
       navigate("/game");
 
       toast.success("Logged in successfully", {
@@ -100,6 +101,7 @@ export const useSignUp = () => {
         setAccessToken(data.token);
       }
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.removeQueries({ queryKey: ["auth-check"] });
       navigate("/game");
 
       toast.success("Account created successfully", {

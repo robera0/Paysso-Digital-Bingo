@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import GameSession from "../models/Game.model.js";
 import TicketModel from "../models/ticket.model.js";
-
+import redis from "../config/redis.js";
 export const createGame = async (req, res) => {
   try {
     const newGame = await GameSession.createFreshGame();
@@ -22,6 +22,21 @@ export const createGame = async (req, res) => {
 
 export const getGame = async (req, res) => {
   try {
+    const cacheKey = "game";
+
+    const cached = await redis.get(cacheKey);
+
+    if (cached) {
+      console.log(" Redis CACHE HIT");
+
+      return res.json({
+        success: true,
+        source: "cache",
+        data: JSON.parse(cached),
+      });
+    }
+    console.log(" Redis CACHE MISS");
+
     const game = await GameSession.findOne();
 
     if (!game) {
@@ -35,26 +50,30 @@ export const getGame = async (req, res) => {
       expired: { $ne: true },
     });
 
-    for (const ticket of expiredTickets) {
-      await GameSession.findOneAndUpdate(
-        {
-          _id: game._id,
-          "boxes._id": ticket?.boxId,
-        },
-        {
-          $set: {
-            "boxes.$[box].isOpened": false,
-            "boxes.$[box].openedBy": null,
-            "boxes.$[box].openedAt": null,
+    await Promise.all(
+      expiredTickets.map(async (ticket) => {
+        await GameSession.findOneAndUpdate(
+          {
+            _id: game._id,
+            "boxes._id": ticket.boxId,
           },
-        },
-        {
-          arrayFilters: [{ "box._id": ticket?.boxId }],
-        },
-      );
-      await TicketModel.findByIdAndUpdate(ticket._id, { expired: true });
-    }
+          {
+            $set: {
+              "boxes.$[box].isOpened": false,
+              "boxes.$[box].openedBy": null,
+              "boxes.$[box].openedAt": null,
+            },
+          },
+          {
+            arrayFilters: [{ "box._id": ticket.boxId }],
+          },
+        );
 
+        await TicketModel.findByIdAndUpdate(ticket._id, {
+          expired: true,
+        });
+      }),
+    );
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
     await TicketModel.deleteMany({
@@ -74,6 +93,16 @@ export const getGame = async (req, res) => {
       openedAt: box?.openedAt,
       prize: box?.isOpened ? box?.prize : null,
     }));
+
+    const responseData = {
+      gameId: game._id,
+      status: game.status,
+      remainingBoxes: game.remainingBoxes,
+      boxes: sanitizedBoxes,
+    };
+
+    await redis.set(cacheKey, JSON.stringify(responseData), "EX", 5);
+    console.log(" Data stored in Redis");
 
     res.json({
       success: true,
