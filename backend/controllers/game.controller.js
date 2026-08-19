@@ -2,10 +2,12 @@ import mongoose from "mongoose";
 import GameSession from "../models/Game.model.js";
 import TicketModel from "../models/ticket.model.js";
 import redis from "../config/redis.js";
+import { clearGameCache } from "../config/redis.js";
 export const createGame = async (req, res) => {
   try {
     const newGame = await GameSession.createFreshGame();
     console.log(newGame);
+    await clearGameCache();
     res.status(201).json({
       success: true,
       gameId: newGame._id,
@@ -27,7 +29,7 @@ export const getGame = async (req, res) => {
     const cached = await redis.get(cacheKey);
 
     if (cached) {
-      console.log(" Redis CACHE HIT");
+      console.log(" Redis GAME CACHE HIT");
 
       return res.json({
         success: true,
@@ -35,7 +37,7 @@ export const getGame = async (req, res) => {
         data: JSON.parse(cached),
       });
     }
-    console.log(" Redis CACHE MISS");
+    console.log(" Redis GAME CACHE MISS");
 
     const game = await GameSession.findOne();
 
@@ -81,7 +83,7 @@ export const getGame = async (req, res) => {
       isVerified: false,
       verificationExpiresAt: { $lt: fiveMinutesAgo },
     });
-    const newGame = await GameSession.find();
+    const newGame = await GameSession.findOne();
 
     const updatedGame = expiredTickets.length ? newGame : game;
 
