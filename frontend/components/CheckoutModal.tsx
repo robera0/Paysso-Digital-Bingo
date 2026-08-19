@@ -146,6 +146,7 @@ const CheckoutModal = ({
                   </p>
 
                   <img
+                    loading="lazy"
                     src="/tele.jpg"
                     alt="How to get your Telebirr receipt"
                     className="w-full max-w-md h-auto rounded-lg object-contain"
