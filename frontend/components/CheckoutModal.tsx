@@ -49,8 +49,8 @@ const CheckoutModal = ({
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm sm:p-6">
-      <div className="flex w-full max-w-md max-h-[90vh] flex-col rounded-2xl bg-white shadow-xl sm:max-w-lg">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center pb-22 bg-black/50 p-4 backdrop-blur-sm sm:p-6">
+      <div className="flex w-full max-w-md max-h-[90vh] flex-col  rounded-2xl bg-white shadow-xl sm:max-w-lg">
         {/* Header */}
         <div className="flex flex-shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 sm:px-6 sm:py-4">
           <h2 className="text-base font-bold text-slate-900 sm:text-lg">
@@ -79,8 +79,12 @@ const CheckoutModal = ({
 
               <div className="space-y-3 text-sm sm:space-y-4">
                 <div className="flex justify-between">
-                  <span className="font-medium text-slate-500">{t.ticketPrice}</span>
-                  <span className="font-semibold text-slate-900">{price} ETB</span>
+                  <span className="font-medium text-slate-500">
+                    {t.ticketPrice}
+                  </span>
+                  <span className="font-semibold text-slate-900">
+                    {price} ETB
+                  </span>
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-3">
                   <span className="font-medium text-slate-900">{t.total}</span>
@@ -104,20 +108,60 @@ const CheckoutModal = ({
           ) : (
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">1</div>
-                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words"><strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">{t.copyOurNumber} </strong>{t.copyInstruction} <strong className="text-slate-900 font-semibold">{TELEBIRR_NUMBER}</strong>.</p>
+                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+                  1
+                </div>
+                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words">
+                  <strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">
+                    {t.copyOurNumber}{" "}
+                  </strong>
+                  {t.copyInstruction}{" "}
+                  <strong className="text-slate-900 font-semibold">
+                    {TELEBIRR_NUMBER}
+                  </strong>
+                  .
+                </p>
               </div>
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">2</div>
-                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words"><strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">{t.sendPayment} </strong>{t.sendInstruction.replace('{price}', price.toString())}</p>
+                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+                  2
+                </div>
+                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words">
+                  <strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">
+                    {t.sendPayment}{" "}
+                  </strong>
+                  {t.sendInstruction.replace("{price}", price.toString())}
+                </p>
               </div>
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">3</div>
-                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words"><strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">{t.getReceipt} </strong>{t.getReceiptInstruction}</p>
+                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+                  3
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words">
+                    <strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">
+                      {t.getReceipt}{" "}
+                    </strong>
+                    {t.getReceiptInstruction}
+                  </p>
+
+                  <img
+                    src="/tele.jpg"
+                    alt="How to get your Telebirr receipt"
+                    className="w-full max-w-md h-auto rounded-lg object-contain"
+                  />
+                </div>
               </div>
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">4</div>
-                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words"><strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">{t.verifyClaim} </strong>{t.verifyInstruction}</p>
+                <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+                  4
+                </div>
+                <p className="flex-1 min-w-0 text-[13px] leading-relaxed text-slate-600 sm:text-sm break-words">
+                  <strong className="text-slate-900 block mb-0.5 sm:mb-0 sm:inline">
+                    {t.verifyClaim}{" "}
+                  </strong>
+                  {t.verifyInstruction}
+                </p>
               </div>
             </div>
           )}
