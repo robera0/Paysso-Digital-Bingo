@@ -66,10 +66,10 @@ export const getTicket = async (req, res) => {
   "source": "telebirr-html",
   "payerName": "<payer name>",
   "payerTelebirrNo": "251********",
-  "payerAccountType": "Individual Customer",
-  "creditedPartyName": "<merchant or recipient name>",
-  "creditedPartyAccountNo": "251********",
-  "transactionStatus": "Completed",
+  "// payerAccountType": "Individual Customer",
+  // "creditedPartyName": "<merchant or recipient name>",
+  // "creditedPartyAccountNo": "251********",
+  // "transactionStatus": "Completed",
   "receiptNo": "ABCD1234EF",
   "paymentDate": "01-01-2026 00:00:00",
   "settledAmount": "100 Birr",
@@ -86,6 +86,9 @@ export const verifyTicket = async (req, res) => {
   const userId = req.user?.id;
   const { receiptUrl, boxId } = req.body;
 
+  const TOTAL_AMOUNT = "150 Birr";
+  const EXPECTED_RECEIVER = "Robera Ararsa Ulu";
+
   if (!userId) {
     return res
       .status(401)
@@ -100,24 +103,62 @@ export const verifyTicket = async (req, res) => {
   try {
     const isValid = await verifyReceipt(receiptUrl);
 
-    if (!isValid) {
+    if (!isValid || isValid.error || !isValid.receipt) {
+      return res.status(400).json({
+        message: isValid?.error || "Receipt verification failed or invalid URL",
+      });
+    }
+
+    const receipt = isValid.receipt;
+
+    if (receipt.transactionStatus !== "Completed") {
+      return res.status(400).json({ message: "Transaction is not completed" });
+    }
+
+    if (receipt.creditedPartyName !== EXPECTED_RECEIVER) {
       return res
         .status(400)
-        .json({ message: "Receipt verification failed or invalid" });
+        .json({ message: "Invalid receiver name on receipt" });
+    }
+
+    if (receipt.settledAmount !== TOTAL_AMOUNT) {
+      return res.status(400).json({
+        message: `Invalid amount. Expected ${TOTAL_AMOUNT}, but receipt shows ${receipt.settledAmount}`,
+      });
+    }
+
+    if (!receipt.receiptNo) {
+      return res
+        .status(400)
+        .json({ message: "Receipt number is missing from receipt data" });
+    }
+
+    const existingTicket = await TicketModel.findOne({
+      receiptNo: receipt.receiptNo,
+    });
+    if (existingTicket) {
+      return res
+        .status(400)
+        .json({ message: "This receipt has already been used." });
     }
 
     const updatedTicket = await TicketModel.findOneAndUpdate(
-      { boxId },
+      {
+        boxId,
+      },
       {
         isVerified: true,
         verificationExpiresAt: null,
         expired: false,
+        receiptNo: receipt.receiptNo,
       },
       { returnDocument: "after" },
     );
 
     if (!updatedTicket) {
-      return res.status(404).json({ message: "Ticket not found for this box" });
+      return res.status(404).json({
+        message: "No unverified ticket found for this box and user",
+      });
     }
 
     return res.status(200).json({
@@ -126,6 +167,11 @@ export const verifyTicket = async (req, res) => {
     });
   } catch (err) {
     console.error("verifyTicket Error:", err);
+    if (err.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "This receipt has already been used." });
+    }
     return res
       .status(500)
       .json({ message: err.message || "Internal server error" });

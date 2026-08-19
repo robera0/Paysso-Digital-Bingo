@@ -23,6 +23,7 @@ const ticketSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    receiptNo: String,
     boxId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "GameSession",

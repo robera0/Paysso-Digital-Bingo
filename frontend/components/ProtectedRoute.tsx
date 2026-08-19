@@ -1,16 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
-
+import api from ".././src/api";
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const checkAuth = async (): Promise<boolean> => {
- 
-  await axios.get(`/api/v1/auth/profile`, {
+  await api.get(`/api/v1/auth/profile`, {
     withCredentials: true,
   });
   return true;
@@ -19,11 +17,15 @@ const checkAuth = async (): Promise<boolean> => {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const navigate = useNavigate();
 
-  const { data: isAuthenticated, isLoading, isError } = useQuery({
+  const {
+    data: isAuthenticated,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["auth-check"],
     queryFn: checkAuth,
-    retry: false,           
-    staleTime: 60_000,      
+    retry: false,
+    staleTime: 60_000,
   });
 
   useEffect(() => {
@@ -32,7 +34,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     }
   }, [isLoading, isError, isAuthenticated, navigate]);
 
-  
   if (isLoading) return null;
 
   // Auth failed — don't flash protected content before redirect fires
