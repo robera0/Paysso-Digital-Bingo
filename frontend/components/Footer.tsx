@@ -32,9 +32,9 @@ export default function Footer() {
   }, [location.pathname]);
 
   return (
-    <footer className="fixed inset-x-0 bottom-0 z-50 flex flex-col sm:top-1/2 sm:right-6 sm:bottom-auto sm:left-auto sm:-translate-y-1/2 sm:w-auto sm:items-end">
-      <div className="w-full border-t border-slate-200 bg-white/95 px-2 py-2 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-md sm:rounded-[28px] sm:border sm:w-auto sm:min-w-[110px] sm:px-2 sm:py-2 sm:shadow-[0_8px_30px_rgba(15,23,42,0.08)]">
-        <nav className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-col sm:gap-2">
+    <footer className="fixed inset-x-0 bottom-0 z-50 flex flex-col lg:top-1/2 lg:right-6 lg:bottom-auto lg:left-auto lg:-translate-y-1/2 lg:w-auto lg:items-end">
+      <div className="w-full border-t border-slate-200 bg-white/95 px-2 py-2 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-md lg:rounded-[28px] lg:border lg:w-auto lg:min-w-[110px] lg:px-2 lg:py-2 lg:shadow-[0_8px_30px_rgba(15,23,42,0.08)]">
+        <nav className="grid grid-cols-2 gap-1.5 lg:flex lg:flex-col lg:gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive = activeKey === item.key;
             const label = item.key === "bingo" ? t.bingo : t.tickets;
@@ -67,7 +67,7 @@ export default function Footer() {
           })}
         </nav>
 
-        <div className="col-span-2 mt-1.5 flex items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1.5 text-center text-[9px] font-medium text-slate-500 sm:col-span-1">
+        <div className="col-span-2 mt-1.5 flex items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1.5 text-center text-[9px] font-medium text-slate-500 lg:col-span-1">
           PDB
         </div>
       </div>

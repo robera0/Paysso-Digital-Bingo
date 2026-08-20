@@ -1,15 +1,21 @@
 import { useState } from "react";
 import CheckoutModal from "../components/CheckoutModal";
+import PrizeMarquee from "../components/PrizeMarquee";
 import { useGame, useTicket } from "../src/services/api";
 import { usePurchaseTicket } from "../src/services/api";
 import { toast } from "sonner";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
-
+import { RefreshCw } from "lucide-react";
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
-  const { data: gameData, isLoading: isGameLoading } = useGame();
+  const {
+    data: gameData,
+    isLoading: isGameLoading,
+    refetch: refetchGame,
+    isRefetching,
+  } = useGame();
   const { data: ticketData, isLoading: ticketIsLoading } = useTicket();
   const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
   const isLoading = isGameLoading || ticketIsLoading;
@@ -46,57 +52,88 @@ const Game = () => {
           onClick={toggleLanguage}
           className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
         >
-          {language === 'en' ? 'አማርኛ' : 'English'}
+          {language === "en" ? "አማርኛ" : "English"}
         </button>
       </div>
-      
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <div className="mb-3 inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-              {t.featuredDraw}
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              {t.title}
-            </h1>
-            <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
-              {t.description}
-            </p>
-          </div>
 
-          <div className="rounded-2xl bg-slate-900 p-4 text-white shadow-sm">
-            <p className="text-xs font-medium text-slate-400">{t.currentPicks}</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {selectedNumbers.slice(0, 6).map((number) => (
-                <span
-                  key={number}
-                  className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-semibold text-slate-100"
-                >
-                  {number}
-                </span>
-              ))}
-              {selectedNumbers.length > 6 && (
-                <span className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-semibold text-slate-300">
-                  +{selectedNumbers.length - 6}
-                </span>
-              )}
+      {/* Header + Prizes side by side */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:gap-5">
+        {/* Main header */}
+        <section className="flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-3 inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
+                {t.featuredDraw}
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                {t.title}
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+                {t.description}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-slate-900 p-4 text-white shadow-sm">
+              <p className="text-xs text-center font-medium text-slate-400">
+                {t.currentPicks}
+              </p>
+              <div className="mt-2 flex  items-center justify-center flex-wrap gap-2">
+                {selectedNumbers.slice(0, 6).map((number) => (
+                  <span
+                    key={number}
+                    className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-semibold text-slate-100"
+                  >
+                    {number}
+                  </span>
+                ))}
+                {selectedNumbers.length > 6 && (
+                  <span className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-semibold text-slate-300">
+                    +{selectedNumbers.length - 6}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
+        </section>
+
+        {/* Prize marquee column */}
+        <div className="w-full lg:w-64 xl:w-72">
+          <PrizeMarquee />
         </div>
-      </section>
+      </div>
 
       <section className="rounded-2xl border border-slate-800 bg-slate-200 p-3 shadow-sm sm:p-4">
         <div className="mb-3 flex items-center justify-between px-1 sm:px-2">
           <div>
             <p className="text-xs font-medium text-slate-700">{t.bingoBoard}</p>
-            <h2 className="text-lg font-semibold text-black">{t.numbersCount}</h2>
+            <h2 className="text-lg font-semibold text-black">
+              {t.numbersCount}
+            </h2>
           </div>
           <button
             type="button"
-            onClick={() => setSelectedNumbers([])}
-            className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+            disabled={isRefetching}
+            onClick={() => {
+              setSelectedNumbers([]);
+              refetchGame();
+            }}
+            className="flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-80"
           >
-            {t.reset}
+            {isRefetching ? (
+              <>
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-400 border-t-white" />
+                Refreshing...
+              </>
+            ) : (
+              <>
+                <RefreshCw
+                  size={16}
+                  className={isRefetching ? "animate-spin" : ""}
+                />
+
+                {t.refresh}
+              </>
+            )}
           </button>
         </div>
 
@@ -105,7 +142,7 @@ const Game = () => {
             ? Array.from({ length: 50 }).map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
-                  className="aspect-square rounded-xl border border-slate-700 bg-slate-800/50 animate-pulse"
+                  className="aspect-square animate-pulse rounded-xl border border-slate-700 bg-slate-800/50"
                 />
               ))
             : gameData?.boxes?.map((box) => {

@@ -10,7 +10,7 @@ const Main = () => {
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <div className="flex w-full flex-col">
         <Header />
-        <main className="flex-1 pb-[7rem] sm:pb-0">
+        <main className="flex-1 pb-[7rem] lg:pb-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -23,7 +23,7 @@ const Main = () => {
             </motion.div>
           </AnimatePresence>
         </main>
-        <div className="h-[6rem] sm:hidden" aria-hidden="true" />
+        <div className="h-[6rem] lg:hidden" aria-hidden="true" />
         <Footer />
       </div>
     </div>

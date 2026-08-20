@@ -31,10 +31,11 @@ export const getGame = async (req, res) => {
     if (cached) {
       console.log(" Redis GAME CACHE HIT");
 
+      const cachedGame = JSON.parse(cached);
+
       return res.json({
         success: true,
-        source: "cache",
-        data: JSON.parse(cached),
+        ...cachedGame,
       });
     }
     console.log(" Redis GAME CACHE MISS");
