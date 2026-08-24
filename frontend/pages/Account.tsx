@@ -27,6 +27,24 @@ const Account = () => {
     }
   }, [info]);
 
+  useEffect(() => {
+    if (isPassword) {
+      const timer = setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 350);
+
+      return () => clearTimeout(timer);
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [isPassword]);
+
   const handleCancel = () => {
     if (info) {
       const [firstName = "", lastName = ""] = (info.fullName ?? "").split(" ");
@@ -49,7 +67,7 @@ const Account = () => {
             setpassword({ currentPass: "", newPass: "" });
             setIsPassword(false);
           },
-        }
+        },
       );
     }
   };
@@ -108,14 +126,20 @@ const Account = () => {
             </div>
             <div className="p-4">
               <nav className="flex flex-col space-y-1">
-                <button className="flex items-center justify-between rounded-xl bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 transition-colors">
+                <button
+                  onClick={() => setIsPassword(false)}
+                  className={`flex items-center justify-between rounded-xl ${!isPassword && "bg-indigo-50 text-indigo-700"} px-4 py-3 text-sm font-medium  transition-colors`}
+                >
                   <div className="flex items-center gap-3">
                     <User size={18} />
                     {t.personalInfo}
                   </div>
                   <ChevronRight size={16} />
                 </button>
-                <button className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900">
+                <button
+                  onClick={() => setIsPassword(true)}
+                  className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium  ${isPassword && "bg-indigo-50 text-indigo-700"} transition-colors hover:bg-slate-50 hover:text-slate-900`}
+                >
                   <div className="flex items-center gap-3">
                     <Shield size={18} />
                     {t.security}
