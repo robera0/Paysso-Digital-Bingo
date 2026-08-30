@@ -78,7 +78,7 @@ function getRemainingTime(verificationExpiresAt: string | Date) {
 function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
   const { language } = useLanguage();
   const t = translations[language].ticket;
-  
+
   const ticketRef = ticketDataStr._id.slice(-8).toUpperCase();
   const sessionRef = ticketDataStr.boxId.slice(-8).toUpperCase();
   const [timeLeft, setTimeLeft] = useState(() =>
@@ -97,7 +97,9 @@ function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
 
   const isExpired = timeLeft.isExpired;
   const { minutes, seconds } = timeLeft;
-  const verificationDate = ticketDataStr.isVerified ? ticketDataStr.updatedAt : ticketDataStr.verificationExpiresAt;
+  const verificationDate = ticketDataStr.isVerified
+    ? ticketDataStr.updatedAt
+    : ticketDataStr.verificationExpiresAt;
 
   const {
     mutate: verifyDate,
@@ -132,9 +134,7 @@ function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
               <span>#{ticketRef}</span>
             </span>
           </h3>
-          <p className="mt-2 text-sm text-slate-500">
-            {t.activeTicketDesc}
-          </p>
+          <p className="mt-2 text-sm text-slate-500">{t.activeTicketDesc}</p>
         </div>
         <StatusPill isVerified={ticketDataStr.isVerified} t={t} />
       </div>
@@ -158,7 +158,9 @@ function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
           </p>
           <p
             className={`mt-3 text-sm font-semibold ${
-              !ticketDataStr.isVerified && isExpired ? "text-rose-600" : "text-slate-900"
+              !ticketDataStr.isVerified && isExpired
+                ? "text-rose-600"
+                : "text-slate-900"
             }`}
           >
             {formatDateTime(verificationDate)}
@@ -203,7 +205,7 @@ function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
               type="button"
               disabled={isExpired}
               onClick={handleOpenVerify}
-              className={`mt-4 w-42 rounded-lg px-4 py-3 text-sm font-semibold text-white transition ${
+              className={`mt-4 w-46 rounded-lg px-4 py-3 text-sm font-semibold text-white transition ${
                 isExpired
                   ? "bg-slate-400 cursor-not-allowed"
                   : "bg-slate-900 hover:bg-slate-700"

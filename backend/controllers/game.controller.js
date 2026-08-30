@@ -6,7 +6,7 @@ import { clearGameCache } from "../config/redis.js";
 export const createGame = async (req, res) => {
   try {
     const newGame = await GameSession.createFreshGame();
-    console.log(newGame);
+
     await clearGameCache();
     res.status(201).json({
       success: true,

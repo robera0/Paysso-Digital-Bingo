@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import connectDB from "./config/db.js";
 import gameRouter from "./routes/gameRoutes.routes.js";
+import adminGameRouter from "./routes/admin.route.js";
 import authRouter from "./routes/auth.routes.js";
 import { ticketRouter, verifyRouter } from "./routes/ticket.routes.js";
 import profileRouter from "./routes/profile.routes.js";
@@ -37,6 +38,7 @@ app.use(cookieParser());
 connectDB(app);
 
 app.use("/api/v1", authRouter);
+app.use("/api/v1/game", adminGameRouter);
 app.use("/api/v1/game", gameRouter);
 app.use("/api/v1/auth", ticketRouter);
 app.use("/api/v1/auth", verifyRouter);

@@ -9,8 +9,8 @@ import Login from "../pages/Login";
 import SignUp from "../pages/SignUp.tsx";
 import Account from "../pages/Account";
 import ProtectedRoute from "../components/ProtectedRoute";
-import { AuthProvider } from "./AuthProvider.tsx"; 
-
+import { AuthProvider } from "./AuthProvider.tsx";
+import AdminApp from "./Admin/AdminApp";
 const queryClient = new QueryClient();
 
 const pageTransition = {
@@ -45,6 +45,16 @@ const AnimatedRoutes = () => {
               </PageWrapper>
             }
           />
+
+          <Route
+            path="/admin"
+            element={
+              <PageWrapper>
+                <AdminApp />
+              </PageWrapper>
+            }
+          />
+
           <Route
             path="/signup"
             element={

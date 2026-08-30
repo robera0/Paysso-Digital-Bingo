@@ -21,7 +21,7 @@ const GameSessionSchema = new mongoose.Schema(
   {
     status: {
       type: String,
-      enum: ["ACTIVE", "COMPLETED"],
+      enum: ["ACTIVE", "PAUSED", "COMPLETED"],
       default: "ACTIVE",
     },
     remainingBoxes: { type: Number, default: 100 },
@@ -31,9 +31,14 @@ const GameSessionSchema = new mongoose.Schema(
 );
 
 GameSessionSchema.statics.createFreshGame = async function () {
+  const FIRST_PRIZE = "l";
+  const SECOND_PRIZE = "m";
+  const THIRD_PRIZE = "d";
   const prizePool = [
-    ...Array(1).fill({ type: "GRAND_PRIZE", value: 50 }),
-    ...Array(99).fill({ type: "NO_PRIZE", value: 0 }),
+    ...Array.from({ length: 1 }, () => ({ type: FIRST_PRIZE, value: 0 })),
+    ...Array.from({ length: 3 }, () => ({ type: SECOND_PRIZE, value: 0 })),
+    ...Array.from({ length: 6 }, () => ({ type: THIRD_PRIZE, value: 0 })),
+    ...Array.from({ length: 99 }, () => ({ type: "NO_PRIZE", value: 0 })),
   ];
 
   for (let i = prizePool.length - 1; i > 0; i--) {

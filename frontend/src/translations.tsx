@@ -64,7 +64,7 @@ export const translations = {
       windowEnded:
         "Your verification window has ended. Go and buy the box again.",
       buyTicket: "buy ticket",
-      verifyTicket: "Verify ticket",
+      verifyTicket: "Verify ticket with",
       verificationLink: "Verification link",
       enterUrl: "Enter verification URL",
       verifying: "Verifying...",
