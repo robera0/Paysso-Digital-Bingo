@@ -1,3 +1,4 @@
+import { useCreateGame } from "@/services/api";
 import { X, Plus, Trash2, Boxes, Loader2 } from "lucide-react";
 
 interface PrizePool {
@@ -6,18 +7,35 @@ interface PrizePool {
   amount: number;
   value: number;
 }
-export interface createGame {
+export interface CreateGameProps {
   priceBox: number;
   totalBox: number;
   prizePool: PrizePool[];
   onClose: () => void;
+}
+
+export interface CreateGamePayload {
+  priceBox: number;
+  totalBox: number;
+  prizePool: PrizePool[];
 }
 export default function CreateGameSessionModal({
   priceBox,
   totalBox,
   prizePool,
   onClose,
-}: createGame) {
+}: CreateGameProps) {
+  const handleCreateGame = () => {
+    const payload: CreateGamePayload = {
+      priceBox,
+      totalBox,
+      prizePool,
+    };
+
+    gameMutation(payload);
+  };
+  const { mutate: gameMutation, isPending: isCreatingGame } = useCreateGame();
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="bg-[#161618] border border-[#26262a] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
@@ -152,9 +170,12 @@ export default function CreateGameSessionModal({
           >
             Cancel
           </button>
-          <button className="px-4 py-2 bg-[#1868DB] hover:bg-[#1456b8] text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5">
+          <button
+            onClick={handleCreateGame}
+            className="px-4 py-2 bg-[#1868DB] hover:bg-[#1456b8] text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+          >
             <Loader2 className="w-3.5 h-3.5 animate-spin hidden" />
-            Create Session
+            {isCreatingGame ? "Creating..." : "Create Game"}
           </button>
         </div>
       </div>

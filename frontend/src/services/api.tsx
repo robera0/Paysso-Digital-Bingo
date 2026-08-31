@@ -2,9 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-
-
+import type { CreateGamePayload } from "@/components/CreateGame";
 export interface Box {
   boxNumber: number;
   prize: string;
@@ -39,6 +37,44 @@ export interface TicketApiResponse {
   success: boolean;
   ticket: TicketResponse[];
 }
+//create Game
+
+export const CreateGame = async (payload: CreateGamePayload) => {
+  const res = await axios.post(`/api/v1/auth/start`, payload, {
+    withCredentials: true,
+  });
+
+  const data = res.data;
+
+  return data;
+};
+
+export const useCreateGame = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: (payload: CreateGamePayload) => CreateGame(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["game"] });
+      navigate("/admin");
+      toast.success("You Create the Game successfully", {
+        duration: 3000,
+      });
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          "You didn't Create the Game, try again";
+        toast.error(message, { duration: 3000 });
+      } else {
+        toast.error("You didn't Create the Game, try again", {
+          duration: 3000,
+        });
+      }
+    },
+  });
+};
 
 // get Game
 export const fetchGame = async (): Promise<ApiResponse> => {
