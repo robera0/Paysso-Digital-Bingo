@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Plus, Radio, Wallet, Ticket, Search, FileText } from "lucide-react";
 import { useGameAnalytics } from "@/services/useAnalytics";
+import CreateGameSessionModal from "@/components/CreateGame";
 
 export const Games: React.FC = () => {
   const [filter, setFilter] = useState<
@@ -8,6 +9,7 @@ export const Games: React.FC = () => {
   >("All");
   const [search, setSearch] = useState("");
   const { data: Game } = useGameAnalytics();
+  const [CreateGame, setCreateGame] = useState(false);
   const gamesList = [
     {
       id: "1",
@@ -83,7 +85,10 @@ export const Games: React.FC = () => {
             Monitor, edit, and launch live and upcoming raffle instances.
           </p>
         </div>
-        <button className="bg-gradient-to-r from-[#1868DB] to-[#1251ad] text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:from-[#1456b8] hover:to-[#0f4392] transition-all shadow-[0_4px_16px_rgba(24,104,219,0.35)] w-full sm:w-auto cursor-pointer border border-[#3b82f6]/30">
+        <button
+          onClick={() => setCreateGame(true)}
+          className="bg-gradient-to-r from-[#1868DB] to-[#1251ad] text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:from-[#1456b8] hover:to-[#0f4392] transition-all shadow-[0_4px_16px_rgba(24,104,219,0.35)] w-full sm:w-auto cursor-pointer border border-[#3b82f6]/30"
+        >
           <Plus className="w-4 h-4" />
           <span>Start New Game</span>
         </button>
@@ -137,9 +142,6 @@ export const Games: React.FC = () => {
           </div>
           <div className="text-3xl font-black font-mono text-white">
             {Game?.unverifiedTicket}
-          </div>
-          <div className="w-full bg-[#121214] h-2 rounded-full mt-2.5 overflow-hidden border border-[#26262a]">
-            <div className="bg-gradient-to-r from-[#1868DB] to-[#3b82f6] h-full w-[83%] rounded-full shadow-[0_0_10px_rgba(24,104,219,0.5)]" />
           </div>
         </div>
       </div>
@@ -298,6 +300,30 @@ export const Games: React.FC = () => {
           );
         })}
       </div>
+
+      {CreateGame && (
+        <>
+          <CreateGameSessionModal
+            priceBox={200}
+            totalBox={100}
+            prizePool={[
+              {
+                prizeName: "iPhone",
+                prize: "1st Prize",
+                amount: 1,
+                value: 5000,
+              },
+              {
+                prizeName: "TV",
+                prize: "2nd Prize",
+                amount: 2,
+                value: 3000,
+              },
+            ]}
+            onClose={() => setCreateGame(false)}
+          />
+        </>
+      )}
     </div>
   );
 };

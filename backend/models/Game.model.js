@@ -6,6 +6,7 @@ const BoxSchema = new mongoose.Schema({
   prize: {
     type: { type: String, required: true },
     value: { type: Number, default: 0 },
+    amount: number,
   },
   isOpened: { type: Boolean, default: false },
   openedBy: {

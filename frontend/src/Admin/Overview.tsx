@@ -132,7 +132,7 @@ export const Overview: React.FC = () => {
             </div>
           </div>
           <div className="text-2.5xl font-black font-mono text-white tracking-tight">
-            84,392
+            {Game?.ActiveUsers}
           </div>
           <div className="mt-3 flex items-center gap-2 text-xs">
             <span className="text-[#10B981] font-mono font-bold flex items-center gap-0.5 bg-[#10B981]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30">

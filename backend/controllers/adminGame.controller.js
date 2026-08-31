@@ -4,7 +4,7 @@ import UserModel from "../models/user.model.js";
 export const getLiveGames = async (req, res) => {
   try {
     const liveGames = await GameSession.countDocuments({ status: "ACTIVE" });
-
+    const activeUsers = await UserModel.countDocuments();
     const GameAnalytics = await GameSession.aggregate([
       {
         $unwind: "$boxes",
@@ -48,21 +48,11 @@ export const getLiveGames = async (req, res) => {
     const OpenedBox = GameAnalytics.filter((item) => item.isOpened).length;
     res.status(200).json({
       activeGame: liveGames,
+      ActiveUsers: activeUsers,
       GameAnalytics: GameAnalytics,
       unverifiedTicket: unverifiedTicket,
       OpenedBox: OpenedBox,
       soldTickets: soldTickets,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-export const ActiveUsers = async (req, res) => {
-  try {
-    const activeUsers = await UserModel.countDocuments();
-    res.status(200).json({
-      ActiveUsers: activeUsers,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
