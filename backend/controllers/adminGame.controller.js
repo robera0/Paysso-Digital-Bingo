@@ -44,12 +44,14 @@ export const getLiveGames = async (req, res) => {
     const unverifiedTicket = GameAnalytics.filter(
       (item) => !item.isVerified,
     ).length;
+    const soldTickets = GameAnalytics.filter((item) => item.isVerified).length;
     const OpenedBox = GameAnalytics.filter((item) => item.isOpened).length;
     res.status(200).json({
       activeGame: liveGames,
       GameAnalytics: GameAnalytics,
       unverifiedTicket: unverifiedTicket,
       OpenedBox: OpenedBox,
+      soldTickets: soldTickets,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -61,6 +63,28 @@ export const ActiveUsers = async (req, res) => {
     const activeUsers = await UserModel.countDocuments();
     res.status(200).json({
       ActiveUsers: activeUsers,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const TicketSold = async (req, res) => {
+  try {
+    const SoldTickets = await TicketModel.countDocuments({ isVerified: true });
+    const TotalRevenue = await TicketModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: {
+            $sum: "$price",
+          },
+        },
+      },
+    ]);
+    res.status(200).json({
+      TicketSold: SoldTickets,
+      TotalRevenue: TotalRevenue,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

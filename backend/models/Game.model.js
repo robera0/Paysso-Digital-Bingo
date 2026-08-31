@@ -26,7 +26,13 @@ const GameSessionSchema = new mongoose.Schema(
     },
     remainingBoxes: { type: Number, default: 100 },
     boxes: [BoxSchema],
+    price: {
+      type: Number,
+      required: true,
+      default: 100,
+    },
   },
+
   { timestamps: true },
 );
 

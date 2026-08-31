@@ -23,6 +23,10 @@ const ticketSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    price: {
+      type: Number,
+      required: true,
+    },
     receiptNo: String,
     boxId: {
       type: mongoose.Schema.Types.ObjectId,

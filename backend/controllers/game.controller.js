@@ -196,6 +196,7 @@ export const PurchaseBox = async (req, res) => {
         {
           gameId: gameId,
           user: userId,
+          price: updatedGame.price,
           boxId: claimedBox._id,
           isVerified: false,
           verificationExpiresAt: expireAt,
