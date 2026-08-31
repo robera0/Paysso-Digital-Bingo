@@ -1,5 +1,6 @@
 import GameSession from "../models/Game.model.js";
 import TicketModel from "../models/ticket.model.js";
+import UserModel from "../models/user.model.js";
 export const getLiveGames = async (req, res) => {
   try {
     const liveGames = await GameSession.countDocuments({ status: "ACTIVE" });
@@ -49,6 +50,17 @@ export const getLiveGames = async (req, res) => {
       GameAnalytics: GameAnalytics,
       unverifiedTicket: unverifiedTicket,
       OpenedBox: OpenedBox,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const ActiveUsers = async (req, res) => {
+  try {
+    const activeUsers = await UserModel.countDocuments();
+    res.status(200).json({
+      ActiveUsers: activeUsers,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Radio, Wallet, Ticket, Search, FileText } from "lucide-react";
+import { useGameAnalytics } from "@/services/useAnalytics";
 
 export const Games: React.FC = () => {
   const [filter, setFilter] = useState<
     "All" | "Live" | "Scheduled" | "Completed"
   >("All");
   const [search, setSearch] = useState("");
-
+  const { data: Game } = useGameAnalytics();
   const gamesList = [
     {
       id: "1",
@@ -58,13 +59,17 @@ export const Games: React.FC = () => {
     },
   ];
 
-  const filteredGames = gamesList.filter((g) => {
-    const matchFilter = filter === "All" ? true : g.status === filter;
-    const matchSearch =
-      g.name.toLowerCase().includes(search.toLowerCase()) ||
-      g.gameId.toLowerCase().includes(search.toLowerCase());
-    return matchFilter && matchSearch;
-  });
+  const filteredGames = useMemo(() => {
+    return gamesList.filter((g) => {
+      const matchFilter = filter === "All" || g.status === filter;
+
+      const matchSearch =
+        g.name.toLowerCase().includes(search.toLowerCase()) ||
+        g.gameId.toLowerCase().includes(search.toLowerCase());
+
+      return matchFilter && matchSearch;
+    });
+  }, [gamesList, filter, search]);
 
   return (
     <div className="p-3.5 sm:p-6 md:p-8 w-full max-w-7xl mx-auto space-y-6">
@@ -95,7 +100,10 @@ export const Games: React.FC = () => {
               <Radio className="w-4 h-4 text-[#10B981]" />
             </div>
           </div>
-          <div className="text-3xl font-black font-mono text-white">4</div>
+          <div className="text-3xl font-black font-mono text-white">
+            {" "}
+            {Game?.activeGame}
+          </div>
           <p className="text-xs text-[#10B981] mt-1 font-mono font-semibold">
             +1 since yesterday
           </p>
@@ -111,7 +119,7 @@ export const Games: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-black font-mono text-white">
-            $870,000
+            {Game?.OpenedBox}
           </div>
           <p className="text-xs text-[#8e8e93] mt-1 font-medium">
             Across all running pools
@@ -121,14 +129,14 @@ export const Games: React.FC = () => {
         <div className="bg-gradient-to-b from-[#18181c] to-[#141416] border border-[#26262a] rounded-2xl p-5 shadow-sm hover:border-[#1868DB]/40 hover:-translate-y-0.5 transition-all duration-200 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between text-[#8e8e93] mb-2">
             <span className="font-bold text-xs uppercase tracking-wider text-[#a1a1a5]">
-              VERIFIED TICKETS
+              UNVERIFIED TICKETS
             </span>
             <div className="w-8.5 h-8.5 rounded-xl bg-[#1868DB]/15 flex items-center justify-center border border-[#1868DB]/30">
               <Ticket className="w-4 h-4 text-[#3b82f6]" />
             </div>
           </div>
           <div className="text-3xl font-black font-mono text-white">
-            71,330 / 85,000
+            {Game?.unverifiedTicket}
           </div>
           <div className="w-full bg-[#121214] h-2 rounded-full mt-2.5 overflow-hidden border border-[#26262a]">
             <div className="bg-gradient-to-r from-[#1868DB] to-[#3b82f6] h-full w-[83%] rounded-full shadow-[0_0_10px_rgba(24,104,219,0.5)]" />
