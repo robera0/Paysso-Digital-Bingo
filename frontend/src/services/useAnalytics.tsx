@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import type { ApiResponse } from "./api";
 
 export interface Game {
   activeGame: number;
@@ -6,6 +7,7 @@ export interface Game {
   OpenedBox: number;
   ActiveUsers: number;
   soldTickets: number;
+  Games: ApiResponse[];
 }
 interface Revenue {
   _id: null;

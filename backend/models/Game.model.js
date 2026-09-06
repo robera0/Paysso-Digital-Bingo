@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import crypto from "crypto";
 
 const BoxSchema = new mongoose.Schema({
   boxNumber: { type: Number, required: true },
@@ -23,8 +22,9 @@ const GameSessionSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["ACTIVE", "PAUSED", "COMPLETED"],
-      default: "ACTIVE",
+      default: "PAUSED",
     },
+    gameName: String,
     remainingBoxes: { type: Number, default: 100 },
     boxes: [BoxSchema],
     price: {
@@ -36,36 +36,6 @@ const GameSessionSchema = new mongoose.Schema(
 
   { timestamps: true },
 );
-
-GameSessionSchema.statics.createFreshGame = async function () {
-  const FIRST_PRIZE = "l";
-  const SECOND_PRIZE = "m";
-  const THIRD_PRIZE = "d";
-  const prizePool = [
-    ...Array.from({ length: 1 }, () => ({ type: FIRST_PRIZE, value: 0 })),
-    ...Array.from({ length: 3 }, () => ({ type: SECOND_PRIZE, value: 0 })),
-    ...Array.from({ length: 6 }, () => ({ type: THIRD_PRIZE, value: 0 })),
-    ...Array.from({ length: 99 }, () => ({ type: "NO_PRIZE", value: 0 })),
-  ];
-
-  for (let i = prizePool.length - 1; i > 0; i--) {
-    const j = crypto.randomInt(0, i + 1);
-
-    [prizePool[i], prizePool[j]] = [prizePool[j], prizePool[i]];
-  }
-
-  const boxes = prizePool.map((prize, index) => ({
-    boxNumber: index + 1,
-    prize: prize,
-    isOpened: false,
-  }));
-
-  return await this.create({
-    boxes: boxes,
-    remainingBoxes: 100,
-    status: "ACTIVE",
-  });
-};
 
 const GameSession = mongoose.model("gamesessions", GameSessionSchema);
 

@@ -14,10 +14,12 @@ export interface Box {
 // for game
 export interface ApiResponse {
   success?: boolean;
+  gameName: string;
   gameId: string;
   status: string;
   remainingBoxes: number;
   boxes: Box[];
+  price: number;
 }
 
 // for tickets

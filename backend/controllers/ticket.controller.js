@@ -60,28 +60,6 @@ export const getTicket = async (req, res) => {
   }
 };
 
-/*
-
-{
-  "source": "telebirr-html",
-  "payerName": "<payer name>",
-  "payerTelebirrNo": "251********",
-  "// payerAccountType": "Individual Customer",
-  // "creditedPartyName": "<merchant or recipient name>",
-  // "creditedPartyAccountNo": "251********",
-  // "transactionStatus": "Completed",
-  "receiptNo": "ABCD1234EF",
-  "paymentDate": "01-01-2026 00:00:00",
-  "settledAmount": "100 Birr",
-  "serviceFee": "1.74 Birr",
-  "serviceFeeVAT": "0.26 Birr",
-  "totalPaidAmount": "102 Birr",
-  "paymentReason": "Send Money to Registered Customer",
-  "paymentMode": "telebirr",
-  "paymentChannel": "API/App"
-}
-*/
-
 export const verifyTicket = async (req, res) => {
   const userId = req.user?.id;
   const { receiptUrl, boxId } = req.body;

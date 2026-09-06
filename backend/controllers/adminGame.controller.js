@@ -5,7 +5,9 @@ export const getLiveGames = async (req, res) => {
   try {
     const liveGames = await GameSession.countDocuments({ status: "ACTIVE" });
     const activeUsers = await UserModel.countDocuments();
+    const Game = await GameSession.find();
     const GameAnalytics = await GameSession.aggregate([
+      { $match: { status: "ACTIVE" } },
       {
         $unwind: "$boxes",
       },
@@ -53,6 +55,7 @@ export const getLiveGames = async (req, res) => {
       unverifiedTicket: unverifiedTicket,
       OpenedBox: OpenedBox,
       soldTickets: soldTickets,
+      Games: Game,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

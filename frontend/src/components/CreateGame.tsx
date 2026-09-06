@@ -8,6 +8,7 @@ interface PrizePool {
   value: number;
 }
 export interface CreateGameProps {
+  gameName: string;
   priceBox: number;
   totalBox: number;
   prizePool: PrizePool[];
@@ -15,11 +16,13 @@ export interface CreateGameProps {
 }
 
 export interface CreateGamePayload {
+  gameName: String;
   priceBox: number;
   totalBox: number;
   prizePool: PrizePool[];
 }
 export default function CreateGameSessionModal({
+  gameName,
   priceBox,
   totalBox,
   prizePool,
@@ -27,6 +30,7 @@ export default function CreateGameSessionModal({
 }: CreateGameProps) {
   const handleCreateGame = () => {
     const payload: CreateGamePayload = {
+      gameName,
       priceBox,
       totalBox,
       prizePool,
@@ -46,11 +50,8 @@ export default function CreateGameSessionModal({
               <Boxes className="w-4 h-4 text-[#3b82f6]" />
             </div>
             <div>
-              <span className="text-[10px] font-mono text-[#8e8e93] uppercase font-semibold">
-                New Session
-              </span>
               <h3 className="text-base font-bold text-white leading-tight">
-                Mystery Box Game
+                PayssoBingo Box Game
               </h3>
             </div>
           </div>
@@ -65,6 +66,17 @@ export default function CreateGameSessionModal({
         {/* Body */}
         <div className="p-5 space-y-4 text-xs overflow-y-auto">
           {/* Price + total boxes */}
+
+          <div className="">
+            <label className="text-[10px] text-[#8e8e93] uppercase tracking-wider font-bold">
+              Game Name
+            </label>
+            <input
+              value={gameName}
+              placeholder="Game name"
+              className="w-full bg-[#121214] border border-[#26262a] rounded-xl px-3 py-2.5 text-white font-mono text-sm focus:outline-none focus:border-[#3b82f6] transition-colors"
+            />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-[10px] text-[#8e8e93] uppercase tracking-wider font-bold">
@@ -149,14 +161,16 @@ export default function CreateGameSessionModal({
               <span className="text-[9px] text-[#8e8e93] uppercase tracking-wider font-bold">
                 Prize boxes
               </span>
-              <div className="text-sm font-mono font-bold text-white">6</div>
+              <div className="text-sm font-mono font-bold text-white">
+                {prizePool.length}
+              </div>
             </div>
             <div className="bg-[#121214] border border-[#26262a] rounded-xl p-3 text-center space-y-0.5">
               <span className="text-[9px] text-[#8e8e93] uppercase tracking-wider font-bold">
                 Empty boxes
               </span>
               <div className="text-sm font-mono font-bold text-[#8e8e93]">
-                94
+                {totalBox - prizePool.length}
               </div>
             </div>
           </div>

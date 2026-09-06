@@ -5,73 +5,29 @@ import CreateGameSessionModal from "@/components/CreateGame";
 
 export const Games: React.FC = () => {
   const [filter, setFilter] = useState<
-    "All" | "Live" | "Scheduled" | "Completed"
+    "All" | "ACTIVE" | "PAUSED" | "COMPLETED"
   >("All");
   const [search, setSearch] = useState("");
   const { data: Game } = useGameAnalytics();
   const [CreateGame, setCreateGame] = useState(false);
-  const gamesList = [
-    {
-      id: "1",
-      gameId: "#RAFFLE-850",
-      name: "Cyberpunk Diamond Vault",
-      status: "Live",
-      prizePool: "$250,000",
-      ticketsSold: "18,490",
-      maxTickets: "20,000",
-      progress: 92,
-      imminent: true,
-      category: "Major Mega",
-    },
-    {
-      id: "2",
-      gameId: "#RAFFLE-851",
-      name: "Apex Midnight Sprint",
-      status: "Live",
-      prizePool: "$45,000",
-      ticketsSold: "2,840",
-      maxTickets: "5,000",
-      progress: 56,
-      imminent: false,
-      category: "Daily Flash",
-    },
-    {
-      id: "3",
-      gameId: "#RAFFLE-852",
-      name: "Midweek Supercharge",
-      status: "Scheduled",
-      prizePool: "$75,000",
-      ticketsSold: "0",
-      maxTickets: "10,000",
-      progress: 0,
-      startsIn: "04h 12m",
-      category: "Weekly Standard",
-    },
-    {
-      id: "4",
-      gameId: "#RAFFLE-849",
-      name: "Global Highroller Showdown",
-      status: "Completed",
-      prizePool: "$500,000",
-      ticketsSold: "50,000",
-      maxTickets: "50,000",
-      progress: 100,
-      endedDate: "Aug 28, 2026",
-      category: "Special Event",
-    },
-  ];
-
+  const gamesList = Game?.Games || [];
   const filteredGames = useMemo(() => {
     return gamesList.filter((g) => {
       const matchFilter = filter === "All" || g.status === filter;
 
-      const matchSearch =
-        g.name.toLowerCase().includes(search.toLowerCase()) ||
-        g.gameId.toLowerCase().includes(search.toLowerCase());
+      const searchLower = search.toLowerCase().trim();
+      const matchName = g.gameName?.toLowerCase().includes(searchLower);
+      const matchId = String(g.gameId || "")
+        .toLowerCase()
+        .includes(searchLower);
+
+      const matchSearch = matchName || matchId;
 
       return matchFilter && matchSearch;
     });
-  }, [gamesList, filter, search]);
+  }, [Game, gamesList, filter, search]);
+
+  console.log(gamesList);
 
   return (
     <div className="p-3.5 sm:p-6 md:p-8 w-full max-w-7xl mx-auto space-y-6">
@@ -160,34 +116,32 @@ export const Games: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap gap-1.5 p-1 bg-[#121214] rounded-xl border border-[#26262a] w-full sm:w-auto">
-          {(["All", "Live", "Scheduled", "Completed"] as const).map(
-            (status) => (
-              <button
-                key={status}
-                onClick={() => setFilter(status)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex-1 sm:flex-initial text-center ${
-                  filter === status
-                    ? "bg-gradient-to-r from-[#1868DB] to-[#1251ad] text-white shadow-sm font-bold"
-                    : "text-[#8e8e93] hover:text-white hover:bg-[#1a1a1e]"
-                }`}
-              >
-                {status}
-              </button>
-            ),
-          )}
+          {(["All", "ACTIVE", "PAUSED", "COMPLETED"] as const).map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex-1 sm:flex-initial text-center ${
+                filter === status
+                  ? "bg-gradient-to-r from-[#1868DB] to-[#1251ad] text-white shadow-sm font-bold"
+                  : "text-[#8e8e93] hover:text-white hover:bg-[#1a1a1e]"
+              }`}
+            >
+              {status}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Games Card Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        {filteredGames.map((game) => {
-          const isLive = game.status === "Live";
-          const isScheduled = game.status === "Scheduled";
-          const isCompleted = game.status === "Completed";
+        {filteredGames?.map((game) => {
+          const isLive = game.status === "ACTIVE";
+          const isScheduled = game.status === "PAUSED";
+          const isCompleted = game.status === "COMPLETED";
 
           return (
             <div
-              key={game.id}
+              key={game?.gameId}
               className="bg-[#161618] border border-[#26262a] rounded-2xl overflow-hidden flex flex-col hover:border-[#3b82f6]/40 transition-all shadow-sm"
             >
               {/* Card Header */}
@@ -210,12 +164,9 @@ export const Games: React.FC = () => {
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-white">
-                    {game.name}
+                    {game.gameName}
                   </h3>
                 </div>
-                <span className="text-xs font-semibold text-[#8e8e93] bg-[#1a1a1e] px-2.5 py-1 rounded-lg border border-[#26262a]">
-                  {game.category}
-                </span>
               </div>
 
               {/* Card Metrics */}
@@ -225,7 +176,7 @@ export const Games: React.FC = () => {
                     Prize Pool
                   </p>
                   <p className="text-lg text-[#10B981] font-bold font-mono">
-                    {game.prizePool}
+                    {game?.price}
                   </p>
                 </div>
                 <div>
@@ -236,42 +187,7 @@ export const Games: React.FC = () => {
                         ? "Ended On"
                         : "Tickets Sold"}
                   </p>
-                  <p className="text-base text-white font-mono font-semibold">
-                    {isScheduled
-                      ? game.startsIn
-                      : isCompleted
-                        ? game.endedDate
-                        : `${game.ticketsSold} / ${game.maxTickets}`}
-                  </p>
                 </div>
-
-                {isLive && (
-                  <div className="col-span-2">
-                    <div className="flex justify-between items-end mb-1">
-                      <span className="text-[11px] text-[#8e8e93]">
-                        Progress to Draw
-                      </span>
-                      <span className="text-xs font-bold font-mono text-[#1868DB]">
-                        {game.progress}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-[#121214] h-2 rounded-full overflow-hidden border border-[#26262a]">
-                      <div
-                        className={`h-full rounded-full ${
-                          game.imminent
-                            ? "bg-[#F59E0B] shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                            : "bg-[#1868DB] shadow-[0_0_10px_rgba(24,104,219,0.5)]"
-                        }`}
-                        style={{ width: `${game.progress}%` }}
-                      />
-                    </div>
-                    {game.imminent && (
-                      <p className="text-[10px] text-[#F59E0B] mt-1 text-right font-semibold animate-pulse">
-                        Draw Imminent (Capacity &gt; 90%)
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Action Buttons */}
@@ -304,6 +220,7 @@ export const Games: React.FC = () => {
       {CreateGame && (
         <>
           <CreateGameSessionModal
+            gameName={""}
             priceBox={200}
             totalBox={100}
             prizePool={[
