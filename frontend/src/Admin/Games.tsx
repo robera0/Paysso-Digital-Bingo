@@ -1,15 +1,89 @@
 import React, { useState, useMemo } from "react";
 import { Plus, Radio, Wallet, Ticket, Search, FileText } from "lucide-react";
 import { useGameAnalytics } from "@/services/useAnalytics";
-import CreateGameSessionModal from "@/components/CreateGame";
+import CreateGameSessionModal, {
+  type PrizePool,
+} from "@/components/CreateGame";
 
 export const Games: React.FC = () => {
   const [filter, setFilter] = useState<
     "All" | "ACTIVE" | "PAUSED" | "COMPLETED"
   >("All");
   const [search, setSearch] = useState("");
+   
   const { data: Game } = useGameAnalytics();
   const [CreateGame, setCreateGame] = useState(false);
+  
+  const [createGameForm, setCreateGameForm] = useState({
+    gameName: "",
+    priceBox: "200",
+    totalBox: "100",
+    prizePool: [
+      {
+        prizeName: "iPhone",
+        prize: "1st Prize",
+        amount: "1",
+        value: "5000",
+      },
+      {
+        prizeName: "TV",
+        prize: "2nd Prize",
+        amount: "2",
+        value: "3000",
+      },
+    ] as PrizePool[],
+  });
+
+  const handleCreateGameFieldChange = (
+    field: "gameName" | "priceBox" | "totalBox",
+    value: string,
+  ) => {
+    setCreateGameForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handlePrizeChange = (
+    index: number,
+    field: keyof PrizePool,
+    value: string,
+  ) => {
+    setCreateGameForm((prev) => ({
+      ...prev,
+      prizePool: prev.prizePool.map((prize, prizeIndex) =>
+        prizeIndex === index
+          ? {
+              ...prize,
+              [field]: value,
+            }
+          : prize,
+      ),
+    }));
+  };
+
+  const handleAddPrize = () => {
+    setCreateGameForm((prev) => ({
+      ...prev,
+      prizePool: [
+        ...prev.prizePool,
+        {
+          prizeName: "",
+          prize: "",
+          amount: "1",
+          value: "0",
+        },
+      ],
+    }));
+  };
+
+  const handleRemovePrize = (index: number) => {
+    setCreateGameForm((prev) => ({
+      ...prev,
+      prizePool: prev.prizePool.filter((_, prizeIndex) => prizeIndex !== index),
+    }));
+  };
+
   const gamesList = Game?.Games || [];
   const filteredGames = useMemo(() => {
     return gamesList.filter((g) => {
@@ -27,8 +101,7 @@ export const Games: React.FC = () => {
     });
   }, [Game, gamesList, filter, search]);
 
-  console.log(gamesList);
-
+  
   return (
     <div className="p-3.5 sm:p-6 md:p-8 w-full max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -49,6 +122,8 @@ export const Games: React.FC = () => {
           <span>Start New Game</span>
         </button>
       </div>
+
+       
 
       {/* Summary KPI Counters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -217,26 +292,19 @@ export const Games: React.FC = () => {
         })}
       </div>
 
+     
+
       {CreateGame && (
         <>
           <CreateGameSessionModal
-            gameName={""}
-            priceBox={200}
-            totalBox={100}
-            prizePool={[
-              {
-                prizeName: "iPhone",
-                prize: "1st Prize",
-                amount: 1,
-                value: 5000,
-              },
-              {
-                prizeName: "TV",
-                prize: "2nd Prize",
-                amount: 2,
-                value: 3000,
-              },
-            ]}
+            gameName={createGameForm.gameName}
+            priceBox={createGameForm.priceBox}
+            totalBox={createGameForm.totalBox}
+            prizePool={createGameForm.prizePool}
+            onChange={handleCreateGameFieldChange}
+            onPrizeChange={handlePrizeChange}
+            onAddPrize={handleAddPrize}
+            onRemovePrize={handleRemovePrize}
             onClose={() => setCreateGame(false)}
           />
         </>

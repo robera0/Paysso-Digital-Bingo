@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
 import { RefreshCw } from "lucide-react";
+import DiceAnimation from "../components/RollingDice"
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
@@ -16,6 +17,7 @@ const Game = () => {
     refetch: refetchGame,
     isRefetching,
   } = useGame();
+  const [rolling, setRolling] = useState(true);
   const { data: ticketData, isLoading: ticketIsLoading } = useTicket();
   const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
   const isLoading = isGameLoading || ticketIsLoading;
@@ -95,6 +97,7 @@ const Game = () => {
             </div>
           </div>
         </section>
+        <DiceAnimation rolling={rolling} />
 
         {/* Prize marquee column */}
         <div className="w-full lg:w-64 xl:w-72">
@@ -174,7 +177,7 @@ const Game = () => {
                     {box?.boxNumber}
                   </button>
                 );
-              })}
+              } )}
         </div>
       </section>
 

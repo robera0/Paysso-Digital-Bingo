@@ -7,25 +7,50 @@ import crypto from "crypto";
 
 export const createGame = async (req, res) => {
   try {
-    const { gameName, prize = [], boxNumber, value = [], price } = req.body;
+    const body = req.body ?? {};
+    const gameName = String(body.gameName ?? "").trim();
+    const price = Number(body.price ?? body.priceBox ?? 0);
+    const totalBoxes = Number(body.boxNumber ?? body.totalBox ?? 0);
 
-    const totalBoxes = Number(boxNumber);
-    if (isNaN(totalBoxes) || totalBoxes < 10) {
+    const legacyPrizePool = Array.isArray(body.prizePool) ? body.prizePool : [];
+    const normalizedPrize = Array.isArray(body.prize)
+      ? body.prize
+      : legacyPrizePool.map((item) => item.prize || item.prizeName || "Prize");
+    const normalizedValue = Array.isArray(body.value)
+      ? body.value
+      : legacyPrizePool.map((item) => Number(item.value ?? 0));
+
+    if (!gameName) {
+      return res.status(400).json({
+        success: false,
+        message: "gameName is required",
+      });
+    }
+
+    if (!Number.isFinite(price) || price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "price must be a valid number greater than zero",
+      });
+    }
+
+    if (!Number.isFinite(totalBoxes) || totalBoxes < 10) {
       return res.status(400).json({
         success: false,
         message: "boxNumber must be a valid number and at least 10",
       });
     }
 
-    if (!Array.isArray(prize) || prize.length < 3) {
+    if (!Array.isArray(normalizedPrize) || normalizedPrize.length < 3) {
       return res.status(400).json({
         success: false,
         message:
           "prize must be an array with at least 3 items [tier1, tier2, tier3]",
       });
     }
-    const [FIRST_PRIZE, SECOND_PRIZE, THIRD_PRIZE] = prize;
 
+    const [FIRST_PRIZE, SECOND_PRIZE, THIRD_PRIZE] = normalizedPrize;
+    const value = Array.isArray(normalizedValue) ? normalizedValue : [];
     const noPrizeBoxes = totalBoxes - 10;
 
     const prizePool = [
@@ -63,7 +88,7 @@ export const createGame = async (req, res) => {
       boxes,
       remainingBoxes: boxes.length,
       price,
-      status: "ACTIVE",
+      status: "PAUSED",
       gameName,
     });
     await clearGameCache();
