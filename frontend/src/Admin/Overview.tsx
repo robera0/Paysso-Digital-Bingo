@@ -4,8 +4,6 @@ import {
   ShoppingCart,
   Clock,
   ShieldCheck,
-  Plus,
-  Download,
   Wallet,
   TrendingUp,
   Users,
