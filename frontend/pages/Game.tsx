@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import CheckoutModal from "../components/CheckoutModal";
 import PrizeMarquee from "../components/PrizeMarquee";
 import { useGame, useTicket } from "../src/services/api";
@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
 import { RefreshCw } from "lucide-react";
+import DiceAnimation from "../components/RollingDice"
 const Game = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
@@ -16,12 +17,18 @@ const Game = () => {
     refetch: refetchGame,
     isRefetching,
   } = useGame();
+  const [rolling, setRolling] = useState(false);
   const { data: ticketData, isLoading: ticketIsLoading } = useTicket();
   const { mutate: purchaseTicket, isPending } = usePurchaseTicket();
   const isLoading = isGameLoading || ticketIsLoading;
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language].game;
-
+ 
+  useEffect(() => {
+  if (gameData?.remainingBoxes === 0) {
+    setRolling(true);
+  }
+}, [gameData?.remainingBoxes]);
   const toggleNumber = (number: number) => {
     setSelectedNumbers((prev) =>
       prev.includes(number)
@@ -95,6 +102,7 @@ const Game = () => {
             </div>
           </div>
         </section>
+      
 
         {/* Prize marquee column */}
         <div className="w-full lg:w-64 xl:w-72">
@@ -138,14 +146,17 @@ const Game = () => {
         </div>
 
         <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
-          {isLoading
+          {isLoading 
             ? Array.from({ length: 50 }).map((_, index) => (
                 <div
                   key={`skeleton-${index}`}
                   className="aspect-square animate-pulse rounded-xl border border-slate-700 bg-slate-800/50"
                 />
               ))
-            : gameData?.boxes?.map((box) => {
+              : gameData?.remainingBoxes === 0 ? (
+  <DiceAnimation rolling={true} />
+) 
+            : (gameData?.boxes?.map((box) => {
                 const isSelected = selectedNumbers.includes(box?.boxNumber);
                 const ticketForBox = ticketData?.ticket?.find(
                   (ticket) => ticket.boxId === box?._id?.toString(),
@@ -174,7 +185,7 @@ const Game = () => {
                     {box?.boxNumber}
                   </button>
                 );
-              })}
+              } ))}
         </div>
       </section>
 

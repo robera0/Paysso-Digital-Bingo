@@ -42,7 +42,7 @@ export interface TicketApiResponse {
 //create Game
 
 export const CreateGame = async (payload: CreateGamePayload) => {
-  const res = await axios.post(`/api/v1/auth/start`, payload, {
+  const res = await axios.post(`/api/v1/game/start`, payload, {
     withCredentials: true,
   });
 
@@ -59,12 +59,13 @@ export const useCreateGame = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["game"] });
       navigate("/admin");
-      toast.success("You Create the Game successfully", {
+      toast.success("You Created the Game successfully", {
         duration: 3000,
       });
     },
     onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {
+       
         const message =
           error.response?.data?.message ||
           "You didn't Create the Game, try again";
@@ -91,7 +92,6 @@ export const fetchGame = async (): Promise<ApiResponse> => {
 
   return data;
 };
-
 export const useGame = () => {
   return useQuery<ApiResponse>({
     queryKey: ["game"],

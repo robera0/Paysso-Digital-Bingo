@@ -53,7 +53,13 @@ const Login = () => {
       </p>
 
       {/* Card */}
-      <div className="w-full max-w-sm rounded-3xl bg-white/95 p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-100 backdrop-blur-sm sm:p-7">
+      <form
+        className="w-full max-w-sm rounded-3xl bg-white/95 p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-100 backdrop-blur-sm sm:p-7"
+        onSubmit={(e) => {
+          e.preventDefault();
+          loginMutation(credentials);
+        }}
+      >
         {/* Artwork Image */}
         <img
           src="/Block_bingo.jpeg"
@@ -107,12 +113,8 @@ const Login = () => {
 
         {/* Sign in button */}
         <button
-          type="button"
+          type="submit"
           disabled={isPending}
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-            loginMutation(credentials);
-          }}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-700 py-3.5 font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
         >
           {isPending ? (
@@ -127,7 +129,7 @@ const Login = () => {
             </>
           )}
         </button>
-      </div>
+      </form>
 
       {/* Footer */}
       <p className="mt-6 text-sm text-slate-500">
