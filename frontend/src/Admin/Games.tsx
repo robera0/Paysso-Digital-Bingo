@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Plus, Radio, Wallet, Ticket, Search, FileText } from "lucide-react";
-import { useGameAnalytics } from "@/services/useAnalytics";
+import { useAllGameAnalytics, useGameAnalytics } from "@/services/useAnalytics";
 import CreateGameSessionModal from "@/components/CreateGame";
 
 export const Games: React.FC = () => {
@@ -8,9 +8,11 @@ export const Games: React.FC = () => {
     "All" | "ACTIVE" | "PAUSED" | "COMPLETED"
   >("All");
   const [search, setSearch] = useState("");
-  const { data: Game } = useGameAnalytics();
+  const { data: liveGameData } = useGameAnalytics();
+  const { data: gameListResponse } = useAllGameAnalytics();
   const [CreateGame, setCreateGame] = useState(false);
-  const gamesList = Game?.Games || [];
+  const gamesList = gameListResponse?.Games || [];
+
   const filteredGames = useMemo(() => {
     return gamesList.filter((g) => {
       const matchFilter = filter === "All" || g.status === filter;
@@ -25,9 +27,7 @@ export const Games: React.FC = () => {
 
       return matchFilter && matchSearch;
     });
-  }, [Game, gamesList, filter, search]);
-
-  console.log(gamesList);
+  }, [gamesList, filter, search]);
 
   return (
     <div className="p-3.5 sm:p-6 md:p-8 w-full max-w-7xl mx-auto space-y-6">
@@ -62,8 +62,7 @@ export const Games: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-black font-mono text-white">
-            {" "}
-            {Game?.activeGame}
+            {liveGameData?.activeGame ?? 0}
           </div>
           <p className="text-xs text-[#10B981] mt-1 font-mono font-semibold">
             +1 since yesterday
@@ -80,7 +79,7 @@ export const Games: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-black font-mono text-white">
-            {Game?.OpenedBox}
+            {liveGameData?.OpenedBox ?? 0}
           </div>
           <p className="text-xs text-[#8e8e93] mt-1 font-medium">
             Across all running pools
@@ -97,7 +96,7 @@ export const Games: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-black font-mono text-white">
-            {Game?.unverifiedTicket}
+            {liveGameData?.unverifiedTicket ?? 0}
           </div>
         </div>
       </div>
@@ -138,6 +137,10 @@ export const Games: React.FC = () => {
           const isLive = game.status === "ACTIVE";
           const isScheduled = game.status === "PAUSED";
           const isCompleted = game.status === "COMPLETED";
+          const totalTicketAmount =
+            (game?.price ?? 0) * (game?.boxes?.length ?? 0);
+          const soldTicketRevenue =
+            (game?.ticketSold ?? 0) * (game?.price ?? 0);
 
           return (
             <div
@@ -176,7 +179,7 @@ export const Games: React.FC = () => {
                     Prize Pool
                   </p>
                   <p className="text-lg text-[#10B981] font-bold font-mono">
-                    {game?.price}
+                    {game?.prizePool ?? 0}
                   </p>
                 </div>
                 <div>
@@ -185,7 +188,10 @@ export const Games: React.FC = () => {
                       ? "Starts In"
                       : isCompleted
                         ? "Ended On"
-                        : "Tickets Sold"}
+                        : "Amount Sold / Total Ticket Value"}
+                  </p>
+                  <p className="text-lg text-[#10B981] font-bold font-mono">
+                    {soldTicketRevenue} / {totalTicketAmount}
                   </p>
                 </div>
               </div>

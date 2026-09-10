@@ -38,7 +38,7 @@ app.use(cookieParser());
 connectDB(app);
 
 app.use("/api/v1", authRouter);
-app.use("/api/v1/game", adminGameRouter);
+app.use("/api/v1", adminGameRouter);
 app.use("/api/v1/game", gameRouter);
 app.use("/api/v1/auth", ticketRouter);
 app.use("/api/v1/auth", verifyRouter);
