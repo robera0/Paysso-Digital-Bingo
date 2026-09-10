@@ -75,7 +75,7 @@ export const Overview: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="font-extrabold text-xl sm:text-2xl md:text-3xl text-white tracking-tight font-sans">
-              Platform Overview
+              Payso Overview
             </h1>
             <Sparkles className="w-5 h-5 text-[#3b82f6] animate-pulse" />
           </div>

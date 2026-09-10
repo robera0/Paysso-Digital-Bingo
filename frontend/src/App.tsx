@@ -102,6 +102,7 @@ export const App = () => {
     <div>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+        
           <Toaster position="top-right" richColors />
           <AnimatedRoutes />
         </BrowserRouter>
