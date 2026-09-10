@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "sonner";
 export interface GameItem {
   gameId: string;
   gameName: string;
@@ -44,6 +45,11 @@ export interface Ticket {
   TotalRevenue: Revenue[];
 }
 
+export interface UpdateGame {
+  gameId: string;
+  status: "ACTIVE" | "PAUSED" | "COMPLETED";
+}
+
 export const fetchLiveGameAnalytics = async (): Promise<LiveGameAnalytics> => {
   const res = await fetch(`/api/v1/live`);
   if (!res.ok) {
@@ -57,7 +63,7 @@ export const fetchLiveGameAnalytics = async (): Promise<LiveGameAnalytics> => {
 };
 
 export const fetchGameAnalytics = async (): Promise<GameListResponse> => {
-  const res = await fetch(`/api/v1/`);
+  const res = await fetch(`/api/v1/game`);
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
@@ -77,6 +83,15 @@ export const fetchGameAnalytics = async (): Promise<GameListResponse> => {
     Games: games,
     sanitizedGame: games,
   };
+};
+
+// update the status of the game
+export const UpdateGame = async (payload: UpdateGame) => {
+  const res = await axios.put(`/api/v1/game`, payload, {
+    withCredentials: true,
+  });
+
+  return res.data;
 };
 
 export const fetchTicketAnalytics = async (): Promise<Ticket> => {
@@ -109,5 +124,33 @@ export const useTicketAnalytics = () => {
   return useQuery<Ticket>({
     queryKey: ["TicketAnalytics"],
     queryFn: fetchTicketAnalytics,
+  });
+};
+
+export const useUpdateGame = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateGame) => UpdateGame(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["game"] });
+      queryClient.invalidateQueries({ queryKey: ["allGameAnalytics"] });
+      queryClient.invalidateQueries({ queryKey: ["liveGameAnalytics"] });
+      toast.success("You Update the status of the  Game successfully", {
+        duration: 3000,
+      });
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          "You didn't update the status  the Game, try again";
+        toast.error(message, { duration: 3000 });
+      } else {
+        toast.error("You didn't update the status  the Game, try again", {
+          duration: 3000,
+        });
+      }
+    },
   });
 };

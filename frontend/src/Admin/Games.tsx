@@ -1,12 +1,30 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Radio, Wallet, Ticket, Search, FileText } from "lucide-react";
-import { useAllGameAnalytics, useGameAnalytics } from "@/services/useAnalytics";
+import {
+  Plus,
+  Radio,
+  Wallet,
+  Ticket,
+  Search,
+  FileText,
+  Dices,
+} from "lucide-react";
+import {
+  useAllGameAnalytics,
+  useGameAnalytics,
+  useUpdateGame,
+} from "@/services/useAnalytics";
 import CreateGameSessionModal from "@/components/CreateGame";
 
 export const Games: React.FC = () => {
   const [filter, setFilter] = useState<
     "All" | "ACTIVE" | "PAUSED" | "COMPLETED"
   >("All");
+  const [selectedGame, setSelectedGame] = useState<any | null>(null);
+  const {
+    mutate: UpdateGameMutation,
+    isPending: isUpdatingGame,
+    variables: pendingVariables,
+  } = useUpdateGame();
   const [search, setSearch] = useState("");
   const { data: liveGameData } = useGameAnalytics();
   const { data: gameListResponse } = useAllGameAnalytics();
@@ -45,7 +63,7 @@ export const Games: React.FC = () => {
           onClick={() => setCreateGame(true)}
           className="bg-gradient-to-r from-[#1868DB] to-[#1251ad] text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:from-[#1456b8] hover:to-[#0f4392] transition-all shadow-[0_4px_16px_rgba(24,104,219,0.35)] w-full sm:w-auto cursor-pointer border border-[#3b82f6]/30"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-6" />
           <span>Start New Game</span>
         </button>
       </div>
@@ -142,6 +160,10 @@ export const Games: React.FC = () => {
           const soldTicketRevenue =
             (game?.ticketSold ?? 0) * (game?.price ?? 0);
 
+          // Only THIS card's button shows the loading state
+          const isThisCardUpdating =
+            isUpdatingGame && pendingVariables?.gameId === game.gameId;
+
           return (
             <div
               key={game?.gameId}
@@ -176,10 +198,10 @@ export const Games: React.FC = () => {
               <div className="p-4 flex-1 grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-[11px] text-[#8e8e93] mb-0.5 font-medium">
-                    Prize Pool
+                    Ticket Price
                   </p>
                   <p className="text-lg text-[#10B981] font-bold font-mono">
-                    {game?.prizePool ?? 0}
+                    {game?.price ?? 0}
                   </p>
                 </div>
                 <div>
@@ -198,19 +220,41 @@ export const Games: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="p-3 bg-[#121214] border-t border-[#26262a] flex justify-end gap-2 text-xs">
-                <button className="px-3.5 py-1.5 rounded-lg text-[#8e8e93] font-semibold hover:text-white hover:bg-[#1a1a1e] transition-colors cursor-pointer">
+                <button
+                  onClick={() => setSelectedGame(game)}
+                  className="px-3.5 py-1.5 rounded-lg text-[#8e8e93] font-semibold hover:text-white hover:bg-[#1a1a1e] transition-colors cursor-pointer"
+                >
                   Details
                 </button>
-                {isLive && (
-                  <button className="px-3.5 py-1.5 rounded-lg border border-[#EF4444]/40 text-[#EF4444] font-semibold hover:bg-[#EF4444]/10 transition-colors cursor-pointer">
-                    Pause Game
+
+                {!isCompleted && (
+                  <button
+                    disabled={isThisCardUpdating}
+                    onClick={() =>
+                      UpdateGameMutation({
+                        gameId: game.gameId,
+                        status: isLive ? "PAUSED" : "ACTIVE",
+                      })
+                    }
+                    className={`px-3.5 py-1.5 rounded-lg border font-semibold transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5 min-w-[100px] justify-center ${
+                      isLive
+                        ? "border-[#EF4444]/40 text-[#EF4444] hover:bg-[#EF4444]/10"
+                        : "border-[#1868DB] text-[#1868DB] hover:bg-[#1868DB]/10"
+                    }`}
+                  >
+                    {isThisCardUpdating ? (
+                      <>
+                        <Dices className="w-4 h-4 animate-spin" />
+                        <span>Updating...</span>
+                      </>
+                    ) : isLive ? (
+                      "Pause Game"
+                    ) : (
+                      "Force Start"
+                    )}
                   </button>
                 )}
-                {isScheduled && (
-                  <button className="px-3.5 py-1.5 rounded-lg border border-[#1868DB] text-[#1868DB] font-semibold hover:bg-[#1868DB]/10 transition-colors cursor-pointer">
-                    Force Start
-                  </button>
-                )}
+
                 {isCompleted && (
                   <button className="px-3.5 py-1.5 rounded-lg text-[#3b82f6] font-semibold hover:text-white hover:bg-[#3b82f6]/10 transition-colors flex items-center gap-1.5 cursor-pointer">
                     <FileText className="w-4 h-4" />
@@ -222,6 +266,73 @@ export const Games: React.FC = () => {
           );
         })}
       </div>
+
+      {selectedGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-[#26262a] bg-[#161618] p-5 shadow-2xl">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-[#8e8e93]">
+                  Game Details
+                </p>
+                <h3 className="mt-1 text-xl font-bold text-white">
+                  {selectedGame.gameName}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedGame(null)}
+                className="rounded-lg border border-[#26262a] px-2.5 py-1.5 text-xs font-semibold text-[#8e8e93] hover:text-white"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm text-[#d1d5db]">
+              <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                  Ticket Price
+                </p>
+                <p className="mt-2 text-lg font-bold text-[#10B981]">
+                  {selectedGame.price ?? 0}
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                  Boxes Sold
+                </p>
+                <p className="mt-2 text-lg font-bold text-[#10B981]">
+                  {selectedGame.ticketSold ?? 0}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 rounded-xl border border-[#26262a] bg-[#121214] p-4">
+              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-[#8e8e93]">
+                Purchased Numbers
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {(selectedGame.boxes || [])
+                  .filter((box: any) => box?.isOpened)
+                  .map((box: any) => (
+                    <span
+                      key={box?._id || box?.boxNumber}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#10B981]/40 bg-[#10B981] text-sm font-bold text-white shadow-[0_0_12px_rgba(16,185,129,0.35)]"
+                    >
+                      {box?.boxNumber}
+                    </span>
+                  ))}
+              </div>
+              {!(selectedGame.boxes || []).some(
+                (box: any) => box?.isOpened,
+              ) && (
+                <p className="mt-3 text-sm text-[#8e8e93]">
+                  No boxes have been purchased for this game yet.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {CreateGame && (
         <>

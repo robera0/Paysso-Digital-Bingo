@@ -184,6 +184,7 @@ const Game = () => {
         onClose={() => setCheckoutNumber(null)}
         onConfirm={handleConfirmPurchase}
         selectedNumber={checkoutNumber}
+        price={gameData?.price ?? 50}
       />
     </div>
   );

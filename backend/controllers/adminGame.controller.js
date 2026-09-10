@@ -3,6 +3,7 @@ import TicketModel from "../models/ticket.model.js";
 import UserModel from "../models/user.model.js";
 import { clearGameCache } from "../config/redis.js";
 import redis from "../config/redis.js";
+import mongoose from "mongoose";
 
 export const getLiveGames = async (req, res) => {
   try {
@@ -108,6 +109,7 @@ export const AllGame = async (req, res) => {
           ticketSold,
           boxes: g.boxes?.map((box) => ({
             _id: box._id,
+            boxNumber: box.boxNumber,
             isOpened: box.isOpened,
             openedBy: box.openedBy,
             openedAt: box.openedAt,
@@ -157,6 +159,32 @@ export const TicketSold = async (req, res) => {
     res.status(200).json({
       TicketSold: SoldTickets,
       TotalRevenue: TotalRevenue,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateGame = async (req, res) => {
+  try {
+    const { status, gameId: id } = req.body;
+    const gameId = new mongoose.Types.ObjectId(id);
+
+    const updatedGame = await GameSession.findOneAndUpdate(
+      { _id: gameId },
+      { $set: { status } },
+      { returnDocument: "after" },
+    );
+
+    if (!updatedGame) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Game not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      games: updatedGame,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
