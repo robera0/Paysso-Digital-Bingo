@@ -84,16 +84,6 @@ export const Overview: React.FC = () => {
             telemetry.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
-          <button className="px-4 py-2.5 bg-gradient-to-r from-[#1868DB] to-[#1251ad] hover:from-[#1456b8] hover:to-[#0f4392] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(24,104,219,0.35)] transition-all cursor-pointer border border-[#3b82f6]/30">
-            <Plus className="w-4 h-4" />
-            <span>New Game</span>
-          </button>
-          <button className="px-4 py-2.5 bg-[#18181c] hover:bg-[#222226] text-white rounded-xl text-xs font-bold border border-[#26262a] flex items-center justify-center gap-2 transition-all cursor-pointer">
-            <Download className="w-4 h-4 text-[#8e8e93]" />
-            <span>Export Report</span>
-          </button>
-        </div>
       </div>
 
       {/* KPI Cards Grid */}
