@@ -92,7 +92,6 @@ export const fetchGame = async (): Promise<ApiResponse> => {
 
   return data;
 };
-
 export const useGame = () => {
   return useQuery<ApiResponse>({
     queryKey: ["game"],
