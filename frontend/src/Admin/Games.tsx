@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import {
   useAllGameAnalytics,
+  useDeleteGame,
   useGameAnalytics,
   useUpdateGame,
 } from "@/services/useAnalytics";
@@ -19,11 +20,13 @@ interface CreateGameFormState {
   gameName: string;
   priceBox: string;
   totalBox: string;
+  activeAt: string;
   prizePool: Array<{
     prizeName: string;
     prize: string;
     amount: string;
     value: string;
+    image: File | null;
   }>;
 }
 
@@ -31,7 +34,12 @@ const defaultCreateGameForm: CreateGameFormState = {
   gameName: "",
   priceBox: "",
   totalBox: "",
-  prizePool: [{ prizeName: "", prize: "", amount: "", value: "" }],
+  activeAt: "",
+  prizePool: [
+    { prizeName: "", prize: "", amount: "", value: "", image: null },
+    { prizeName: "", prize: "", amount: "", value: "", image: null },
+    { prizeName: "", prize: "", amount: "", value: "", image: null },
+  ],
 };
 
 export const Games: React.FC = () => {
@@ -44,20 +52,32 @@ export const Games: React.FC = () => {
     isPending: isUpdatingGame,
     variables: pendingVariables,
   } = useUpdateGame();
+  const { mutate: deleteGameMutation, isPending: isDeletingGame } =
+    useDeleteGame();
   const [search, setSearch] = useState("");
   const { data: liveGameData } = useGameAnalytics();
   const { data: gameListResponse } = useAllGameAnalytics();
   const [CreateGame, setCreateGame] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
   const [createGameForm, setCreateGameForm] = useState<CreateGameFormState>(
     defaultCreateGameForm,
   );
   const gamesList = gameListResponse?.Games || [];
 
   const handleCreateGameFieldChange = (
-    field: "gameName" | "priceBox" | "totalBox",
+    field: "gameName" | "priceBox" | "totalBox" | "activeAt",
     value: string,
   ) => {
     setCreateGameForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePrizeImageChange = (index: number, file: File | null) => {
+    setCreateGameForm((prev) => ({
+      ...prev,
+      prizePool: prev.prizePool.map((prize, prizeIndex) =>
+        prizeIndex === index ? { ...prize, image: file } : prize,
+      ),
+    }));
   };
 
   const handlePrizeChange = (
@@ -78,7 +98,7 @@ export const Games: React.FC = () => {
       ...prev,
       prizePool: [
         ...prev.prizePool,
-        { prizeName: "", prize: "", amount: "", value: "" },
+        { prizeName: "", prize: "", amount: "", value: "", image: null },
       ],
     }));
   };
@@ -289,28 +309,67 @@ export const Games: React.FC = () => {
                   Details
                 </button>
 
-                {!isCompleted && (
+                <button
+                  disabled={isDeletingGame}
+                  onClick={() => setDeleteTarget(game)}
+                  className="px-3.5 py-1.5 rounded-lg border border-[#EF4444]/40 text-[#EF4444] hover:bg-[#EF4444]/10 font-semibold transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isDeletingGame ? "Deleting..." : "Delete"}
+                </button>
+
+                {isLive && (
+                  <>
+                    <button
+                      disabled={isThisCardUpdating}
+                      onClick={() =>
+                        UpdateGameMutation({
+                          gameId: game.gameId,
+                          status: "PAUSED",
+                        })
+                      }
+                      className="px-3.5 py-1.5 rounded-lg border border-[#EF4444]/40 text-[#EF4444] hover:bg-[#EF4444]/10 font-semibold transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5 min-w-[100px] justify-center"
+                    >
+                      {isThisCardUpdating ? (
+                        <>
+                          <Dices className="w-4 h-4 animate-spin" />
+                          <span>Updating...</span>
+                        </>
+                      ) : (
+                        "Pause Game"
+                      )}
+                    </button>
+
+                    <button
+                      disabled={isThisCardUpdating}
+                      onClick={() =>
+                        UpdateGameMutation({
+                          gameId: game.gameId,
+                          status: "COMPLETED",
+                        })
+                      }
+                      className="px-3.5 py-1.5 rounded-lg border border-[#F59E0B]/40 text-[#F59E0B] hover:bg-[#F59E0B]/10 font-semibold transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5 min-w-[100px] justify-center"
+                    >
+                      Complete
+                    </button>
+                  </>
+                )}
+
+                {isScheduled && (
                   <button
                     disabled={isThisCardUpdating}
                     onClick={() =>
                       UpdateGameMutation({
                         gameId: game.gameId,
-                        status: isLive ? "PAUSED" : "ACTIVE",
+                        status: "ACTIVE",
                       })
                     }
-                    className={`px-3.5 py-1.5 rounded-lg border font-semibold transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5 min-w-[100px] justify-center ${
-                      isLive
-                        ? "border-[#EF4444]/40 text-[#EF4444] hover:bg-[#EF4444]/10"
-                        : "border-[#1868DB] text-[#1868DB] hover:bg-[#1868DB]/10"
-                    }`}
+                    className="px-3.5 py-1.5 rounded-lg border border-[#1868DB] text-[#1868DB] hover:bg-[#1868DB]/10 font-semibold transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5 min-w-[100px] justify-center"
                   >
                     {isThisCardUpdating ? (
                       <>
                         <Dices className="w-4 h-4 animate-spin" />
                         <span>Updating...</span>
                       </>
-                    ) : isLive ? (
-                      "Pause Game"
                     ) : (
                       "Force Start"
                     )}
@@ -318,9 +377,12 @@ export const Games: React.FC = () => {
                 )}
 
                 {isCompleted && (
-                  <button className="px-3.5 py-1.5 rounded-lg text-[#3b82f6] font-semibold hover:text-white hover:bg-[#3b82f6]/10 transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <button
+                    onClick={() => setSelectedGame(game)}
+                    className="px-3.5 py-1.5 rounded-lg text-[#3b82f6] font-semibold hover:text-white hover:bg-[#3b82f6]/10 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
                     <FileText className="w-4 h-4" />
-                    <span>Audit Report</span>
+                    <span>View Report</span>
                   </button>
                 )}
               </div>
@@ -329,13 +391,57 @@ export const Games: React.FC = () => {
         })}
       </div>
 
+      {deleteTarget && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-[#26262a] bg-[#161618] p-5 shadow-2xl">
+            <div className="mb-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[#8e8e93]">
+                Confirm Delete
+              </p>
+              <h3 className="mt-2 text-xl font-bold text-white">
+                Delete {deleteTarget.gameName}?
+              </h3>
+            </div>
+
+            <p className="text-sm text-[#d1d5db] leading-6">
+              This action will permanently remove the game and its linked ticket
+              data. Please double check before continuing.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="rounded-xl border border-[#26262a] bg-[#121214] px-4 py-2 text-sm font-semibold text-[#d1d5db] hover:bg-[#1a1a1e] transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeletingGame}
+                onClick={() => {
+                  deleteGameMutation(deleteTarget.gameId, {
+                    onSuccess: () => setDeleteTarget(null),
+                  });
+                }}
+                className="rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/10 px-4 py-2 text-sm font-semibold text-[#FCA5A5] hover:bg-[#EF4444]/20 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isDeletingGame ? "Deleting..." : "Delete Game"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedGame && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-2xl rounded-2xl border border-[#26262a] bg-[#161618] p-5 shadow-2xl">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.18em] text-[#8e8e93]">
-                  Game Details
+                  {selectedGame.status === "COMPLETED"
+                    ? "Game Report"
+                    : "Game Details"}
                 </p>
                 <h3 className="mt-1 text-xl font-bold text-white">
                   {selectedGame.gameName}
@@ -349,49 +455,106 @@ export const Games: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-sm text-[#d1d5db]">
-              <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
-                  Ticket Price
-                </p>
-                <p className="mt-2 text-lg font-bold text-[#10B981]">
-                  {selectedGame.price ?? 0}
-                </p>
+            {selectedGame.status === "COMPLETED" ? (
+              <div className="space-y-4 text-sm text-[#d1d5db]">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      Game Name
+                    </p>
+                    <p className="mt-2 text-base font-bold text-white">
+                      {selectedGame.gameName ?? "N/A"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      Ticket Sold
+                    </p>
+                    <p className="mt-2 text-base font-bold text-[#10B981]">
+                      {selectedGame.ticketSold ?? 0}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      Start Date
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-white">
+                      {selectedGame.activeAt
+                        ? new Date(selectedGame.activeAt).toLocaleDateString()
+                        : selectedGame.createdAt
+                          ? new Date(
+                              selectedGame.createdAt,
+                            ).toLocaleDateString()
+                          : "N/A"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      End Date
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-white">
+                      {selectedGame.updatedAt
+                        ? new Date(selectedGame.updatedAt).toLocaleDateString()
+                        : "N/A"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3 col-span-2">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      Price of the Game
+                    </p>
+                    <p className="mt-2 text-2xl font-black text-[#10B981]">
+                      {selectedGame.price ?? 0}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
-                  Boxes Sold
-                </p>
-                <p className="mt-2 text-lg font-bold text-[#10B981]">
-                  {selectedGame.ticketSold ?? 0}
-                </p>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-3 text-sm text-[#d1d5db]">
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      Ticket Price
+                    </p>
+                    <p className="mt-2 text-lg font-bold text-[#10B981]">
+                      {selectedGame.price ?? 0}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#26262a] bg-[#121214] p-3">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-[#8e8e93]">
+                      Boxes Sold
+                    </p>
+                    <p className="mt-2 text-lg font-bold text-[#10B981]">
+                      {selectedGame.ticketSold ?? 0}
+                    </p>
+                  </div>
+                </div>
 
-            <div className="mt-5 rounded-xl border border-[#26262a] bg-[#121214] p-4">
-              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-[#8e8e93]">
-                Purchased Numbers
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {(selectedGame.boxes || [])
-                  .filter((box: any) => box?.isOpened)
-                  .map((box: any) => (
-                    <span
-                      key={box?._id || box?.boxNumber}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#10B981]/40 bg-[#10B981] text-sm font-bold text-white shadow-[0_0_12px_rgba(16,185,129,0.35)]"
-                    >
-                      {box?.boxNumber}
-                    </span>
-                  ))}
-              </div>
-              {!(selectedGame.boxes || []).some(
-                (box: any) => box?.isOpened,
-              ) && (
-                <p className="mt-3 text-sm text-[#8e8e93]">
-                  No boxes have been purchased for this game yet.
-                </p>
-              )}
-            </div>
+                <div className="mt-5 rounded-xl border border-[#26262a] bg-[#121214] p-4">
+                  <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-[#8e8e93]">
+                    Purchased Numbers
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedGame.boxes || [])
+                      .filter((box: any) => box?.isOpened)
+                      .map((box: any) => (
+                        <span
+                          key={box?._id || box?.boxNumber}
+                          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#10B981]/40 bg-[#10B981] text-sm font-bold text-white shadow-[0_0_12px_rgba(16,185,129,0.35)]"
+                        >
+                          {box?.boxNumber}
+                        </span>
+                      ))}
+                  </div>
+                  {!(selectedGame.boxes || []).some(
+                    (box: any) => box?.isOpened,
+                  ) && (
+                    <p className="mt-3 text-sm text-[#8e8e93]">
+                      No boxes have been purchased for this game yet.
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -402,9 +565,14 @@ export const Games: React.FC = () => {
             gameName={createGameForm.gameName}
             priceBox={createGameForm.priceBox}
             totalBox={createGameForm.totalBox}
+            activeAt={createGameForm.activeAt}
             prizePool={createGameForm.prizePool}
             onChange={handleCreateGameFieldChange}
             onPrizeChange={handlePrizeChange}
+            onPrizeImageChange={handlePrizeImageChange}
+            onActiveDateChange={(value) =>
+              handleCreateGameFieldChange("activeAt", value)
+            }
             onAddPrize={handleAddPrize}
             onRemovePrize={handleRemovePrize}
             onClose={() => setCreateGame(false)}

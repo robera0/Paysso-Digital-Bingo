@@ -53,7 +53,9 @@ export const useLogin = () => {
       }
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.removeQueries({ queryKey: ["auth-check"] });
-      navigate("/game");
+
+      const role = data?.role ?? data?.user?.role;
+      navigate(role === "admin" ? "/admin" : "/game");
 
       toast.success("Logged in successfully", {
         duration: 3000,
@@ -102,7 +104,9 @@ export const useSignUp = () => {
       }
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.removeQueries({ queryKey: ["auth-check"] });
-      navigate("/game");
+
+      const role = data?.role ?? data?.user?.role;
+      navigate(role === "admin" ? "/admin" : "/game");
 
       toast.success("Account created successfully", {
         duration: 3000,

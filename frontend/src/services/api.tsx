@@ -41,9 +41,12 @@ export interface TicketApiResponse {
 }
 //create Game
 
-export const CreateGame = async (payload: CreateGamePayload) => {
-  const res = await axios.post(`/api/v1/game/start`, payload, {
+export const CreateGame = async (payload: CreateGamePayload | FormData) => {
+  const isFormData = payload instanceof FormData;
+
+  const res = await axios.post(`/api/v1/game/create`, payload, {
     withCredentials: true,
+    headers: isFormData ? { "Content-Type": "multipart/form-data" } : undefined,
   });
 
   const data = res.data;
@@ -55,7 +58,7 @@ export const useCreateGame = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: (payload: CreateGamePayload) => CreateGame(payload),
+    mutationFn: (payload: CreateGamePayload | FormData) => CreateGame(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["game"] });
       navigate("/admin");
@@ -65,7 +68,6 @@ export const useCreateGame = () => {
     },
     onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {
-       
         const message =
           error.response?.data?.message ||
           "You didn't Create the Game, try again";

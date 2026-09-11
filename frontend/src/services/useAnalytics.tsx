@@ -9,6 +9,9 @@ export interface GameItem {
   prizePool: number;
   ticketSold: number;
   remainingBoxes: number;
+  activeAt?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
   boxes?: Array<{
     _id: string;
     boxNumber: number;
@@ -51,7 +54,7 @@ export interface UpdateGame {
 }
 
 export const fetchLiveGameAnalytics = async (): Promise<LiveGameAnalytics> => {
-  const res = await fetch(`/api/v1/live`);
+  const res = await fetch(`/api/v1/live`, { credentials: "include" });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
@@ -63,7 +66,7 @@ export const fetchLiveGameAnalytics = async (): Promise<LiveGameAnalytics> => {
 };
 
 export const fetchGameAnalytics = async (): Promise<GameListResponse> => {
-  const res = await fetch(`/api/v1/game`);
+  const res = await fetch(`/api/v1/game`, { credentials: "include" });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
@@ -95,7 +98,7 @@ export const UpdateGame = async (payload: UpdateGame) => {
 };
 
 export const fetchTicketAnalytics = async (): Promise<Ticket> => {
-  const res = await fetch(`/api/v1/ticket`);
+  const res = await fetch(`/api/v1/ticket`, { credentials: "include" });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
@@ -132,11 +135,44 @@ export const useUpdateGame = () => {
 
   return useMutation({
     mutationFn: (payload: UpdateGame) => UpdateGame(payload),
-    onSuccess: () => {
+    onSuccess: (_, payload) => {
+      queryClient.setQueryData<GameListResponse>(
+        ["allGameAnalytics"],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            Games: (oldData.Games || []).map((game) =>
+              game.gameId === payload.gameId
+                ? { ...game, status: payload.status }
+                : game,
+            ),
+          };
+        },
+      );
+
+      queryClient.setQueryData<LiveGameAnalytics>(
+        ["liveGameAnalytics"],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            Games: (oldData.Games || []).map((game) =>
+              game.gameId === payload.gameId
+                ? { ...game, status: payload.status }
+                : game,
+            ),
+          };
+        },
+      );
+
       queryClient.invalidateQueries({ queryKey: ["game"] });
       queryClient.invalidateQueries({ queryKey: ["allGameAnalytics"] });
       queryClient.invalidateQueries({ queryKey: ["liveGameAnalytics"] });
-      toast.success("You Update the status of the  Game successfully", {
+      queryClient.invalidateQueries({ queryKey: ["TicketAnalytics"] });
+      toast.success("You Update the status of the Game successfully", {
         duration: 3000,
       });
     },
@@ -144,10 +180,75 @@ export const useUpdateGame = () => {
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data?.message ||
-          "You didn't update the status  the Game, try again";
+          "You didn't update the status of the Game, try again";
         toast.error(message, { duration: 3000 });
       } else {
-        toast.error("You didn't update the status  the Game, try again", {
+        toast.error("You didn't update the status of the Game, try again", {
+          duration: 3000,
+        });
+      }
+    },
+  });
+};
+
+export const deleteGame = async (gameId: string) => {
+  const res = await axios.delete(`/api/v1/game/${gameId}`, {
+    withCredentials: true,
+  });
+
+  return res.data;
+};
+
+export const useDeleteGame = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (gameId: string) => deleteGame(gameId),
+    onSuccess: (_, gameId) => {
+      queryClient.setQueryData<GameListResponse>(
+        ["allGameAnalytics"],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            Games: (oldData.Games || []).filter(
+              (game) => game.gameId !== gameId,
+            ),
+          };
+        },
+      );
+
+      queryClient.setQueryData<LiveGameAnalytics>(
+        ["liveGameAnalytics"],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            Games: (oldData.Games || []).filter(
+              (game) => game.gameId !== gameId,
+            ),
+          };
+        },
+      );
+
+      queryClient.invalidateQueries({ queryKey: ["game"] });
+      queryClient.invalidateQueries({ queryKey: ["allGameAnalytics"] });
+      queryClient.invalidateQueries({ queryKey: ["liveGameAnalytics"] });
+      queryClient.invalidateQueries({ queryKey: ["TicketAnalytics"] });
+      toast.success("Game deleted successfully", {
+        duration: 3000,
+      });
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          "You couldn't delete the game, try again";
+        toast.error(message, { duration: 3000 });
+      } else {
+        toast.error("You couldn't delete the game, try again", {
           duration: 3000,
         });
       }

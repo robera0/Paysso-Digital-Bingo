@@ -190,3 +190,39 @@ export const updateGame = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteGame = async (req, res) => {
+  try {
+    const { gameId } = req.params;
+
+    if (!gameId) {
+      return res.status(400).json({
+        success: false,
+        message: "Game id is required",
+      });
+    }
+
+    const deletedGame = await GameSession.findByIdAndDelete(gameId);
+
+    if (!deletedGame) {
+      return res.status(404).json({
+        success: false,
+        message: "Game not found",
+      });
+    }
+
+    await TicketModel.deleteMany({ gameId: deletedGame._id });
+    await clearGameCache();
+
+    return res.status(200).json({
+      success: true,
+      message: "Game deleted successfully",
+      gameId: deletedGame._id,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

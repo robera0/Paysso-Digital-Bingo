@@ -4,10 +4,85 @@ import TicketModel from "../models/ticket.model.js";
 import redis from "../config/redis.js";
 import { clearGameCache } from "../config/redis.js";
 import crypto from "crypto";
+import multer from "multer";
+import path from "node:path";
+
+const uploadDir = path.resolve("uploads");
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (_req, file, cb) => {
+    const safeName = file.originalname.replace(/\s+/g, "-").toLowerCase();
+    const uniqueSuffix = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}`;
+    cb(null, `${uniqueSuffix}-${safeName}`);
+  },
+});
+
+export const uploadGameImage = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+      return;
+    }
+
+    cb(new Error("Only image files are allowed for prize image"));
+  },
+}).single("prizeImage");
+
+export const uploadPrizeImages = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+      return;
+    }
+
+    cb(new Error("Only image files are allowed for prize images"));
+  },
+}).array("prizeImages", 10);
+
+const normalizeArrayField = (value) => {
+  if (Array.isArray(value)) return value;
+
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // ignore malformed JSON and fall back to comma split
+    }
+
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
 
 export const createGame = async (req, res) => {
   try {
-    const { gameName, prize = [], boxNumber, value = [], price } = req.body;
+    const rawPrize = normalizeArrayField(req.body.prize ?? []);
+    const rawValue = normalizeArrayField(req.body.value ?? []);
+
+    const { gameName, boxNumber, price, activeAt } = req.body;
+
+    const prize = rawPrize;
+    const value = rawValue;
+    const prizeImages =
+      req.files && req.files.length
+        ? req.files.map((file) => `/uploads/${file.filename}`)
+        : normalizeArrayField(req.body.prizeImages ?? []);
 
     const totalBoxes = Number(boxNumber);
     if (isNaN(totalBoxes) || totalBoxes < 10) {
@@ -65,6 +140,8 @@ export const createGame = async (req, res) => {
       price,
       status: "ACTIVE",
       gameName,
+      prizeImages,
+      activeAt: activeAt ? new Date(activeAt) : null,
     });
     await clearGameCache();
 

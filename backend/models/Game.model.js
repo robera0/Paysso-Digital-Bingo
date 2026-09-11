@@ -25,6 +25,20 @@ const GameSessionSchema = new mongoose.Schema(
       default: "PAUSED",
     },
     gameName: String,
+    prizeImages: {
+      type: [String],
+      default: [],
+    },
+    activeAt: {
+      type: Date,
+      default: null,
+      description: "Start date when the game becomes active",
+    },
+    endAt: {
+      type: Date,
+      default: null,
+      description: "End date when the game is completed",
+    },
     remainingBoxes: { type: Number, default: 100 },
     boxes: [BoxSchema],
     price: {

@@ -2,14 +2,23 @@ import express from "express";
 import {
   createGame,
   getGame,
-  PurchaseBox,
+  uploadPrizeImages,
 } from "../controllers/game.controller.js";
 import { authenticateTokenMiddleware } from "../middleware/authenticateToken.middleware.js";
-
 const gameRouter = express.Router();
 
-gameRouter.post("/create", createGame);
-gameRouter.post("/start", createGame);
+gameRouter.post(
+  "/create",
+  uploadPrizeImages,
+  authenticateTokenMiddleware,
+  createGame,
+);
+gameRouter.post(
+  "/start",
+  uploadPrizeImages,
+  authenticateTokenMiddleware,
+  createGame,
+);
 gameRouter.get("/new-game", getGame);
 
 export default gameRouter;
