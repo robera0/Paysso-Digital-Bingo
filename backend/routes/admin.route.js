@@ -4,13 +4,14 @@ import {
   AllGame,
   deleteGame,
   getLiveGames,
+  getWinner,
   TicketSold,
   updateGame,
 } from "../controllers/adminGame.controller.js";
 import { authenticateTokenMiddleware } from "../middleware/authenticateToken.middleware.js";
 
 const adminGameRouter = Router();
-
+adminGameRouter.get("/winner", getWinner);
 adminGameRouter.get("/live", authenticateTokenMiddleware, getLiveGames);
 adminGameRouter.get("/ticket", authenticateTokenMiddleware, TicketSold);
 adminGameRouter.get("/game", authenticateTokenMiddleware, AllGame);
