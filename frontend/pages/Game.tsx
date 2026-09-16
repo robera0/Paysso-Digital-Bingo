@@ -23,6 +23,11 @@ const Game = () => {
   const isLoading = isGameLoading || ticketIsLoading;
   const { language, toggleLanguage } = useLanguage();
   const t = translations[language].game;
+  const totalBoxes = gameData?.boxes?.length ?? 0;
+  const boardNumbersLabel =
+    totalBoxes > 0
+      ? `${totalBoxes} ${totalBoxes === 1 ? "number" : "numbers"}`
+      : t.numbersCount;
 
   useEffect(() => {
     if (gameData?.remainingBoxes === 0) {
@@ -114,7 +119,7 @@ const Game = () => {
           <div>
             <p className="text-xs font-medium text-slate-700">{t.bingoBoard}</p>
             <h2 className="text-lg font-semibold text-black">
-              {t.numbersCount}
+              {boardNumbersLabel}
             </h2>
           </div>
           <button
@@ -146,12 +151,14 @@ const Game = () => {
 
         <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
           {isLoading ? (
-            Array.from({ length: 50 }).map((_, index) => (
-              <div
-                key={`skeleton-${index}`}
-                className="aspect-square animate-pulse rounded-xl border border-slate-700 bg-slate-800/50"
-              />
-            ))
+            Array.from({ length: Math.max(totalBoxes || 50, 1) }).map(
+              (_, index) => (
+                <div
+                  key={`skeleton-${index}`}
+                  className="aspect-square animate-pulse rounded-xl border border-slate-700 bg-slate-800/50"
+                />
+              ),
+            )
           ) : gameData?.remainingBoxes === 0 ? (
             <DiceAnimation rolling={rolling} />
           ) : (
