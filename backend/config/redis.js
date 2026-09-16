@@ -14,12 +14,12 @@ export default redis;
 
 export const clearGameCache = async () => {
   try {
-    const keys = await redisClient.keys(`game`);
+    const keys = await redis.keys("game:*");
 
     if (keys.length > 0) {
-      await redisClient.del(keys);
+      await redis.del(keys);
     }
   } catch (err) {
-    console.error("Failed to clear game cache :", err);
+    console.error("Failed to clear game cache:", err);
   }
 };

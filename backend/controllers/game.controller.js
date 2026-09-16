@@ -239,6 +239,7 @@ export const getGame = async (req, res) => {
       status: game.status,
       price: game.price,
       remainingBoxes: game.remainingBoxes,
+      prizeImages: game.prizeImages ?? [],
       boxes: sanitizedBoxes,
     };
 
@@ -274,6 +275,7 @@ export const PurchaseBox = async (req, res) => {
 
     const ticketCount = await TicketModel.countDocuments({
       user: userId,
+      gameId: gameId,
       $or: [
         { isVerified: true },
         { verificationExpiresAt: { $gt: new Date() } },
