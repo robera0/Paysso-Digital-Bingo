@@ -18,6 +18,7 @@ export interface ApiResponse {
   gameId: string;
   status: string;
   remainingBoxes: number;
+  prizeImages?: string[];
   boxes: Box[];
   price: number;
 }

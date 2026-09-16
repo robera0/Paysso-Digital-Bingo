@@ -226,3 +226,26 @@ export const deleteGame = async (req, res) => {
     });
   }
 };
+
+export const getWinner = async (req, res) => {
+  try {
+    const winner = await GameSession.aggregate([
+      { $unwind: "$boxes" },
+      {
+        $match: {
+          "boxes.prize.type": { $ne: "NO_PRIZE" },
+        },
+      },
+    ]);
+    return res.status(200).json({
+      success: true,
+      message: "winner found successfully",
+      winner: winner,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

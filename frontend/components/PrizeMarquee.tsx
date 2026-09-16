@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
+import { useGame } from "../src/services/api";
 
 interface Prize {
   image: string;
@@ -9,13 +10,24 @@ interface Prize {
   borderColor: string;
 }
 
+const resolveImageUrl = (url: string) => {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url)) return url;
+
+  const baseUrl = (
+    import.meta.env.VITE_API_URL || "http://localhost:5000"
+  ).replace(/\/$/, "");
+  return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+};
+
 const PrizeMarquee = () => {
   const { language } = useLanguage();
+  const { data: gameData } = useGame();
   const t = translations[language].prizes;
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
-  const prizes: Prize[] = [
+  const fallbackPrizes: Prize[] = [
     {
       image: "/prize-1.png",
       label: t.firstPrize,
@@ -35,6 +47,20 @@ const PrizeMarquee = () => {
       borderColor: "border-yellow-400/40",
     },
   ];
+
+  const prizes: Prize[] = (
+    gameData?.prizeImages?.length
+      ? gameData.prizeImages
+      : fallbackPrizes.map((prize) => prize.image)
+  ).map((image, index) => ({
+    image: resolveImageUrl(image),
+    label: gameData?.prizeImages?.length
+      ? ([t.firstPrize, t.secondPrize, t.thirdPrize][index] ?? t.firstPrize)
+      : (fallbackPrizes[index]?.label ?? t.firstPrize),
+    gradient:
+      fallbackPrizes[index]?.gradient ?? "from-slate-400/15 to-slate-300/5",
+    borderColor: fallbackPrizes[index]?.borderColor ?? "border-slate-400/40",
+  }));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,9 +87,11 @@ const PrizeMarquee = () => {
           isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        <div className={`overflow-hidden rounded-2xl border bg-gradient-to-br ${prize.gradient} ${prize.borderColor} p-3`}>
+        <div
+          className={`overflow-hidden rounded-2xl border bg-gradient-to-br ${prize.gradient} ${prize.borderColor} p-3`}
+        >
           <img
-          loading="lazy"
+            loading="lazy"
             src={prize.image}
             alt={prize.label}
             className="h-20 w-20 rounded-xl object-contain sm:h-24 sm:w-24"
