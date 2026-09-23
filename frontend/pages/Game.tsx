@@ -8,7 +8,9 @@ import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
 import { RefreshCw } from "lucide-react";
 import DiceAnimation from "../components/RollingDice";
+import { useNavigate } from "react-router-dom";
 const Game = () => {
+  const navigate = useNavigate();
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [checkoutNumber, setCheckoutNumber] = useState<number | null>(null);
   const {
@@ -114,6 +116,25 @@ const Game = () => {
         </div>
       </div>
 
+      <div className="flex w-full justify-center">
+        <div className="inline-flex w-full max-w-md rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
+          <button
+            onClick={() => navigate("/game")}
+            type="button"
+            className="flex flex-1 items-center justify-center rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-slate-800 active:scale-[0.98] sm:py-3.5"
+          >
+            Bingo
+          </button>
+
+          <button
+            onClick={() => navigate("/game/spin-game")}
+            type="button"
+            className="flex flex-1 items-center justify-center rounded-full px-4 py-3 text-sm font-semibold text-slate-600 transition-all duration-200 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] sm:py-3.5"
+          >
+            Spin Game
+          </button>
+        </div>
+      </div>
       <section className="rounded-2xl border border-slate-800 bg-slate-200 p-3 shadow-sm sm:p-4">
         <div className="mb-3 flex items-center justify-between px-1 sm:px-2">
           <div>
