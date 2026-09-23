@@ -5,16 +5,13 @@ import { toast } from "sonner";
 export interface VerifyTicket {
   receiptUrl: string;
   boxId: string;
+  gameId: string;
 }
 
 export const verifyReceipt = async (verifyTicket: VerifyTicket) => {
-  const res = await axios.post(
-    `/api/v1/auth/verify-receipt`,
-    verifyTicket,
-    {
-      withCredentials: true,
-    },
-  );
+  const res = await axios.post(`/api/v1/auth/verify-receipt`, verifyTicket, {
+    withCredentials: true,
+  });
   const data = res.data;
 
   return data;

@@ -5,13 +5,14 @@ import {
   Loader2,
   CheckCircle2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useTicket } from "../src/services/api";
 import type { TicketApiResponse } from "../src/services/api";
 import { useVerify } from "../src/services/useVerify";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
 import { TwinOrbit } from "@/components/loading-ui/twin-orbit";
-
+import { useGame } from "../src/services/api";
 const COLORS = {
   page: "#EEF1F6",
   card: "#FFFFFF",
@@ -78,6 +79,7 @@ function getRemainingTime(verificationExpiresAt: string | Date) {
 function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
   const { language } = useLanguage();
   const t = translations[language].ticket;
+  const { data: gameData } = useGame();
 
   const ticketRef = ticketDataStr._id.slice(-8).toUpperCase();
   const sessionRef = ticketDataStr.boxId.slice(-8).toUpperCase();
@@ -115,7 +117,15 @@ function TicketCard({ t: ticketDataStr }: { t: TicketArray }) {
 
   const handleSubmitVerify = () => {
     if (!verifyLink.trim() || isPending) return;
-    verifyDate({ receiptUrl: verifyLink, boxId: ticketDataStr.boxId });
+    if (!gameData?.gameId) {
+      toast.error("Game information is not available");
+      return;
+    }
+    verifyDate({
+      receiptUrl: verifyLink,
+      boxId: ticketDataStr.boxId,
+      gameId: gameData?.gameId,
+    });
   };
 
   return (

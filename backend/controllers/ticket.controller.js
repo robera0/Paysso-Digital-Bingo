@@ -62,9 +62,9 @@ export const getTicket = async (req, res) => {
 
 export const verifyTicket = async (req, res) => {
   const userId = req.user?.id;
-  const { receiptUrl, boxId } = req.body;
-
-  const TOTAL_AMOUNT = "50 Birr";
+  const { receiptUrl, boxId, gameId } = req.body;
+  const amount = await GameSession.findById(gameId);
+  const TOTAL_AMOUNT = amount.price;
   const EXPECTED_RECEIVER = "Robera Ararsa Ulu";
 
   if (!userId) {
