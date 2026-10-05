@@ -11,6 +11,7 @@ import Account from "../pages/Account";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { AuthProvider } from "./AuthProvider.tsx";
 import AdminApp from "./Admin/AdminApp";
+import Spin from "../components/Spin.tsx";
 const queryClient = new QueryClient();
 
 const pageTransition = {
@@ -89,6 +90,14 @@ const AnimatedRoutes = () => {
                 </PageWrapper>
               }
             />
+            <Route
+              path="spin"
+              element={
+                <PageWrapper>
+                  <Spin />
+                </PageWrapper>
+              }
+            />
             <Route path="account" element={<Account />} />
           </Route>
         </Routes>
@@ -102,7 +111,6 @@ export const App = () => {
     <div>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-        
           <Toaster position="top-right" richColors />
           <AnimatedRoutes />
         </BrowserRouter>
