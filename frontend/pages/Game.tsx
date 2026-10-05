@@ -6,7 +6,7 @@ import { usePurchaseTicket } from "../src/services/api";
 import { toast } from "sonner";
 import { useLanguage } from "../src/LanguageContext";
 import { translations } from "../src/translations";
-import { Dices, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import DiceAnimation from "../components/RollingDice";
 
 const Game = () => {
