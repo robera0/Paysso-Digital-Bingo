@@ -36,7 +36,7 @@ export default function Footer() {
   return (
     <footer className="fixed inset-x-0 bottom-0 z-50 flex flex-col lg:top-1/2 lg:right-6 lg:bottom-auto lg:left-auto lg:-translate-y-1/2 lg:w-auto lg:items-end">
       <div className="w-full border-t border-slate-200 bg-white/95 px-2 py-2 shadow-[0_-8px_30px_rgba(15,23,42,0.08)] backdrop-blur-md lg:rounded-[28px] lg:border lg:w-auto lg:min-w-[110px] lg:px-2 lg:py-2 lg:shadow-[0_8px_30px_rgba(15,23,42,0.08)]">
-        <nav className="grid grid-cols-2 gap-1.5 lg:flex lg:flex-col lg:gap-2">
+        <nav className="grid grid-cols-3 gap-1.5 lg:flex lg:flex-col lg:gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive = activeKey === item.key;
             const label =
@@ -50,22 +50,22 @@ export default function Footer() {
                 key={item.key}
                 type="button"
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center gap-1 rounded-2xl border px-1.5 py-1.5 transition ${
+                className={`flex flex-col items-center gap-1 rounded-xl border px-1 py-1.5 transition sm:px-1.5 ${
                   isActive
                     ? "border-slate-900 bg-slate-900 text-white shadow-sm"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}
               >
                 <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-[10px] ${
+                  className={`flex h-6 w-6 items-center justify-center rounded-[8px] sm:h-7 sm:w-7 ${
                     isActive
                       ? "bg-white/10 text-white"
                       : "bg-slate-100 text-slate-700"
                   }`}
                 >
-                  <Icon name={item.icon} size={18} />
+                  <Icon name={item.icon} size={15} />
                 </span>
-                <span className="text-[9px] font-medium leading-none">
+                <span className="text-[8px] font-medium leading-none sm:text-[9px]">
                   {label}
                 </span>
               </button>
