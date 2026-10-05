@@ -11,8 +11,9 @@ interface NavItemsProps {
 }
 
 const NAV_ITEMS: NavItemsProps[] = [
-  { key: "bingo", icon: "grid", path: "/game" },
+  { key: "Game", icon: "grid", path: "/game" },
   { key: "tickets", icon: "ticket", path: "/game/ticket" },
+  { key: "Spin", icon: "ticket", path: "/game/spin" },
 ];
 
 export default function Footer() {
@@ -24,10 +25,11 @@ export default function Footer() {
   const activeKey = useMemo(() => {
     if (location.pathname.startsWith("/game/account")) return null;
     if (location.pathname.startsWith("/game/ticket")) return "tickets";
+    if (location.pathname.startsWith("/game/spin")) return "Spin";
     if (location.pathname.startsWith("/game/winners")) return "winners";
     if (location.pathname.startsWith("/game/settings")) return "settings";
     if (location.pathname === "/game" || location.pathname.startsWith("/game/"))
-      return "bingo";
+      return "Game";
     return null;
   }, [location.pathname]);
 
@@ -37,8 +39,12 @@ export default function Footer() {
         <nav className="grid grid-cols-2 gap-1.5 lg:flex lg:flex-col lg:gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive = activeKey === item.key;
-            const label = item.key === "bingo" ? t.bingo : t.tickets;
-
+            const label =
+              item.key === "Game"
+                ? t.Game
+                : item.key === "tickets"
+                  ? t.tickets
+                  : t.Spin;
             return (
               <button
                 key={item.key}

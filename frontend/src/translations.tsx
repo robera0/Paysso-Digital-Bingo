@@ -43,8 +43,9 @@ export const translations = {
       understandAndContinue: "Understand & Continue",
     },
     footer: {
-      bingo: "Bingo",
+      Game: "Game",
       tickets: "Tickets",
+      Spin: "Spin",
     },
     ticket: {
       verified: "Verified",
@@ -176,8 +177,9 @@ export const translations = {
       understandAndContinue: "ተረድቻለሁ እና ቀጥል",
     },
     footer: {
-      bingo: "ቢንጎ",
+      Game: "ቢንጎ",
       tickets: "ትኬቶች",
+      Spin: "Spin",
     },
     ticket: {
       verified: "ተረጋግጧል",
